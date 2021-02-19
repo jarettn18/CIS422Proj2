@@ -9,29 +9,49 @@ class item():
 		self.price = 0.0
 		self.discount = 1.0
 
-	def get_name():
+	def get_name(self):
 		return self.name
 
-	def get_catagory():
+	def get_catagory(self):
 		return self.category
 
-	def get_price():
+	def get_price(self):
 		return self.price
 
-	def get_discount():
+	def get_discount(self):
 		return self.discount
 
 	def set_name(self, name):
-		pass
+		if name:
+			self.name = name
+			return True
+		else:
+			print("Invalid Name")
+			return False
 
-	def set_catagory():
-		pass
+	def set_catagory(self, category):
+		if category:
+			self.category = category
+			return True
+		else:
+			print("Invalid Category")
+			return False
 
-	def set_price():
-		pass
+	def set_price(self, price):
+		if price > 0:
+			self.price = price
+			return True
+		else:
+			print("Invalid Price")
+			return False
 
-	def set_discount():
-		pass
+	def set_discount(self, discount):
+		if (0 <= discount) and (discount <= 1):
+			self.discount = discount
+			return True
+		else:
+			print("Invalid Discount")
+			return False
 
 
 class receipt():
