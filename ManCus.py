@@ -14,6 +14,7 @@ navigator_symbol = "/" # This will make the program runnable on any unix based e
 if os.name == "nt":
     navigator_symbol = "\\" # This will make the program runnable on Windows
 
+#Discount will be optional argument by using *
 def add_item(name, catagory, price, *discount):
 	#add new data into the list
 	#read and write lists from the file
