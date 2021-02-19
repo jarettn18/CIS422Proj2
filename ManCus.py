@@ -3,28 +3,29 @@
 #This module have functions for users
 
 import os
-
+import ManDB
+import ManRcpt
 #Global lists
-list_foods = {}
-list_drinks = {}
-list_others = {}
-list_orders = {}
+list_menus = {}
+#talk to ui
+list_orders = { 1 : [(name, hambuger)]}
 
 navigator_symbol = "/" # This will make the program runnable on any unix based enviroument because it has differnet file system
 if os.name == "nt":
     navigator_symbol = "\\" # This will make the program runnable on Windows
 
-def add_menu():
+def add_menu(name, catagory, ):
 	#add new data into the list
-	#read and write lists from the file?
+	#read and write lists from the file
 	pass
 
-def add_order():
+def add_order(name, ):
 	#add order
 	#read and write the list
+
 	pass
 
-def add_modif():
+def add_modif(name):
 	#select food options
 	#read and write the list
 	pass
@@ -44,15 +45,24 @@ def delete_order():
 	#read and write the list
 	pass	
 
+def show_menu():
+	#present orders from list
+	#read the orders
+	pass
+	
 def show_order():
 	#present orders from list
-	#read the list
+	#read the orders
 	pass
 
 def pay_order():
 	#send order data to DB
+	ManDB()
+	{} = {}
 	pass
 
-def report_sale():
+def report_sale(date):
 	#call analized report from DB
+	md = ManDB()
+	md.report(date)
 	pass
