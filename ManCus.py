@@ -8,7 +8,7 @@ import ManRcpt
 #Global lists
 list_menus = {}
 #talk to ui
-list_orders = { 1 : [(name, hambuger)]}
+list_orders = {}
 
 navigator_symbol = "/" # This will make the program runnable on any unix based enviroument because it has differnet file system
 if os.name == "nt":
@@ -22,7 +22,6 @@ def add_menu(name, catagory, ):
 def add_order(name, ):
 	#add order
 	#read and write the list
-
 	pass
 
 def add_modif(name):
@@ -49,7 +48,7 @@ def show_menu():
 	#present orders from list
 	#read the orders
 	pass
-	
+
 def show_order():
 	#present orders from list
 	#read the orders
