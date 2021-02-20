@@ -43,11 +43,6 @@ def add_order(name, amount):
 		ret = False
 	return ret
 
-def add_modif(name, ):
-	#select food options
-	#read and write the list
-	pass
-
 def edit_item(name, factor, newkey):
 	#edit item data
 	#read and write the list
