@@ -22,7 +22,6 @@
 """
 
 import copy
-from ManCus import list_items
 
 class item:
 	def __init__(self):
@@ -116,7 +115,7 @@ class order():
 
 	def set_amount(self, amount):
 		if amount > 0:
-			self.name = name
+			self.amount = amount
 			ret = True
 		else:
 			print("Error: order(): set_amount(): Invalid amount.")
