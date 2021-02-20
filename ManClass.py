@@ -21,6 +21,8 @@
 *   Edit History: v1.0: Creating all the function.
 """
 
+import copy
+from ManCus import list_items
 
 class item:
 	def __init__(self):
@@ -72,6 +74,55 @@ class item:
 		else:
 			print("Invalid Discount")
 			return False
+"""
+*   Class: order
+*   Description: This class contains details of a order. It contains
+*				 .
+*   Date: 20 Feb 2021
+*   Last Created by: Jay Shin
+*   Edit History: v1.0: Creating all the function.
+"""
+
+class order():
+	"""docstring for order"""
+	def __init__(self):
+		self.item = None
+		self.amount = 1
+
+	def get_item(self):
+		if self.item:
+			ret = self.item
+		else:
+			print("Error: order(): get_item(): item is empty.")
+			ret = False
+		return ret
+
+	def get_amount(self):
+		if self.item:
+			ret = self.amount
+		else:
+			print("Error: order(): get_amount(): item is empty.")
+			ret = False
+		return ret
+
+	def set_item(self, item):
+		if item:
+			self.item = copy.deepcopy(item)
+			ret = True
+		else:
+			print("Error: order(): set_item(): Invalid item.")
+			ret = False
+		return ret
+
+	def set_amount(self, amount):
+		if amount > 0:
+			self.name = name
+			ret = True
+		else:
+			print("Error: order(): set_amount(): Invalid amount.")
+			ret = False
+		return ret
+
 
 
 """
@@ -86,16 +137,16 @@ class item:
 
 class receipt:
 	def __init__(self):
-		self.customer_name = None
+		self.customer = None
 		self.orders = None
 		self.total = 0.0
 		self.discount = 1.0
 
-	def get_customer_name(self):
-		if self.customer_name:
-			ret = self.customer_name
+	def get_customer(self):
+		if self.customer:
+			ret = self.customer
 		else:
-			print("Error: receipt(): get_customer_name(): customer_name is empty.")
+			print("Error: receipt(): get_customer(): customer is empty.")
 			ret = False
 		return ret
 
@@ -123,12 +174,12 @@ class receipt:
 			ret = False
 		return ret
 
-	def set_customer_name(self, name):
+	def set_customer(self, name):
 		if isinstance(name, str):
 			self.name = name
 			ret = True
 		else:
-			print("Error: receipt(): set_customer_name(): Invalid name.")
+			print("Error: receipt(): set_customer(): Invalid name.")
 			ret = False
 		return ret
 
