@@ -110,10 +110,16 @@ def get_total():
 	#get total price of the each order
 	return list_orders.get_total()
 
-def pay_order(C_name,receipt):
-	curr_orders = ManClass.receipt()
-	curr_orders.set_customer(C_name)
-	curr_orders.get_receipt(receipt)
+def pay_order(customer):
+	if C_name and receipt:
+		list_orders.set_customer(customer)
+		# database move
+		ret = list_orders.get_receipt()
+		list_orders = ManClass.receipt()
+	else:
+		print("Invalid Input")
+		ret = False
+	return ret
 
 def report_sale(begin_date,end_date):
 	#call analized report from DB
