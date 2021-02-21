@@ -46,7 +46,7 @@ def add_order(name, amount):
 		order = ManClass.order()
 		order.set_item(ret)
 		order.set_amount(amount)
-		return list_orders.add_order(name)
+		list_orders.add_order(name)
 		ret = True
 	else:
 		print("Item does not exist")
@@ -75,22 +75,7 @@ def edit_item(name, factor, newkey):
 def edit_order(name, factor, newkey):
 	#edit order data
 	#read and write the list
-<<<<<<< Updated upstream
 	return list_orders.edit_order(name, factor, newkey)
-=======
-	ret = list_orders[name]
-	if ret:
-		if factor == 'item':
-			ret.set_item(newkey)
-		elif factor == 'amount':
-			ret.set_amount(newkey)
-		else:
-			print("Invalid Input")
-			return False
-	else:
-		print("Invalid Input")
-		return False
->>>>>>> Stashed changes
 
 def delete_menu(name):
 	#delete menu from list
@@ -106,6 +91,7 @@ def delete_order(name):
 	#delete order from list
 	#read and write the list
 	return list_orders.delete_order(name)
+
 def show_item():
 	#present orders from list
 	#read the orders
@@ -124,20 +110,10 @@ def get_total():
 	#get total price of the each order
 	return list_orders.get_total()
 
-<<<<<<< Updated upstream
 def pay_order(C_name,receipt):
 	curr_orders = ManClass.receipt()
 	curr_orders.set_customer(C_name)
 	curr_orders.get_receipt(receipt)
-=======
-def pay_order(customer, orders, discount,total):
-	#send order data to DB
-	Listorders = ManClass.receipt.
-
-
-
->>>>>>> Stashed changes
-	pass
 
 def report_sale(begin_date,end_date):
 	#call analized report from DB
