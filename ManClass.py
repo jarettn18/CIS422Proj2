@@ -135,8 +135,10 @@ class order():
 *   Date: 18 Feb 2021
 *   Last Created by: Perat Damrongsiri
 *   Edit History: v1.0: Creating all the function.
-				  20 Feb 2021
-				  v1.1: Change total setter to calculate total.
+*				  20 Feb 2021
+*				  v1.1: Change total setter to calculate total.
+*				  20 Feb 2021
+*				  v1.2: Remove orders setter. Added functions related to orders.
 """
 
 
@@ -265,3 +267,4 @@ class receipt:
 			str += ' '
 		str += total + '\n'
 		str += '==============================================\n'
+		return str
