@@ -35,7 +35,7 @@ class item:
 	def get_name(self):
 		return self.name
 
-	def get_catagory(self):
+	def get_category(self):
 		return self.category
 
 	def get_price(self):
@@ -52,7 +52,7 @@ class item:
 			print("Invalid Name")
 			return False
 
-	def set_catagory(self, category):
+	def set_category(self, category):
 		if category:
 			self.category = category
 			return True
