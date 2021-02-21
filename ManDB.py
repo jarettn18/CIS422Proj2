@@ -15,27 +15,30 @@ class ItemDatabase:
         self.item = db.Table('item', metadata,
                              db.Column('name', db.String(255), nullable=False),
                              db.Column('category', db.String(255), nullable=False),
-                             db.Column('price', db.Float(), deafault=0),
+                             db.Column('price', db.Float(), deafault=0.0),
                              db.Column('discount', db.float(), default=1.0)
                              )
 
         metadata.create_all(engine)
 
     def add_item(self, item):
-        query = db.insert(self.item).values(name=item.get_name(), category=item.get_category(),
+        if item:
+            query = db.insert(self.item).values(name=item.get_name(), category=item.get_category(),
                                        price=item.get_price(),
                                        discount=item.get_discount())
-        ResultProxy = connection.execute(query)
+            ResultProxy = connection.execute(query)
 
     def delete_item(self, name):
-        query = db.delete(self.item)
-        query = query.where(self.item.columns.name == item.name)
-        results = connection.execute(query)
+        if name:
+            query = db.delete(self.item)
+            query = query.where(self.item.columns.name == item.name)
+            results = connection.execute(query)
 
     def edit_item(self, name, option, new_value):
-        query = db.update(self.item).values(name=item.name)
-        query = query.where(self.item.columns.Id == 1)
-        results = connection.execute(query)
+        if name and option, new_valu:
+            query = db.update(self.item).values(name=item.name)
+            query = query.where(self.item.columns.Id == 1)
+            results = connection.execute(query)
 
 class ReceiptDatabase:
     def __init__(self):
