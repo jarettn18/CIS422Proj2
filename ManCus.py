@@ -69,7 +69,7 @@ def edit_order(name, factor, newkey):
 	if ret:
 		if factor == 'item':
 			ret.set_item(newkey)
-		elif factor == 'amout':
+		elif factor == 'amount':
 			ret.set_amount(newkey)
 		else:
 			print("Invalid Input")
