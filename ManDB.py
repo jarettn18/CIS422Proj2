@@ -1,47 +1,42 @@
-# ManDB
-# This module manages database for ManEz
+import sqlalchemy as db
+import ManClass
 
-import datetime
-from sqlalchemy import create_engine, Column, Integer, String, Sequence, ForeignKey
-from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declarative_base
+class ItemDatabase:
+    def __init__(self):
+        self.engine = None
+        self.connection = None
+        self.metadata = None
 
-engine = create_engine('sqlite:///:memory:', echo=True)
-Base = declarative_base()
+    def start_session(self):
+        self.engine = db.create_engine('sqlite:///ManEzItems.sqlite')
+        self.connection = self.engine.connect()
+        self.metadata = db.MetaData()
 
+    def add_item(self, item):
+        pass
 
-class MenuDB(Base):
-    __tablename__ = 'menus'
+    def delete_item(self, name):
+        pass
 
-    menu_name = Column(String(50), primary_key=True)
+    def edit_item(self, name, option, new_value):
+        pass
 
-    def __repr__(self):
-        return f"{self.menu_name}"
+class ReceiptDatabase:
+    def __init__(self):
+        self.engine = None
+        self.connection = None
+        self.metadata = None
 
+    def start_session(self):
+        self.engine = db.create_engine('sqlite:///ManEzReceipts.sqlite')
+        self.connection = self.engine.connect()
+        self.metadata = db.MetaData()
 
-class SectionDB(Base):
-    __tablename__ = 'sections'
+    def add_receipt(self, item):
+        pass
 
-    section_name = Column(String(50), primary_key=True)
-    menu_id = Column(String, ForeignKey('menus.menu_name'))
-    menu = relationship("MenuDB", back_populates="sections")
+    def delete_receipt(self, name):
+        pass
 
-    def __repr__(self):
-        return f"{self.section_name}"
-
-
-class ItemDB(Base):
-    __tablename__ = "items"
-    id = Column(Integer, primary_key=True)
-    section_id = Column(String, ForeignKey('sections.section_name'))
-    section = relationship("SectionDB", back_populates="items")
-    item_name = Column(String(50))
-    item_price = Column(Integer)
-
-    def __repr__(self):
-        return f"{self.item_name}: {self.item_price}"
-
-
-MenuDB.sections = relationship("SectionDB", order_by=SectionDB.section_name, back_populates="menu")
-SectionDB.items = relationship("ItemDB",order_by=ItemDB.item_name, back_populates="section")
-Base.metadata.create_all(engine)
+    def get_report(self, start_date, end_date):
+        pass
