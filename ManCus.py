@@ -111,9 +111,16 @@ def get_total():
 	return list_orders.get_total()
 
 def pay_order(C_name,receipt):
-	curr_orders = ManClass.receipt()
-	curr_orders.set_customer(C_name)
-	curr_orders.get_receipt(receipt)
+	if C_name and receipt:
+		list_orders.set_customer(C_name)
+		list_orders.get_receipt(receipt)
+
+		#database move
+
+		list_orders = ManClass.receipt()
+	else:
+		print("Invalid Input")
+		return False
 
 def report_sale(begin_date,end_date):
 	#call analized report from DB
