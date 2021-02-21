@@ -12,14 +12,33 @@ class ItemDatabase:
         self.connection = self.engine.connect()
         self.metadata = db.MetaData()
 
-    def add_item(self, item):
-        pass
+        self.items = db.Table('items', metadata,
+                             db.Column('name', db.String(255), nullable=False),
+                             db.Column('category', db.String(255), nullable=False),
+                             db.Column('price', db.Float(), deafault=10),
+                             db.Column('discount', db.float(), default=1.0)
+                             )
+
+        metadata.create_all(engine)
+
+    def add_item(self, items):
+        for elem in ManClass.order().get_item():
+            query = db.insert(self.items).values(name=ManClass.item().get_name(), category=ManClass.item().get_category(),
+                                       price=ManClass.item().get_price(),
+                                       discount=ManClass.item().get_discount())
+            ResultProxy = connection.execute(query)
 
     def delete_item(self, name):
-        pass
+        for elem in ManClass.order().get_item():
+            query = db.delete(self.items)
+            query = query.where(self.items.columns.name == ManClass.item().name)
+            results = connection.execute(query)
 
     def edit_item(self, name, option, new_value):
-        pass
+        for elem in ManClass.order().get_item():
+            query = db.update(self.items).values(name=ManClass.item().name)
+            query = query.where(self.items.columns.Id == 1)
+            results = connection.execute(query)
 
 class ReceiptDatabase:
     def __init__(self):
