@@ -19,6 +19,8 @@
 *   Date: 18 Feb 2021
 *   Last Created by: Jay Shin
 *   Edit History: v1.0: Creating all the function.
+*				  20 Feb 2021 - Perat Damrongsiri
+*				  v1.1: Edited set_discount()
 """
 
 import copy
@@ -67,12 +69,13 @@ class item:
 			return False
 
 	def set_discount(self, discount):
-		if (0 <= discount) and (discount <= 1):
-			self.discount = discount
-			return True
+		if discount >= 0 and discount <= 100:
+			self.discount = (100 - discount) / 100
+			ret = True
 		else:
-			print("Invalid Discount")
-			return False
+			print("Error: item(): set_discount(): Invalid discount (range should be 0 - 100).")
+			ret = False
+		return ret
 """
 *   Class: order
 *   Description: This class contains details of a order. It contains
@@ -207,10 +210,10 @@ class receipt:
 		return ret
 
 	def set_discount(self, discount):
-		if discount >= 0 and discount <= 1:
-			self.discount = discount
+		if discount >= 0 and discount <= 100:
+			self.discount = (100 - discount) / 100
 			ret = True
 		else:
-			print("Error: receipt(): set_discount(): Invalid discount factor.")
+			print("Error: receipt(): set_discount(): Invalid discount (range should be 0 - 100).")
 			ret = False
 		return ret
