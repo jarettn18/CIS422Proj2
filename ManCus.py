@@ -14,7 +14,7 @@
 
 import copy
 import os
-#import ManDB
+import ManDB
 import ManClass
 #Global lists
 list_items = {}
