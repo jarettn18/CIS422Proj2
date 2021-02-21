@@ -76,7 +76,7 @@ class item:
 """
 *   Class: order
 *   Description: This class contains details of a order. It contains
-*				 .
+*
 *   Date: 20 Feb 2021
 *   Last Created by: Jay Shin
 *   Edit History: v1.0: Creating all the function.
@@ -131,6 +131,8 @@ class order():
 *   Date: 18 Feb 2021
 *   Last Created by: Perat Damrongsiri
 *   Edit History: v1.0: Creating all the function.
+				  20 Feb 2021
+				  v1.1: Change total setter to calculate total.
 """
 
 
@@ -191,12 +193,16 @@ class receipt:
 			ret = False
 		return ret
 
-	def set_total(self, total):
-		if total >= 0:
-			self.total = total
+	def cal_total(self):
+		if self.orders:
+			self.total = 0
+			for elem in self.orders:
+				item = elem.get_item()
+				self.total += item.get_price() * item.get_discount() * elem.get_amount()
+			self.total *= self.discount
 			ret = True
 		else:
-			print("Error: receipt(): set_total(): Invalid total cost.")
+			print("Error: receipt(): cal_total(): No order is made.")
 			ret = False
 		return ret
 
