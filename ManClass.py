@@ -24,6 +24,7 @@
 """
 
 import copy
+import datetime
 
 class item:
 	def __init__(self):
@@ -142,9 +143,38 @@ class order():
 class receipt:
 	def __init__(self):
 		self.customer = None
-		self.orders = None
+		self.orders = []
 		self.total = 0.0
 		self.discount = 1.0
+
+	def add_order(self, order):
+		for elem in self.orders:
+			if order.get_item().get_name() == elem.get_item().get_name():
+				elem.set_amount(elem.get_amount() + order.get_amount())
+				self.cal_total()
+				return True
+		orders.append(order)
+		self.cal_total()
+		return True
+
+	def delete_order(self, name):
+		for i in range(len(self.orders)):
+			elem = self.orders[i]
+			if name == elem.get_item().get_name():
+				del elem
+				self.cal_total()
+				return True
+		print("Error: receipt(): delete_order(): ", name, " does not exist in orders.")
+		return False
+
+	def edit_order(self, name, new_amount):
+		for elem in self.orders:
+			if name == elem.get_item().get_name():
+				elem.set_amount(new_amount)
+				self.cal_total()
+				return True
+		print("Error: receipt(): edit_order(): ", name, "does not exist in orders.")
+		return False
 
 	def get_customer(self):
 		if self.customer:
@@ -187,15 +217,6 @@ class receipt:
 			ret = False
 		return ret
 
-	def set_orders(self, orders):
-		if isinstance(orders, dict):
-			self.orders = orders
-			ret = True
-		else:
-			print("Error: receipt(): set_orders(): Invalid orders data type.")
-			ret = False
-		return ret
-
 	def cal_total(self):
 		if self.orders:
 			self.total = 0
@@ -217,3 +238,30 @@ class receipt:
 			print("Error: receipt(): set_discount(): Invalid discount (range should be 0 - 100).")
 			ret = False
 		return ret
+
+	def get_receipt(self):
+		str = 'Date: ' + datetime.datetime.now() + '\n'
+		str += 'Customer: ' + self.get_customer() + '\n'
+		str += '---------------------------------------------\n'
+		str += 'order                         amount    price\n'
+		str += '---------------------------------------------\n'
+		for order in self.get_orders():
+			order_txt = order.get_item().get_name()
+			for i in range(30 - len(order_txt)):
+				order_txt += ' '
+			order_amount = str(order.get_amount())
+			for i in range(6 - len(order_amount)):
+				order_txt += ' '
+			order_txt += order_amount + '    '
+			order_price = '$' + str(order.get_item().get_price())
+			for i in range(5 - len(order_price)):
+				order_txt += ' '
+			order_txt += order_price + '\n'
+			str += order_txt
+		str += '---------------------------------------------\n'
+		str += 'Total:'
+		total = '$' + str(self.get_total())
+		for i in range(39 - len(total)):
+			str += ' '
+		str += total + '\n'
+		str += '==============================================\n'
