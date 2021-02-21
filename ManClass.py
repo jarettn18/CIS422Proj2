@@ -84,6 +84,8 @@ class item:
 *   Date: 20 Feb 2021
 *   Last Created by: Jay Shin
 *   Edit History: v1.0: Creating all the function.
+*				  20 Feb 2021 - Perat Damrongsiri
+*				  v1.1: Added type checking for setters.
 """
 
 class order():
@@ -108,21 +110,21 @@ class order():
 			ret = False
 		return ret
 
-	def set_item(self, item):
-		if item:
-			self.item = copy.deepcopy(item)
+	def set_item(self, value):
+		if value and isinstance(type(value), item):
+			self.item = copy.deepcopy(value)
 			ret = True
 		else:
-			print("Error: order(): set_item(): Invalid item.")
+			print("Error: order(): set_item(): Invalid value for item.")
 			ret = False
 		return ret
 
 	def set_amount(self, amount):
-		if amount > 0:
-			self.amount = amount
+		if amount > 0 and str(amount).isdigit():
+			self.amount = float(amount)
 			ret = True
 		else:
-			print("Error: order(): set_amount(): Invalid amount.")
+			print("Error: order(): set_amount(): Invalid value for amount.")
 			ret = False
 		return ret
 
@@ -145,36 +147,47 @@ class order():
 class receipt:
 	def __init__(self):
 		self.customer = None
-		self.orders = []
+		self.orders = {}
 		self.total = 0.0
 		self.discount = 1.0
 
-	def add_order(self, order):
-		for elem in self.orders:
-			if order.get_item().get_name() == elem.get_item().get_name():
-				elem.set_amount(elem.get_amount() + order.get_amount())
+	def add_order(self, new_order):
+		if isinstance(type(new_order), order):
+			name = new_order.get_item().get_name()
+			if name in self.orders:
+				self.orders[name].set_amount(elem.get_amount() + order.get_amount())
 				self.cal_total()
 				return True
-		orders.append(order)
-		self.cal_total()
-		return True
+			orders[name] = new_order
+			self.cal_total()
+			return True
+		else:
+			print("Error: receipt(): add_order(): new_order is not order object")
+			return False
 
 	def delete_order(self, name):
-		for i in range(len(self.orders)):
-			elem = self.orders[i]
-			if name == elem.get_item().get_name():
-				del elem
-				self.cal_total()
-				return True
-		print("Error: receipt(): delete_order(): ", name, " does not exist in orders.")
-		return False
+		if name in self.orders:
+			del self.orders[name]
+			self.cal_total()
+			ret = True
+		else:
+			print("Error: receipt(): delete_order(): ", name, " does not exist in orders.")
+			ret = False
+		return ret
 
-	def edit_order(self, name, new_amount):
-		for elem in self.orders:
-			if name == elem.get_item().get_name():
-				elem.set_amount(new_amount)
+	def edit_order(self, name, option, new_value):
+		if name in self.orders:
+			if option == 'item':
+				self.orders[name].set_item(new_value)
+				self.add_order(self.orders[name])
+				self.delete_order(name)
+				return True
+			elif option == 'amount':
+				self.orders[name].set_amount(new_value)
 				self.cal_total()
 				return True
+			else:
+				print("Error: receipt(): edit_order(): ", option, "is invalid.")
 		print("Error: receipt(): edit_order(): ", name, "does not exist in orders.")
 		return False
 
