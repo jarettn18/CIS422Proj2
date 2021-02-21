@@ -188,6 +188,7 @@ class receipt:
 				return True
 			else:
 				print("Error: receipt(): edit_order(): ", option, "is invalid.")
+				return False
 		print("Error: receipt(): edit_order(): ", name, "does not exist in orders.")
 		return False
 
