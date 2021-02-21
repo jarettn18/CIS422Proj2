@@ -15,7 +15,7 @@ class ItemDatabase:
         self.items = db.Table('items', metadata,
                              db.Column('name', db.String(255), nullable=False),
                              db.Column('category', db.String(255), nullable=False),
-                             db.Column('price', db.Float(), deafault=10),
+                             db.Column('price', db.Float(), deafault=0),
                              db.Column('discount', db.float(), default=1.0)
                              )
 
