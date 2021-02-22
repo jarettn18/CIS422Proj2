@@ -32,7 +32,7 @@ class SectionDB(Base):
 
 class ItemDB(Base):
     __tablename__ = "items"
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, Sequence("item_id_seq"), primary_key=True)
     section_id = Column(String, ForeignKey('sections.section_name'))
     section = relationship("SectionDB", back_populates="items")
     item_name = Column(String(50))
