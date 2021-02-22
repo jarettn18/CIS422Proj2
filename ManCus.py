@@ -1,26 +1,36 @@
 
 #ManCus
 #This module have functions for users
+"""
+*   Description: Functions for Point of Sales
+*   Date: 18 Feb 2021
+*   Last Created by: Theodore Yun
+*   Edit History: v1.0: Jay Basic functions
+*				  20 Feb 2021
+*				  v1.1: Jay end of basic functions
+*				  20 Feb 2021
+*				  v1.2: Fix edit_order, pay_order based on modification on ManClass.py
+"""
 
 import copy
 import os
-#import ManDB
+import ManDB
 import ManClass
 #Global lists
 list_items = {}
-list_orders = {}
+list_orders = ManClass.receipt()
 
 navigator_symbol = "/" # This will make the program runnable on any unix based enviroument because it has differnet file system
 if os.name == "nt":
     navigator_symbol = "\\" # This will make the program runnable on Windows
 
 #Discount will be optional argument by using *
-def add_item(name, catagory, price, *discount):
+def add_item(name, category, price, *discount):
 	#add new data into the list
 	#read and write lists from the file
 	item = ManClass.item()
 	item.set_name(name)
-	item.set_catagory(catagory)
+	item.set_category(category)
 	item.set_price(price)
 	#default should be 1.0
 	if discount:
@@ -28,30 +38,44 @@ def add_item(name, catagory, price, *discount):
 
 	list_items[name] = item
 
-def add_order(name):
+def add_order(name, amount):
 	#add order
 	#copy and paste selected item to order list
-	if list_items:
-		list_orders[name] = copy.deepcopy(list_items[name])
-		return True
+	ret = list_items[name]
+	if ret:
+		order = ManClass.order()
+		order.set_item(ret)
+		order.set_amount(amount)
+		list_orders.add_order(name)
+		ret = True
 	else:
-		print("Options do not exist")
-		return False
+		print("Item does not exist")
+		ret = False
+	return ret
 
-def add_modif(name, ):
-	#select food options
-	#read and write the list
-	pass
-
-def edit_item(name, ):
+def edit_item(name, factor, newkey):
 	#edit item data
 	#read and write the list
-	pass
+	if name in list_items:
+		if factor == 'name':
+			list_items[name].set_name(newkey)
+		elif factor == 'category':
+			list_items[name].set_category(newkey)
+		elif factor == 'price':
+			list_items[name].set_price(newkey)
+		elif factor == 'discount':
+			list_items[name].set_discount(newkey)
+		else:
+			print("Invalid Input")
+			return False
+	else:
+		print("Invalid Input")
+		return False
 
-def edit_order():
+def edit_order(name, factor, newkey):
 	#edit order data
 	#read and write the list
-	pass	
+	return list_orders.edit_order(name, factor, newkey)
 
 def delete_menu(name):
 	#delete menu from list
@@ -66,12 +90,7 @@ def delete_menu(name):
 def delete_order(name):
 	#delete order from list
 	#read and write the list
-	try:
-		del list_orders[name]
-		return True
-	except KeyError:
-		print("Option does not exist")
-		return False
+	return list_orders.delete_order(name)
 
 def show_item():
 	#present orders from list
@@ -85,16 +104,23 @@ def show_item():
 def show_order():
 	#present orders from list
 	#read the orders
-	if list_orders:
-		return list_orders
+	return list_orders.get_orders()
+
+def get_total():
+	#get total price of the each order
+	return list_orders.get_total()
+
+def pay_order(customer):
+	if C_name and receipt:
+		list_orders.set_customer(customer)
+		# database move
+		ret = list_orders.get_receipt()
+		list_orders = ManClass.receipt()
 	else:
-		print("Order is empty")
-		return False
+		print("Invalid Input")
+		ret = False
+	return ret
 
-def pay_order():
-	#send order data to DB
-	pass
-
-def report_sale(date):
+def report_sale(begin_date,end_date):
 	#call analized report from DB
 	pass
