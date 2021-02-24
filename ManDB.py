@@ -60,6 +60,7 @@ class ItemDatabase:
         query = db.delete(self.item)
         query = query.where(self.item.columns.name == item.name)
         results = connection.execute(query)
+        return True
       else:
         print("Invalid Input")
         return False
