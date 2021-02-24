@@ -65,7 +65,7 @@ class ItemDatabase:
         return False
 
     def edit_item(self, name, option, new_value):
-      if name and option, new_value:
+      if name and option and new_value:
         query = db.update(self.item).values(name=item.name)
         query = query.where(self.item.columns.Id == 1)
         results = connection.execute(query)
