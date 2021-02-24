@@ -111,7 +111,7 @@ def get_total():
 	return list_orders.get_total()
 
 def pay_order(customer):
-	if C_name and receipt:
+	if customer:
 		list_orders.set_customer(customer)
 		# database move
 		ret = list_orders.get_receipt()
