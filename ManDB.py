@@ -8,6 +8,8 @@
 *   Last Created by: Perat Damrongsiri
 *                    Theodore Yun
 *   Date Created:    21 Feb 2021
+                    v 1.0 : Initial creation
+                    v 1.1 : Edition 24 Feb 2021
 """
 
 
@@ -52,26 +54,26 @@ class ItemDatabase:
                   discount=item.get_discount())
         ResultProxy = connection.execute(query)
       else:
-        print("Invalid Input")
+            print("Invalid Input")
         return False
 
     def delete_item(self, name):
-      if name:
+        if name:
         query = db.delete(self.item)
         query = query.where(self.item.columns.name == item.name)
         results = connection.execute(query)
-      else:
-        print("Invalid Input")
-        return False
+        else:
+            print("Invalid Input")
+            return False
 
-    def edit_item(self, name, option, new_value):
-      if name and option and new_value:
+    def edit_item(self, name):
+        if name:
         query = db.update(self.item).values(name=item.name)
         query = query.where(self.item.columns.Id == 1)
         results = connection.execute(query)
-      else:
-        print("Invalid Input")
-        return False
+        else:
+            print("Invalid Input")
+            return False
 
 """
 *   Class: ReceiptDatabase

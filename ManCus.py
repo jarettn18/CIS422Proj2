@@ -25,18 +25,22 @@ if os.name == "nt":
     navigator_symbol = "\\" # This will make the program runnable on Windows
 
 #Discount will be optional argument by using *
-def add_item(name, category, price, *discount):
-	#add new data into the list
-	#read and write lists from the file
-	item = ManClass.item()
-	item.set_name(name)
-	item.set_category(category)
-	item.set_price(price)
-	#default should be 1.0
-	if discount:
-		item.set_discount(discount)
+def add_item(name, category, price, discount=0, add_to_db=True):
+    #add new data into the list
+    #read and write lists from the file
+    item = ManClass.item()
+    item.set_name(name)
+    item.set_category(category)
+    item.set_price(price)
+    #default should be 1.0
+    if discount:
+        item.set_discount(discount)
 
 	list_items[name] = item
+	if add_to_db:
+		itemdb = ManDB.ItemDatabase()
+		itemdb.start_session()
+		itemdb.add_item(item)
 
 def add_order(name, amount):
 	#add order
@@ -73,28 +77,30 @@ def edit_item(name, factor, newkey):
 		return False
 
 def edit_order(name, factor, newkey):
-	#edit order data
-	#read and write the list
+	# edit order data
+	# read and write the list
 	return list_orders.edit_order(name, factor, newkey)
 
 def delete_menu(name):
-	#delete menu from list
-	#read and write lists from the file?
+	# delete menu from list
+	# read and write lists from the file?
 	try:
 		del list_items[name]
-		return True
+		itemdb = ManDB.ItemDatabase()
+		itemdb.start_session()
+		return itemdb.delete_item(name)
 	except KeyError:
 		print("Option does not exist")
 		return False
 
 def delete_order(name):
-	#delete order from list
-	#read and write the list
+	# delete order from list
+	# read and write the list
 	return list_orders.delete_order(name)
 
 def show_item():
-	#present orders from list
-	#read the orders
+	# present orders from list
+	# read the orders
 	if list_items:
 		return list_items
 	else:
@@ -102,12 +108,12 @@ def show_item():
 		return False
 
 def show_order():
-	#present orders from list
-	#read the orders
+	# present orders from list
+	# read the orders
 	return list_orders.get_orders()
 
 def get_total():
-	#get total price of the each order
+	# get total price of the each order
 	return list_orders.get_total()
 
 def pay_order(customer):
@@ -115,6 +121,9 @@ def pay_order(customer):
 		list_orders.set_customer(customer)
 		# database move
 		ret = list_orders.get_receipt()
+		receiptdb = ManDB.ReceiptDatabase()
+		receiptdb.start_session()
+		receiptdb.add_receipt(ret)
 		list_orders = ManClass.receipt()
 	else:
 		print("Invalid Input")
@@ -122,5 +131,5 @@ def pay_order(customer):
 	return ret
 
 def report_sale(begin_date,end_date):
-	#call analized report from DB
+	# call analized report from DB
 	pass
