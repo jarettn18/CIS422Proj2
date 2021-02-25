@@ -111,7 +111,7 @@ class order():
 		return ret
 
 	def set_item(self, value):
-		if value and isinstance(type(value), item):
+		if value and type(value) == item:
 			self.item = copy.deepcopy(value)
 			ret = True
 		else:
@@ -152,13 +152,13 @@ class receipt:
 		self.discount = 1.0
 
 	def add_order(self, new_order):
-		if isinstance(type(new_order), order):
+		if type(new_order) == order:
 			name = new_order.get_item().get_name()
 			if name in self.orders:
 				self.orders[name].set_amount(elem.get_amount() + order.get_amount())
 				self.cal_total()
 				return True
-			orders[name] = new_order
+			self.orders[name] = new_order
 			self.cal_total()
 			return True
 		else:
@@ -226,7 +226,7 @@ class receipt:
 
 	def set_customer(self, name):
 		if isinstance(name, str):
-			self.name = name
+			self.customer = name
 			ret = True
 		else:
 			print("Error: receipt(): set_customer(): Invalid name.")
@@ -237,8 +237,8 @@ class receipt:
 		if self.orders:
 			self.total = 0
 			for elem in self.orders:
-				item = elem.get_item()
-				self.total += item.get_price() * item.get_discount() * elem.get_amount()
+				item = self.orders[elem].get_item()
+				self.total += item.get_price() * item.get_discount() * self.orders[elem].get_amount()
 			self.total *= self.discount
 			ret = True
 		else:
@@ -256,29 +256,31 @@ class receipt:
 		return ret
 
 	def get_receipt(self):
-		str = 'Date: ' + datetime.datetime.now() + '\n'
-		str += 'Customer: ' + self.get_customer() + '\n'
-		str += '---------------------------------------------\n'
-		str += 'order                         amount    price\n'
-		str += '---------------------------------------------\n'
-		for order in self.get_orders():
-			order_txt = order.get_item().get_name()
+		ret_str = 'Date: '
+		ret_str += datetime.datetime.now().strftime("%m/%d/%Y, %H:%M:%S") + '\n'
+		ret_str += 'Customer: ' + self.get_customer() + '\n'
+		ret_str += '---------------------------------------------\n'
+		ret_str += 'order                         amount    price\n'
+		ret_str += '---------------------------------------------\n'
+		orders = self.get_orders()
+		for order in orders:
+			order_txt = orders[order].get_item().get_name()
 			for i in range(30 - len(order_txt)):
 				order_txt += ' '
-			order_amount = str(order.get_amount())
+			order_amount = str(orders[order].get_amount())
 			for i in range(6 - len(order_amount)):
 				order_txt += ' '
 			order_txt += order_amount + '    '
-			order_price = '$' + str(order.get_item().get_price())
+			order_price = '$' + str(orders[order].get_item().get_price())
 			for i in range(5 - len(order_price)):
 				order_txt += ' '
 			order_txt += order_price + '\n'
-			str += order_txt
-		str += '---------------------------------------------\n'
-		str += 'Total:'
+			ret_str += order_txt
+		ret_str += '---------------------------------------------\n'
+		ret_str += 'Total:'
 		total = '$' + str(self.get_total())
 		for i in range(39 - len(total)):
-			str += ' '
-		str += total + '\n'
-		str += '==============================================\n'
-		return str
+			ret_str += ' '
+		ret_str += total + '\n'
+		ret_str += '==============================================\n'
+		return ret_str
