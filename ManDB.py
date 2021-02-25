@@ -39,38 +39,41 @@ class ItemDatabase:
         self.connection = self.engine.connect()
         self.metadata = db.MetaData()
 
-        self.item = db.Table('item', metadata,
+        self.item = db.Table('item', self.metadata,
               db.Column('name', db.String(255), nullable=False),
               db.Column('category', db.String(255), nullable=False),
-              db.Column('price', db.Float(), deafault=0.0),
-              db.Column('discount', db.float(), default=1.0)
+              db.Column('price', db.Float(), default=0.0),
+              db.Column('discount', db.Float(), default=1.0)
               )
-        metadata.create_all(engine)
+        self.metadata.create_all(self.engine)
 
     def add_item(self, item):
-      if item:
-        query = db.insert(self.item).values(name=item.get_name(), category=item.get_category(),
-                  price=item.get_price(),
-                  discount=item.get_discount())
-        ResultProxy = connection.execute(query)
-      else:
+        if item:
+            query = db.insert(self.item).values(name=item.get_name(), category=item.get_category(),
+                      price=item.get_price(),
+                      discount=item.get_discount())
+            ResultProxy = self.connection.execute(query)
+            return True
+        else:
             print("Invalid Input")
-        return False
+            return False
 
     def delete_item(self, name):
         if name:
-        query = db.delete(self.item)
-        query = query.where(self.item.columns.name == item.name)
-        results = connection.execute(query)
+            query = db.delete(self.item)
+            query = query.where(self.item.columns.name == item.name)
+            results = self.connection.execute(query)
+            return True
         else:
             print("Invalid Input")
             return False
 
     def edit_item(self, name):
         if name:
-        query = db.update(self.item).values(name=item.name)
-        query = query.where(self.item.columns.Id == 1)
-        results = connection.execute(query)
+            query = db.update(self.item).values(name=item.name)
+            query = query.where(self.item.columns.Id == 1)
+            results = self.connection.execute(query)
+            return True
         else:
             print("Invalid Input")
             return False
@@ -95,10 +98,10 @@ class ReceiptDatabase:
         self.engine = db.create_engine('sqlite:///ManEzReceipts.sqlite')
         self.connection = self.engine.connect()
         self.metadata = db.MetaData()
-        self.receipts = db.Table('receipts', metadata,
+        self.receipts = db.Table('receipts', self.metadata,
               db.Column('number', db.Integer()),
-              db.Column('date', db.date()),
-              db.Column('datetime', db.datetime()),
+              db.Column('date', db.Date()),
+              db.Column('datetime', db.DateTime()),
               db.Column('name', db.String(255), nullable=False),
               db.Column('orders', db.String(255), nullable=False),
               db.Column('discount', db.Float(), default=1.0),
@@ -106,25 +109,26 @@ class ReceiptDatabase:
               db.Column('price', db.Float())
               )
 
-        metadata.create_all(engine)
+        self.metadata.create_all(self.engine)
 
     def add_receipt(self, receipt):
-        if isinstance(type(receipt), ManClass.receipt):
-            Session = sessionmaker(bind=engine)
+        if type(receipt) == ManClass.receipt:
+            Session = sessionmaker(bind=self.engine)
             session = Session()
-            desc_expression = sqlalchemy.sql.expression.desc(self.receipts.c.date)
+            desc_expression = db.sql.expression.desc(self.receipts.c.date)
             last_item = session.query(self.receipts).order_by(desc_expression).first()
             if last_item and last_item.date == datetime.date.today():
                 rec_num = last_item.number + 1
             else:
                 rec_num = 1
 
-            for elem in receipt.get_orders():
+            orders = receipt.get_orders()
+            for elem in orders:
                 query = db.insert(self.receipts).values(number=rec_num, date=datetime.date.today(),
                     datetime=datetime.datetime.now(), name=receipt.get_customer(),
-                    orders=receipt.get_orders(), discount=receipt.get_discount(),
-                    amount=receipt.get_amount(), price=receipt.get_total())
-                ResultProxy = connection.execute(query)
+                    orders=elem, discount=receipt.get_discount(),
+                    amount=orders[elem].get_amount(), price=receipt.get_total())
+                ResultProxy = self.connection.execute(query)
             ret = True
         else:
             print("Error: ReceiptDatabase(): add_receipt(): receipt: Invalid data type.")
@@ -145,7 +149,7 @@ class ReceiptDatabase:
                             query = query.where(self.receipts.c.number == receipt_num). \
                                 where(self.receipts.c.date == date). \
                                 where(self.receipts.c.name == name)
-                            connection.execute(query)
+                            self.connection.execute(query)
                             ret = True
                         else:
                             print("Error: ReceiptDatabase(): delete_receipt(): Receipt not found.")
