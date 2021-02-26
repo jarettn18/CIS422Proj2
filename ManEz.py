@@ -25,11 +25,14 @@ def main():
 	print(show_order())
 	print(pay_order('poom'))
 	print(get_sale_list(d, d))
-	print(total_sale_by_date(d, d))
-	print(total_profit_by_date(d, d))
 
-	print(report_by_item(d, d))
-	print(report_by_category(d, d))
+	delta = datetime.timedelta(days=1)
+	sd = d-delta
+	print(total_sale_by_date(sd, d))
+	print(total_profit_by_date(sd, d))
+
+	print(report_by_item(sd, d))
+	print(report_by_category(sd, d))
 
 if __name__ == '__main__':
     main()
