@@ -16,7 +16,6 @@ import copy
 import os
 import ManDB
 import ManClass
-import datetime
 
 #Global lists
 list_items = {}
@@ -139,17 +138,6 @@ def pay_order(customer):
         receiptdb.add_receipt(list_dict['list_orders'])
         list_dict['list_orders'] = ManClass.receipt()
     else:
-        print("Invalid Input")
-        ret = False
-    return ret
-
-def report_sale(start_date,end_date):
-    #call analized report from DB
-    try:
-        receiptdb = ManDB.ReceiptDatabase()
-        receiptdb.start_session()
-        ret = receiptdb.get_period(start_date, end_date)
-    except ValueError:
         print("Invalid Input")
         ret = False
     return ret
