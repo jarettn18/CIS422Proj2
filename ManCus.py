@@ -16,8 +16,11 @@ import copy
 import os
 import ManDB
 import ManClass
+import datetime
+
 #Global lists
 list_items = {}
+#read the newest item list
 list_dict = {'list_orders': ManClass.receipt()}
 
 navigator_symbol = "/" # This will make the program runnable on any unix based enviroument because it has differnet file system
@@ -55,6 +58,17 @@ def add_order(name, amount):
         print("Item does not exist")
         ret = False
     return ret
+
+def set_itemlist():
+    #Just to set item list from database
+    itemdb = ManDB.ItemDatabase()
+    itemdb.start_session()
+    items = itemdb.read_db()
+    for item in items:
+        add_item(item.name, item.category, item.price, item.discount, False)
+    return True
+#fresh item list from database
+set_itemlist()
 
 def edit_item(name, factor, newkey):
     #edit item data
@@ -129,6 +143,13 @@ def pay_order(customer):
         ret = False
     return ret
 
-def report_sale(begin_date,end_date):
+def report_sale(start_date,end_date):
     #call analized report from DB
-    pass
+    try:
+        receiptdb = ManDB.ReceiptDatabase()
+        receiptdb.start_session()
+        ret = receiptdb.get_period(start_date, end_date)
+    except ValueError:
+        print("Invalid Input")
+        ret = False
+    return ret

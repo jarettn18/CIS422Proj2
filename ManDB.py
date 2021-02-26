@@ -17,6 +17,8 @@ import sqlalchemy as db
 from sqlalchemy.orm import sessionmaker
 import datetime
 import ManClass
+#just for read_db function
+import ManCus
 from decimal import Decimal
 
 """
@@ -52,32 +54,36 @@ class ItemDatabase:
             query = db.insert(self.item).values(name=item.get_name(), category=item.get_category(),
                       price=item.get_price(),
                       discount=item.get_discount())
-            ResultProxy = self.connection.execute(query)
-            return True
+            ret = self.connection.execute(query)
         else:
             print("Invalid Input")
-            return False
+            ret = False
+        return ret
 
     def delete_item(self, name):
         if name:
             query = db.delete(self.item)
             query = query.where(self.item.columns.name == item.name)
-            results = self.connection.execute(query)
-            return True
+            ret = self.connection.execute(query)
         else:
             print("Invalid Input")
-            return False
+            ret = False
+        return ret
 
     def edit_item(self, name):
         if name:
             query = db.update(self.item).values(name=item.name)
             query = query.where(self.item.columns.Id == 1)
-            results = self.connection.execute(query)
-            return True
+            ret = self.connection.execute(query)
         else:
             print("Invalid Input")
-            return False
+            ret = False
+        return ret
 
+    def read_db(self):
+        query = db.select([self.item])
+        return self.connection.execute(query).fetchall()
+            
 """
 *   Class: ReceiptDatabase
 *   Description:
@@ -168,5 +174,20 @@ class ReceiptDatabase:
             ret = False
         return ret
 
-    def get_report(self, start_date, end_date):
-        pass
+    def get_period(self, start_date, end_date):
+        if isinstance(start_date, datetime.date) and isinstance(end_date, datetime.date):
+            #regular database calls
+            Session = sessionmaker(bind=self.engine)
+            session = Session()
+            #delta 1 day to start date to loop until end_date
+            delta = datetime.timedelta(days=1)
+            #return dic
+            ret = {}
+            while start_date <= end_date:
+                query_res = session.query(self.receipts).filter(self.receipts.c.date.like(start_date)).all()
+                ret[start_date] = query_res
+                start_date += delta
+        else:
+            print("Error: get_report(): Invalid date input")
+            ret = False
+        return ret
