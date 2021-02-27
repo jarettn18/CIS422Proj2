@@ -2,7 +2,7 @@ import ManClass
 
 shopEmp = {}
 
-def add_employee(name, current_user, firstrun=False, add_to_db=True):
+def add_employee(name, current_user, password, firstrun=False, add_to_db=True):
     if name:
         if firstrun:
             position = 'admin'
@@ -96,4 +96,57 @@ def promote_to_admin(name, current_user, password):
     elif suc == 4:
         print("Error: ManStaff: promote_to_admin(): employee is not Employee object.")
         ret = 21
+    return ret
+
+def demote_from_admin(name, current_user, password):
+    suc = shopEmp[current_user].demote_from_admin(shopEmp[name], password)
+    if suc == 1:
+        print("Successfully promoted.")
+        ret = 22
+    elif suc == 2:
+        print("Error: ManStaff: demote_from_admin(): Wrong Password.")
+        ret = 23
+    elif suc == 3:
+        print("Error: ManStaff: demote_from_admin(): Require Admin Permission.")
+        ret = 24
+    elif suc == 4:
+        print("Error: ManStaff: demote_from_admin(): employee is not Employee object.")
+        ret = 25
+    return ret
+
+def set_password(name, password):
+    suc = shopEmp[name].set_password(password)
+    if suc == 1:
+        print("Successfully set password.")
+        ret = 26
+    elif suc == 2:
+        print("Error: ManStaff: set_password(): password has to be 4 characters.")
+        ret = 27
+    elif suc == 3:
+        print("Trying to pass this wall?? no way!!!")
+        ret = 28
+    return ret
+
+def change_password(name, old_pass, new_pass):
+    if len(new_pass) != 4:
+        print("New password has to be 4 characters.")
+        ret = 29
+    elif shopEmp[name].change_password(old_pass, new_pass):
+        print("Successfully change password.")
+        ret = 30
+    else:
+        print("Invalid Password (Previous Password does not match).")
+        ret = 31
+    return ret
+
+def forgot_password(name, key, new_pass):
+    if len(new_pass) != 4:
+        print("New password has to be 4 characters.")
+        ret = 32
+    elif shopEmp[name].forgot_password(key, new_pass):
+        print("Successfully change password.")
+        ret = 33
+    else:
+        print("Error: ManStaff: forgot_password(): Wrong secure key.")
+        ret = 34
     return ret

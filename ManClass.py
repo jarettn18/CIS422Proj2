@@ -327,19 +327,15 @@ class Employee:
 
 	def set_password(self, password):
 		if not self._password_hash:
-			if password:
-				if len(password) >= 8:
-					self._password_hash = hashing(password)
-					ret = 1
-				else:
-					print("Error: Employee(): set_password(): password has to be longer than 8 characters")
-					ret = 2
+			if len(password) == 4:
+				self._password_hash = hashing(password)
+				ret = 1
 			else:
-				print("Error: Employee(): set_password(): password is empty")
-				ret = 3
+				print("Error: Employee(): set_password(): password has to be 4 characters")
+				ret = 2
 		else:
 			print("Trying to pass this wall?? no way!!!")
-			ret = 4
+			ret = 3
 		return ret
 
 	def set_secure_key(self):
@@ -422,6 +418,23 @@ class Employee:
 		else:
 			print("Error: employee(): add_admin(): Require Admin Permission.")
 			ret = 3
+		return ret
+
+	def demote_from_admin(self, admin, password):
+		if type(employee) == admin:
+			if self._position == 'admin':
+				if self._password_hash == hashing(password):
+					admin._position = 'emp'
+					ret = 1
+				else:
+					print("Error: employee(): set_to_admin(): Wrong Password.")
+					ret = 2
+			else:
+				print("Error: employee(): set_to_admin(): Require Admin Permission.")
+				ret = 3
+		else:
+			print("Error: employee(): set_to_admin(): employee is not Employee object.")
+			ret = 4
 		return ret
 
 	def checkpass(self, password):
