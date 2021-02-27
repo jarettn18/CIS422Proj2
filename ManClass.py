@@ -24,7 +24,9 @@
 """
 
 import copy
+import hashlib
 import datetime
+import random
 
 class item:
 	def __init__(self):
@@ -284,3 +286,158 @@ class receipt:
 		ret_str += total + '\n'
 		ret_str += '==============================================\n'
 		return ret_str
+
+class Employee:
+	def __init__(self, name=None, position='emp', login=None):
+		self._name = name
+		self._password_hash = None
+		self._position = position
+		self._login_time = login
+		self._logout_time = None
+		self._secure_key = None
+
+	def is_admin(self):
+		if self._position == 'admin':
+			ret = True
+		else:
+			ret = False
+		return ret
+
+	def set_login_time(self):
+		if not self._login_time:
+			self._login_time = datetime.datetime.now()
+			ret = True
+		else:
+			print("Error: Employee(): set_login_time(): Already login.")
+			ret = False
+		return ret
+
+	def set_logout_time(self):
+		if self._login_time:
+			if not self._logout_time:
+				self._logout_time = datetime.datetime.now()
+				ret = 1
+			else:
+				print("Error: Employee(): set_logout_time(): Already logout.")
+				ret = 2
+		else:
+			print("Error: Employee(): set_logout_time(): This employee did not login yet.")
+			ret = 3
+		return ret
+
+	def set_password(self, password):
+		if not self._password_hash:
+			if password:
+				if len(password) >= 8:
+					self._password_hash = hashing(password)
+					ret = 1
+				else:
+					print("Error: Employee(): set_password(): password has to be longer than 8 characters")
+					ret = 2
+			else:
+				print("Error: Employee(): set_password(): password is empty")
+				ret = 3
+		else:
+			print("Trying to pass this wall?? no way!!!")
+			ret = 4
+		return ret
+
+	def set_secure_key(self):
+		if not self._secure_key:
+			self._secure_key = random.randint(1000, 10000)
+			ret = self._secure_key
+		else:
+			print("Error: Employee(): set_secure_key(): secure key is already set.")
+			ret = False
+		return ret
+
+	def change_password(self, old_pass, new_pass):
+		old_pass_hash = hashing(old_pass)
+		if self._password_hash == old_pass_hash:
+			self._password_hash = hashing(new_pass)
+			ret = True
+		else:
+			print("Invalid Password (Previous Password does not match).")
+			ret = False
+		return ret
+
+	def forgot_password(self, key, new_pass):
+		if key == self._secure_key:
+			self._password_hash = hashing(new_pass)
+			ret = True
+		else:
+			print("Error: Employee(): forgot_password(): Wrong secure key.")
+			ret = False
+		return ret
+
+	def get_login_time(self):
+		if self._login_time:
+			ret = self._login_time
+		else:
+			print("Error: Employee(): get_login_time(): login time is none")
+			ret = False
+		return ret
+
+	def get_name(self):
+		if self._name:
+			ret = self._name
+		else:
+			print("Error: employee(): get_name(): name is empty")
+			ret = False
+		return ret
+
+	def set_to_admin(self, employee, password):
+		if type(employee) == Employee:
+			if self._position == 'admin':
+				if self._password_hash == hashing(password):
+					employee._position = 'admin'
+					ret = 1
+				else:
+					print("Error: employee(): set_to_admin(): Wrong Password.")
+					ret = 2
+			else:
+				print("Error: employee(): set_to_admin(): Require Admin Permission.")
+				ret = 3
+		else:
+			print("Error: employee(): set_to_admin(): employee is not Employee object.")
+			ret = 4
+		return ret
+
+	def add_employee(self, name):
+		if name:
+			ret = employee(name=name)
+		else:
+			print("Error: employee(): add_employee(): Invalid name.")
+			ret = False
+		return ret
+
+	def add_admin(self, name, password):
+		if self._position == 'admin':
+			if self._password_hash == hashing(password):
+				new_employee = Employee(name=name, position='admin')
+				ret = new_employee
+			else:
+				print("Error: employee(): add_admin(): Wrong Password.")
+				ret = 2
+		else:
+			print("Error: employee(): add_admin(): Require Admin Permission.")
+			ret = 3
+		return ret
+
+	def checkpass(self, password):
+		if self._password_hash == hashing(password):
+			ret = True
+		else:
+			print("Error: employee(): checkpass(): Wrong password.")
+			ret = False
+		return ret
+
+	def get_key(self):
+		if self._secure_key:
+			ret = self._secure_key
+		else:
+			ret = False
+		return ret
+
+def hashing(param_in):
+	return hashlib.sha256(param_in).hexdigest()
