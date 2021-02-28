@@ -339,7 +339,7 @@ class Employee:
 	def set_password(self, password):
 		if not self._password_hash:
 			if len(password) == 4:
-				self._password_hash = hashing(password.encode('ascii')
+				self._password_hash = hashing(password)
 				ret = 1
 			else:
 				print("Error: Employee(): set_password(): password has to be 4 characters")
@@ -400,7 +400,7 @@ class Employee:
 	def set_to_admin(self, employee, password):
 		if type(employee) == Employee:
 			if self._permission == 'admin':
-				if self._password_hash == hashing(password.encode('ascii'):
+				if self._password_hash == hashing(password):
 					employee._permission = 'admin'
 					ret = 1
 				else:
@@ -424,7 +424,7 @@ class Employee:
 
 	def add_admin(self, name, password):
 		if self._permission == 'admin':
-			if self._password_hash == hashing(password.encode('ascii'):
+			if self._password_hash == hashing(password):
 				new_employee = Employee(name=name, permission='admin')
 				ret = new_employee
 			else:
@@ -438,7 +438,7 @@ class Employee:
 	def demote_from_admin(self, admin, password):
 		if type(employee) == admin:
 			if self._permission == 'admin':
-				if self._password_hash == hashing(password.encode('ascii'):
+				if self._password_hash == hashing(password):
 					admin._permission = 'emp'
 					ret = 1
 				else:
@@ -453,7 +453,7 @@ class Employee:
 		return ret
 
 	def checkpass(self, password):
-		if self._password_hash == hashing(password.encode('ascii'):
+		if self._password_hash == hashing(password):
 			ret = True
 		else:
 			print("Error: employee(): checkpass(): Wrong password.")
@@ -468,4 +468,4 @@ class Employee:
 		return ret
 
 def hashing(param_in):
-	return hashlib.sha256(param_in).hexdigest()
+	return hashlib.sha256(param_in.encode('ascii')).hexdigest()
