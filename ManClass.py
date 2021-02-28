@@ -287,17 +287,28 @@ class receipt:
 		ret_str += '==============================================\n'
 		return ret_str
 
+"""
+*   Class: Employee
+*   Description: This class contains details of an employee. It contains
+*				 employee's name, password, permission, login time, logout time,
+*				 and recovery key.
+*   Date: 27 Feb 2021
+*   Last Created by: Perat Damrongsiri
+*   Edit History: v1.0: Creating all the function.
+"""
+
+
 class Employee:
-	def __init__(self, name=None, position='emp', login=None):
+	def __init__(self, name=None, permission='emp', login=None):
 		self._name = name
 		self._password_hash = None
-		self._position = position
+		self._permission = permission
 		self._login_time = login
 		self._logout_time = None
-		self._secure_key = None
+		self._recovery_key = None
 
 	def is_admin(self):
-		if self._position == 'admin':
+		if self._permission == 'admin':
 			ret = True
 		else:
 			ret = False
@@ -338,31 +349,35 @@ class Employee:
 			ret = 3
 		return ret
 
-	def set_secure_key(self):
-		if not self._secure_key:
-			self._secure_key = random.randint(1000, 10000)
-			ret = self._secure_key
+	def set_recovery_key(self):
+		if not self._recovery_key:
+			self._recovery_key = random.randint(1000, 10000)
+			ret = self._recovery_key
 		else:
-			print("Error: Employee(): set_secure_key(): secure key is already set.")
+			print("Error: Employee(): set_recovery_key(): recovery key is already set.")
 			ret = False
 		return ret
 
 	def change_password(self, old_pass, new_pass):
 		old_pass_hash = hashing(old_pass)
 		if self._password_hash == old_pass_hash:
-			self._password_hash = hashing(new_pass)
-			ret = True
+			if len(password) == 4:
+				self._password_hash = hashing(new_pass)
+				ret = 1
+			else:
+				print("Error: Employee(): change_password(): password has to be 4 characters")
+				ret = 2
 		else:
 			print("Invalid Password (Previous Password does not match).")
-			ret = False
+			ret = 3
 		return ret
 
 	def forgot_password(self, key, new_pass):
-		if key == self._secure_key:
+		if key == self._recovery_key:
 			self._password_hash = hashing(new_pass)
 			ret = True
 		else:
-			print("Error: Employee(): forgot_password(): Wrong secure key.")
+			print("Error: Employee(): forgot_password(): Wrong recovery key.")
 			ret = False
 		return ret
 
@@ -384,9 +399,9 @@ class Employee:
 
 	def set_to_admin(self, employee, password):
 		if type(employee) == Employee:
-			if self._position == 'admin':
+			if self._permission == 'admin':
 				if self._password_hash == hashing(password):
-					employee._position = 'admin'
+					employee._permission = 'admin'
 					ret = 1
 				else:
 					print("Error: employee(): set_to_admin(): Wrong Password.")
@@ -408,9 +423,9 @@ class Employee:
 		return ret
 
 	def add_admin(self, name, password):
-		if self._position == 'admin':
+		if self._permission == 'admin':
 			if self._password_hash == hashing(password):
-				new_employee = Employee(name=name, position='admin')
+				new_employee = Employee(name=name, permission='admin')
 				ret = new_employee
 			else:
 				print("Error: employee(): add_admin(): Wrong Password.")
@@ -422,9 +437,9 @@ class Employee:
 
 	def demote_from_admin(self, admin, password):
 		if type(employee) == admin:
-			if self._position == 'admin':
+			if self._permission == 'admin':
 				if self._password_hash == hashing(password):
-					admin._position = 'emp'
+					admin._permission = 'emp'
 					ret = 1
 				else:
 					print("Error: employee(): set_to_admin(): Wrong Password.")
@@ -446,8 +461,8 @@ class Employee:
 		return ret
 
 	def get_key(self):
-		if self._secure_key:
-			ret = self._secure_key
+		if self._recovery_key:
+			ret = self._recovery_key
 		else:
 			ret = False
 		return ret
