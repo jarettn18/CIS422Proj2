@@ -191,3 +191,54 @@ class ReceiptDatabase:
             print("Error: get_report(): Invalid date input")
             ret = False
         return ret
+
+"""
+*   Class: ReceiptDatabase
+*   Description:
+*   Date: 27 Feb 2021
+*   Last Created by: Jay Shin
+*   Edit History: 27 Feb 2021 - Jay Shin
+*                 v1.0: Creating all the function.
+"""
+
+class UserDatabase:
+    def __init__(self):
+        self.name = None
+        self.password_hash = None
+        self.position = None
+        self.login_time = None
+        self.logout_time = None
+        self.secure_key = None
+
+    def start_session(self):
+        self.engine = db.create_engine('sqlite:///ManEzUsers.sqlite')
+        self.connection = self.engine.connect()
+        self.metadata = db.MetaData()
+        self.receipts = db.Table('users', self.metadata,
+              db.Column('name'.String(255), nullable=False),
+              db.Column('password_hash',db.Integer()),
+              db.Column('position', String(255), nullable=False),
+              db.Column('login_time', db.DateTime()),
+              db.Column('logout_time', db.DateTime()),
+              db.Column('secure_key', db.Integer())
+              )
+
+        self.metadata.create_all(self.engine)
+
+    def add_user(self, user):
+        if type(user) == ManClass.Employee:
+            Session = sessionmaker(bind=self.engine)
+            session = Session()
+            desc_expression = db.sql.expression.desc(self.users.c.position)
+            last_item = session.query(self.receipts).order_by(desc_expression).first()
+
+            query = db.insert(self.receipts).values(name=user.add_employee(),
+                password_hash=user.(), name=receipt.get_customer())
+            ResultProxy = self.connection.execute(query)
+            ret = True
+        else:
+            print("Error: UserDatabase(): user: Invalid data type.")
+            ret = False
+        return ret
+
+    def delete_user(self, name):
