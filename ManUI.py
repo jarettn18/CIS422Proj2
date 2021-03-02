@@ -67,6 +67,26 @@ class App (tk.Frame):
 		submit = tk.Button(self.master, text="Submit", command=_init_submit_button, font=("Calibre", 20, 'bold'))
 		submit.grid(row=4, column=2)
 
+	def main_login_screen(self):
+		for i in range(6):
+			tk.Grid.rowconfigure(self.master, i, weight=1)
+			tk.Grid.columnconfigure(self.master, i, weight=1)
+
+		# Choose Background Color
+		bg_color = 'gray'
+		self.master.configure(background=bg_color)
+		"""
+		for r in range(6):
+			for c in range(6):
+				tk.Label(self.master, text='R%s/C%s' % (r, c),
+						 borderwidth=1).grid(row=r, column=c)
+		"""
+		#TODO
+		#Add New Order Button
+		#Add Order History Button
+		#Add Settings Button
+		#Add Clock In Button
+
 	def make_menu_screen(self):
 		pass
 
@@ -74,7 +94,8 @@ def main():
 	root = tk.Tk(className="Welcome to ManEz")
 	root.geometry("1024x768")
 	manez = App(root)
-	manez.init_screen()
+	#manez.init_screen()
+	manez.main_login_screen()
 	manez.mainloop()
 
 if __name__ == '__main__':
