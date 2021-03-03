@@ -63,7 +63,7 @@ class ItemDatabase:
     def delete_item(self, name):
         if name:
             query = db.delete(self.item)
-            query = query.where(self.item.columns.name == item.name)
+            query = query.where(self.item.columns.name == self.item.name)
             ret = self.connection.execute(query)
         else:
             print("Invalid Input")
@@ -72,7 +72,7 @@ class ItemDatabase:
 
     def edit_item(self, name):
         if name:
-            query = db.update(self.item).values(name=item.name)
+            query = db.update(self.item).values(name=self.item.name)
             query = query.where(self.item.columns.Id == 1)
             ret = self.connection.execute(query)
         else:
@@ -146,7 +146,7 @@ class ReceiptDatabase:
         if Decimal(receipt_num) % 1 == 0 and Decimal(receipt_num) > 0:
             if isinstance(date, datetime.date):
                 if isinstance(name, str):
-                    Session = sessionmaker(bind=engine)
+                    Session = sessionmaker(bind=self.engine)
                     session = Session()
                     query_res = session.query(self.receipts).filter(self.receipts.c.number == receipt_num). \
                         filter(self.receipts.c.date == date).filter(self.receipts.c.name == name).all()
@@ -215,7 +215,7 @@ class UserDatabase:
         self.receipts = db.Table('users', self.metadata,
               db.Column('name'.String(255), nullable=False),
               db.Column('password_hash',db.Integer()),
-              db.Column('position', String(255), nullable=False),
+              db.Column('position', db.String(255), nullable=False),
               db.Column('login_time', db.DateTime()),
               db.Column('logout_time', db.DateTime()),
               db.Column('secure_key', db.Integer())
@@ -231,7 +231,7 @@ class UserDatabase:
             last_item = session.query(self.receipts).order_by(desc_expression).first()
 
             query = db.insert(self.receipts).values(name=user.add_employee(),
-                password_hash=user.(), name=receipt.get_customer())
+                password_hash=user)
             ResultProxy = self.connection.execute(query)
             ret = True
         else:
