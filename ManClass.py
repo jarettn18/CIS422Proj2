@@ -467,5 +467,19 @@ class Employee:
 			ret = False
 		return ret
 
+	def get_permission(self):
+		if self._permission:
+			ret = self._permission
+		else:
+			ret = False
+		return ret
+
+	def get_pass_hash(self):
+		if self._password_hash:
+			ret = self._password_hash
+		else:
+			ret = False
+		return ret
+
 def hashing(param_in):
 	return hashlib.sha256(param_in.encode('ascii')).hexdigest()

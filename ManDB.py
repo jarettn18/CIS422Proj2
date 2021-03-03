@@ -83,7 +83,7 @@ class ItemDatabase:
     def read_db(self):
         query = db.select([self.item])
         return self.connection.execute(query).fetchall()
-            
+
 """
 *   Class: ReceiptDatabase
 *   Description:
@@ -99,6 +99,7 @@ class ReceiptDatabase:
         self.engine = None
         self.connection = None
         self.metadata = None
+        self.receipts = None
 
     def start_session(self):
         self.engine = db.create_engine('sqlite:///ManEzReceipts.sqlite')
@@ -203,12 +204,9 @@ class ReceiptDatabase:
 
 class UserDatabase:
     def __init__(self):
-        self.name = None
-        self.password_hash = None
-        self.position = None
-        self.login_time = None
-        self.logout_time = None
-        self.secure_key = None
+        self.engine = None
+        self.connection = None
+        self.metadata = None
 
     def start_session(self):
         self.engine = db.create_engine('sqlite:///ManEzUsers.sqlite')
@@ -242,3 +240,52 @@ class UserDatabase:
         return ret
 
     def delete_user(self, name):
+        pass
+
+"""
+*   Class: EmployeesDatabase
+*   Description:
+*   Date: 2 Mar 2021
+*   Last Created by: Perat Damrongsiri
+*   Edit History: v1.0: Creating all the function.
+"""
+
+
+class EmployeesDatabase:
+    def __init__(self):
+        self.engine = None
+        self.connection = None
+        self.metadata = None
+        self.employees = None
+
+    def start_session(self):
+        self.engine = db.create_engine('sqlite:///ManEzEmployees.sqlite')
+        self.connection = self.engine.connect()
+        self.metadata = db.MetaData()
+        self.employees = db.Table('employees', self.metadata,
+              db.Column('name', db.String(255), nullable=False),
+              db.Column('permission', db.String(255), nullable=False),
+              db.Column('pass_hash', db.String(255), nullable=False),
+              db.Column('recov_key', db.String(255), nullable=False)
+              )
+
+        self.metadata.create_all(self.engine)
+
+    def add_employee(self, employee):
+        if type(employee) == ManClass.Employee:
+            query = db.insert(self.employees).values(name=employee.get_name(),
+                permission=employee.get_permission(),
+                pass_hash=employee.get_pass_hash(),
+                recov_key=employee.get_key())
+            ResultProxy = self.connection.execute(query)
+            ret = True
+        else:
+            print("Error: EmployeesDatabase(): add_employee(): Invalid datatype.")
+            ret = False
+        return ret
+
+    def delete_employee(self, name):
+        pass
+
+    def edit_employee(self, name, option):
+        pass
