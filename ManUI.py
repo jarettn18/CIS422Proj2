@@ -35,6 +35,11 @@ class App(tk.Frame):
 			name_var.set("")
 			pin_var.set("")
 
+			for widget in self.master.winfo_children():
+				widget.destroy()
+
+			self.main_login_screen()
+
 		for i in range(6):
 			tk.Grid.rowconfigure(self.master, i, weight=1)
 			tk.Grid.columnconfigure(self.master, i, weight=1)
@@ -79,12 +84,14 @@ class App(tk.Frame):
 
 		# Choose Background Color
 		self.master.configure(background=BG_COLOR)
-		"""
+
+		greeting = tk.Label(background=BG_COLOR, text="Test Text", font=("Arial", 30, 'bold'))
+		greeting.grid(row=0, column=2, columnspan=2)
+
 		for r in range(6):
 			for c in range(6):
 				tk.Label(self.master, text='R%s/C%s' % (r, c),
 						 borderwidth=1).grid(row=r, column=c)
-		"""
 		#TODO
 		#Add New Order Button
 		#Add Order History Button
@@ -156,14 +163,19 @@ def main():
 	root = tk.Tk(className="Welcome to ManEz")
 	root.geometry("1024x768")
 	manez = App(root)
+
 	test = tk.Frame()
 	test.pack()
+	manez.init_screen()
+
+	'''
 	if stf.is_emp_db_empty():
 		#manez.init_screen()
 		pass
 	else:
 		#manez.main_login_screen()
 		pass
+	'''
 	manez.settings_menu(test)
 	manez.mainloop()
 
