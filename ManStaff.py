@@ -1,4 +1,5 @@
-import ManClass
+import ManClass as mc
+import ManDB as db
 
 shopEmp = {}
 
@@ -6,18 +7,18 @@ def is_emp_db_empty() -> bool:
     # Someone please make me a function that can check if the employee database is empty/not created yet - Alex
     return True
 
-def add_employee(name, current_user, password, firstrun=False, add_to_db=True):
+def add_employee(name, password, position='emp', add_to_db=True):
     if name:
-        if firstrun:
-            position = 'admin'
-        else:
-            position = 'emp'
-
-        new_emp = shopEmp[current_user].add_employee(name)
+        new_emp = mc.Employee(name=name, permission=position)
         if new_emp:
-            shopEmp[name] = new_emp
+            new_emp.set_password(password)
             print("Successfully added new employee.")
-            ret = new_emp.get_key()
+            if add_to_db:
+                emp_database = db.EmployeesDatabase()
+                emp_database.start_session()
+                emp_database.add_employee(new_emp)
+                print("Employee added to database.")
+            ret = new_emp.get_name()
         else:
             print("Error: ManStaff: add_employee(): Invalid name.")
             ret = 2
