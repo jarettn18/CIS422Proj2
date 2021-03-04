@@ -39,7 +39,7 @@ def total_sale_by_date(start_date,end_date):
             sales[start_date] = total_sale
             start_date += delta
         return sales
-    else
+    else:
         print("Invalid Input")
         return False
 
@@ -62,7 +62,7 @@ def total_profit_by_date(start_date, end_date):
             sales[start_date] = tot
             start_date += delta
         return sales
-    else
+    else:
         print("Invalid Input")
         return False
 
@@ -84,7 +84,7 @@ def report_by_item(start_date, end_date):
             sales[start_date] = item_dic
             start_date += delta
         return sales
-    else
+    else:
         print("Invalid Input")
         return False
 
@@ -115,7 +115,7 @@ def report_by_category(start_date, end_date):
             sales[start_date] = category_dic
             start_date += delta
         return sales
-    else
+    else:
         print("Invalid Input")
         return False
 
