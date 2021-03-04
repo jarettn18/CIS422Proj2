@@ -166,16 +166,14 @@ def main():
 
 	test = tk.Frame()
 	test.pack()
-	manez.init_screen()
 
-	'''
 	if stf.is_emp_db_empty():
 		#manez.init_screen()
 		pass
 	else:
 		#manez.main_login_screen()
 		pass
-	'''
+
 	manez.settings_menu(test)
 	manez.mainloop()
 
