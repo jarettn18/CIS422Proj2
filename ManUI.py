@@ -10,7 +10,8 @@
 *	Date Created: 22 Feb 2022
 """
 import tkinter as tk
-import ManDB as mdb
+import ManCus as cus
+import ManStaff as stf
 
 class App (tk.Frame):
 	
@@ -88,15 +89,24 @@ class App (tk.Frame):
 		#Add Settings Button
 		#Add Clock In Button
 
-	def make_menu_screen(self):
-		pass
+	def settings_menu(self):
+		new_account = tk.Button(text='Create New Account', command=self.new_account(), width='25', height='25',font=("Calibre", 20, 'bold'))
+		new_account.grid(row=4, column=2)
+
+	def new_account(selfs):
+		print("sup")
 
 def main():
 	root = tk.Tk(className="Welcome to ManEz")
 	root.geometry("1024x768")
 	manez = App(root)
-	#manez.init_screen()
-	manez.main_login_screen()
+	if stf.is_emp_db_empty():
+		#manez.init_screen()
+		pass
+	else:
+		#manez.main_login_screen()
+		pass
+	manez.settings_menu()
 	manez.mainloop()
 
 if __name__ == '__main__':

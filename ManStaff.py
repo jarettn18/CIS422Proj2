@@ -2,6 +2,10 @@ import ManClass
 
 shopEmp = {}
 
+def is_emp_db_empty() -> bool:
+    # Someone please make me a function that can check if the employee database is empty/not created yet - Alex
+    return True
+
 def add_employee(name, current_user, password, firstrun=False, add_to_db=True):
     if name:
         if firstrun:
@@ -15,7 +19,7 @@ def add_employee(name, current_user, password, firstrun=False, add_to_db=True):
             print("Successfully added new employee.")
             ret = new_emp.get_key()
         else:
-			print("Error: ManStaff: add_employee(): Invalid name.")
+            print("Error: ManStaff: add_employee(): Invalid name.")
             ret = 2
     else:
         print("Error: ManStaff: add_employee(): Invalid name.")
