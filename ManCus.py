@@ -28,21 +28,37 @@ if os.name == "nt":
 
 #Discount will be optional argument by using *
 def add_item(name, category, price, discount=0, add_to_db=True):
-    #add new data into the list
-    #read and write lists from the file
-    item = ManClass.item()
-    item.set_name(name)
-    item.set_category(category)
-    item.set_price(price)
-    #default should be 1.0
-    if discount:
-        item.set_discount(discount)
+    try:
+        #add new data into the list
+        #read and write lists from the file
+        item = ManClass.item()
+        item.set_name(name)
+        item.set_category(category)
+        item.set_price(price)
+        #default should be 1.0
+        if discount:
+            item.set_discount(discount)
 
-    list_items[name] = item
-    if add_to_db:
-        itemdb = ManDB.ItemDatabase()
-        itemdb.start_session()
-        itemdb.add_item(item)
+        list_items[name] = item
+        if add_to_db:
+            itemdb = ManDB.ItemDatabase()
+            itemdb.start_session()
+            itemdb.add_item(item)
+        return True
+    except:
+        return False
+
+def query_items():
+    menu_dict = {}
+    itemdb = ManDB.ItemDatabase()
+    itemdb.start_session()
+    for i in itemdb.read_db():
+        if i[1] not in menu_dict:
+            items = [(i[0], i[2], i[3])]
+            menu_dict[i[1]] = items
+        else:
+            menu_dict[i[1]].append((i[0], i[2], i[3]))
+    return menu_dict
 
 def add_order(name, amount):
     #add order

@@ -10,14 +10,14 @@
 *	Date Created: 22 Feb 2022
 """
 import tkinter as tk
-import tkinter.ttk as ttk
 import ManCus as cus
 import ManStaff as stf
 
 BG_COLOR = 'gray'
 
+
 class App(tk.Frame):
-	
+
 	def __init__(self, master=None):
 		super().__init__(master)
 		self.master = master
@@ -49,11 +49,11 @@ class App(tk.Frame):
 				tk.Label(self.master, text='R%s/C%s' % (r, c),
 						 borderwidth=1).grid(row=r, column=c)
 		"""
-		#Choose Background Color
+		# Choose Background Color
 		BG_COLOR = 'gray'
 		self.master.configure(background=BG_COLOR)
 
-		#Create Labels
+		# Create Labels
 		greeting = tk.Label(background=BG_COLOR, text="Welcome to ManEz", font=("Arial", 30, 'bold'))
 		greeting.grid(row=0, column=2, columnspan=2)
 		create_profile = tk.Label(background=BG_COLOR, text="Create Administrator Profile", font=("Arial", 25))
@@ -62,10 +62,10 @@ class App(tk.Frame):
 		name_var = tk.StringVar()
 		pin_var = tk.StringVar()
 
-		name_label = tk.Label(self.master,background=BG_COLOR, text="Name", font=("Calibre", 20, 'bold'))
+		name_label = tk.Label(self.master, background=BG_COLOR, text="Name", font=("Calibre", 20, 'bold'))
 		name_entry = tk.Entry(self.master, textvariable=name_var, font=("Calibre", 20))
 
-		pin_label = tk.Label(self.master,background=BG_COLOR, text="Pin", font=("Calibre", 20, 'bold'))
+		pin_label = tk.Label(self.master, background=BG_COLOR, text="Pin", font=("Calibre", 20, 'bold'))
 		pin_entry = tk.Entry(self.master, textvariable=pin_var, font=("Calibre", 20))
 
 		name_label.grid(row=2, column=2)
@@ -92,11 +92,12 @@ class App(tk.Frame):
 			for c in range(6):
 				tk.Label(self.master, text='R%s/C%s' % (r, c),
 						 borderwidth=1).grid(row=r, column=c)
-		#TODO
-		#Add New Order Button
-		#Add Order History Button
-		#Add Settings Button
-		#Add Clock In Button
+
+	# TODO
+	# Add New Order Button
+	# Add Order History Button
+	# Add Settings Button
+	# Add Clock In Button
 
 	def settings_menu(self, prev: tk.Frame):
 		prev.pack_forget()
@@ -106,16 +107,24 @@ class App(tk.Frame):
 		title = tk.Label(settings_frame, text='ManEz Settings', font=("Calibre", 20, 'bold'), width='15', height='5')
 		title.grid(row=1, column=2)
 
-		new_account = tk.Button(settings_frame, cursor='circle', command=lambda: self.new_account(settings_frame), text='Create New Account', width='25', height='10',font=("Calibre", 20, 'bold'))
+		back = tk.Button(settings_frame, text="Back", command=None, font=("Calibre", 20, 'bold'))
+		back.grid(row=1, column=1)
+
+		new_account = tk.Button(settings_frame, cursor='circle', command=lambda: self.new_account(settings_frame),
+								text='Create New Account', width='25', height='10', font=("Calibre", 20, 'bold'))
 		new_account.grid(row=2, column=1)
 
-		sales = tk.Button(settings_frame, cursor='circle', text='Sales Analytics', width='25', height='10', font=("Calibre", 20, 'bold'))
+		sales = tk.Button(settings_frame, cursor='circle', text='Sales Analytics', width='25', height='10',
+						  font=("Calibre", 20, 'bold'))
 		sales.grid(row=2, column=3)
 
-		edit = tk.Button(settings_frame, cursor='circle', text='Edit Menu', width='25', height='10',font=("Calibre", 20, 'bold'))
+		edit = tk.Button(settings_frame, cursor='circle', text='Menu Settings',
+						 command=lambda: self.menu_settings(settings_frame), width='25', height='10',
+						 font=("Calibre", 20, 'bold'))
 		edit.grid(row=3, column=3)
 
-		employee = tk.Button(settings_frame, cursor='circle', text='Employee Analytics', width='25', height='10', font=("Calibre", 20, 'bold'))
+		employee = tk.Button(settings_frame, cursor='circle', text='Employee Analytics', width='25', height='10',
+							 font=("Calibre", 20, 'bold'))
 		employee.grid(row=3, column=1)
 
 	def new_account(self, prev: tk.Frame):
@@ -126,13 +135,17 @@ class App(tk.Frame):
 		title = tk.Label(account_frame, text='Create New Account', font=("Calibre", 20, 'bold'), width='15', height='5')
 		title.grid(row=1, column=2)
 
-		type_var = tk.StringVar()
+		back = tk.Button(account_frame, text="Back", command=lambda: self.settings_menu(account_frame),
+						 font=("Calibre", 20, 'bold'))
+		back.grid(row=1, column=1)
+
+		type_var = tk.IntVar()
 		name_var = tk.StringVar()
 		pin_var = tk.StringVar()
 
 		radio_label = tk.Label(account_frame, text='Select Account Type:', font=("Calibre", 18, 'bold'))
-		admin = tk.Radiobutton(account_frame, text="Administrator", variable=type_var, value='admin')
-		emplo = tk.Radiobutton(account_frame, text='Employee', variable=type_var, value='emp')
+		admin = tk.Radiobutton(account_frame, text="Administrator", variable=type_var, value=1)
+		emplo = tk.Radiobutton(account_frame, text='Employee', variable=type_var, value=2)
 
 		name_label = tk.Label(account_frame, text="Name", font=("Calibre", 18, 'bold'))
 		name_entry = tk.Entry(account_frame, textvariable=name_var, font=("Calibre", 16))
@@ -140,7 +153,9 @@ class App(tk.Frame):
 		pin_label = tk.Label(account_frame, text="Pin", font=("Calibre", 18, 'bold'))
 		pin_entry = tk.Entry(account_frame, textvariable=pin_var, font=("Calibre", 16))
 
-		submit = tk.Button(account_frame, text="Create", command=lambda: self.create_account(account_frame, name_var.get(), pin_var.get(), type_var.get()), font=("Calibre", 20, 'bold'))
+		submit = tk.Button(account_frame, text="Create",
+						   command=lambda: self.create_account(account_frame, name_var.get(), pin_var.get(),
+															   type_var.get()), font=("Calibre", 20, 'bold'))
 
 		radio_label.grid(row=2, column=1)
 		admin.grid(row=2, column=2)
@@ -154,10 +169,134 @@ class App(tk.Frame):
 
 		submit.grid(row=5, column=2)
 
-	def create_account(self, prev: tk.Frame, name, pin, permission):
-		stf.add_employee(name, pin, permission)
+	def create_account(self, prev: tk.Frame, name: str, pin: str, permission: int):
+		if permission == 1:
+			perm_type = 'admin'
+		else:
+			perm_type = 'emp'
+		stf.add_employee(name, pin, perm_type)
 		self.settings_menu(prev)
 
+	def menu_settings(self, prev):
+		prev.pack_forget()
+
+		men_sett_frame = tk.Frame(self.master)
+		men_sett_frame.pack()
+
+		title = tk.Label(men_sett_frame, text='Menu Settings', font=("Calibre", 20, 'bold'), width='15', height='5')
+		title.grid(row=1, column=2)
+
+		back = tk.Button(men_sett_frame, text="Back", command=lambda: self.settings_menu(men_sett_frame),
+						 font=("Calibre", 20, 'bold'))
+		back.grid(row=1, column=1)
+
+		add_menu = tk.Button(men_sett_frame, cursor='circle', command=lambda: self.add_menu(men_sett_frame),
+							 text='Add New Menu', width='25', height='10', font=("Calibre", 20, 'bold'))
+		add_menu.grid(row=2, column=2)
+
+	def add_menu(self, prev):
+		prev.pack_forget()
+
+		men_main_frame = tk.Frame(self.master)
+		men_main_frame.pack()
+
+		add_men_frame = tk.Frame(men_main_frame)
+		add_men_frame.pack(side=tk.LEFT)
+
+		curr_men_frame = tk.Frame(men_main_frame)
+		curr_men_frame.pack(side=tk.RIGHT)
+
+		currents_header = tk.Label(curr_men_frame, text="Current Menu", font=("Calibre", 18, 'bold'))
+		currents_header.grid(column=1, row=1, padx=50)
+
+		item_frames = self.show_cat_list(curr_men_frame)
+
+		title = tk.Label(add_men_frame, text='Add New Menu', font=("Calibre", 20, 'bold'), width='15', height='5')
+		title.grid(row=1, column=2)
+
+		back = tk.Button(add_men_frame, text="Back", command=lambda: self.menu_settings(men_main_frame),
+						 font=("Calibre", 20, 'bold'))
+		back.grid(row=1, column=1)
+
+		name_var = tk.StringVar()
+		price_var = tk.DoubleVar()
+		cat_var = tk.StringVar()
+
+		header = tk.Label(add_men_frame, text="New Item", font=("Calibre", 18, 'bold'))
+		item_name = tk.Label(add_men_frame, text="Name", font=("Calibre", 16, 'bold'))
+		name_entry = tk.Entry(add_men_frame, textvariable=name_var, font=("Calibre", 16))
+
+		item_price = tk.Label(add_men_frame, text="Price", font=("Calibre", 16, 'bold'))
+		price_entry = tk.Entry(add_men_frame, textvariable=price_var, font=("Calibre", 16))
+
+		item_category = tk.Label(add_men_frame, text="Category", font=("Calibre", 16, 'bold'))
+		category_entry = tk.Entry(add_men_frame, textvariable=cat_var, font=("Calibre", 16))
+
+		submit = tk.Button(add_men_frame, text="Add",
+						   command=lambda: self.insert_item(name_var.get(), cat_var.get(), price_var.get(), name_entry,
+															price_entry, item_frames), font=("Calibre", 20, 'bold'))
+
+		header.grid(column=2, row=2)
+
+		item_name.grid(column=1, row=3)
+		name_entry.grid(column=2, row=3)
+
+		item_price.grid(column=1, row=4)
+		price_entry.grid(column=2, row=4)
+
+		item_category.grid(column=1, row=5)
+		category_entry.grid(column=2, row=5)
+
+		submit.grid(column=2, row=6, pady=20)
+
+
+
+	def insert_item(self, name: str, category: str, price: float, name_entry: tk.Entry, price_entry: tk.Entry, item_frames: dict):
+		if cus.add_item(name, category, price):
+			name_entry.delete(0, 'end')
+			price_entry.delete(0, 'end')
+			self.update_cat_list(item_frames)
+
+	def show_cat_list(self, cat_frame: tk.Frame):
+		c = 2
+		indiv_frames = {}
+		buttons_dict = {}
+
+		for i in cus.query_items():
+			div = tk.Frame(cat_frame)  # Frame that holds the category button label and the individual item frame
+			indiv_frame = tk.Frame(div)  # individual items frame
+			div.grid(column=1, row=c)
+
+			indiv_frames[i] = indiv_frame
+			c += 1
+			cat_label = tk.Button(div, bg='gray', command=lambda i=i: self.toggle_items(indiv_frames[i], buttons_dict[i]), text=f'{i}', font=("Calibre", 18, 'bold'))
+			buttons_dict[i] = cat_label
+			cat_label.pack(side=tk.TOP)
+
+			self.create_item_list(indiv_frames, i)
+		return indiv_frames
+
+	def create_item_list(self, indiv_frames:dict, i: str):
+			r = 2
+			indiv_frame = indiv_frames[i]
+			for j in cus.query_items()[i]:
+				name_label = tk.Label(indiv_frame, text=f'{j[0]}', font=("Calibre", 18, 'bold'))
+				price_label = tk.Label(indiv_frame, text=f'$ {j[1]}', font=("Calibre", 18, 'bold'))
+				name_label.grid(column=1, row=r)
+				price_label.grid(column=2, row=r)
+				r += 1
+
+	def toggle_items(self, div_frame: tk.Frame, btn: tk.Button):
+		if btn['bg'] == 'gray':
+			div_frame.pack(side=tk.BOTTOM)
+			btn['bg'] = 'white'
+		else:
+			div_frame.pack_forget()
+			btn['bg'] = 'gray'
+
+	def update_cat_list(self, item_frames: dict):
+		for i in cus.query_items():
+			self.create_item_list(item_frames, i)
 
 def main():
 	root = tk.Tk(className="Welcome to ManEz")
@@ -168,14 +307,15 @@ def main():
 	test.pack()
 
 	if stf.is_emp_db_empty():
-		#manez.init_screen()
+		# manez.init_screen()
 		pass
 	else:
-		#manez.main_login_screen()
+		# manez.main_login_screen()
 		pass
 
 	manez.settings_menu(test)
 	manez.mainloop()
+
 
 if __name__ == '__main__':
 	main()
