@@ -236,7 +236,7 @@ class App(tk.Frame):
 		submit = tk.Button(add_men_frame, text="Add",
 						   command=lambda: item_frames.insert_item(name_var.get(), cat_var.get(), price_var.get(),
 																   name_entry,
-																   price_entry, item_frames),
+																   price_entry),
 						   font=("Calibre", 20, 'bold'))
 
 		header.grid(column=2, row=2)
@@ -262,8 +262,7 @@ class UpdatingCategories(tk.Frame):
 		self.buttons_dict = {}
 		self.c = 2
 
-	def insert_item(self, name: str, category: str, price: float, name_entry: tk.Entry, price_entry: tk.Entry,
-					item_frames: dict):
+	def insert_item(self, name: str, category: str, price: float, name_entry: tk.Entry, price_entry: tk.Entry):
 		if cus.add_item(name, category, price):
 			name_entry.delete(0, 'end')
 			price_entry.delete(0, 'end')
@@ -273,8 +272,11 @@ class UpdatingCategories(tk.Frame):
 		for i in cus.query_items():
 			if i in self.indiv_frames:
 				indiv_frame = self.indiv_frames[i]
+				count = 2
 				for j in cus.query_items()[i]:
-					self.create_item(j, indiv_frame, 2)
+					self.create_item(j, indiv_frame, count)
+					count += 1
+
 			else:
 				self.create_category(i)
 
@@ -298,13 +300,13 @@ class UpdatingCategories(tk.Frame):
 		for j in cus.query_items()[i]:
 			edit_frame = self.indiv_frames[i]
 			self.create_item(j, edit_frame, count)
+			count += 1
 
 	def create_item(self, j: tuple, indiv_frame, count: int):
 		name_label = tk.Label(indiv_frame, text=f'{j[0]}', font=("Calibre", 18, 'bold'))
 		price_label = tk.Label(indiv_frame, text=f'$ {j[1]}', font=("Calibre", 18, 'bold'))
 		name_label.grid(column=1, row=count)
 		price_label.grid(column=2, row=count)
-		count += 1
 
 	def toggle_items(self, btn: tk.Button, frm: tk.Frame):
 		if btn['bg'] == 'gray':
