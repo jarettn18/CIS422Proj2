@@ -209,7 +209,8 @@ class App(tk.Frame):
 		currents_header = tk.Label(curr_men_frame, text="Current Menu", font=("Calibre", 18, 'bold'))
 		currents_header.grid(column=1, row=1, padx=50)
 
-		item_frames = self.show_cat_list(curr_men_frame)
+		item_frames = UpdatingCategories(curr_men_frame)
+		item_frames.show_cat_list()
 
 		title = tk.Label(add_men_frame, text='Add New Menu', font=("Calibre", 20, 'bold'), width='15', height='5')
 		title.grid(row=1, column=2)
@@ -233,8 +234,10 @@ class App(tk.Frame):
 		category_entry = tk.Entry(add_men_frame, textvariable=cat_var, font=("Calibre", 16))
 
 		submit = tk.Button(add_men_frame, text="Add",
-						   command=lambda: self.insert_item(name_var.get(), cat_var.get(), price_var.get(), name_entry,
-															price_entry, item_frames), font=("Calibre", 20, 'bold'))
+						   command=lambda: item_frames.insert_item(name_var.get(), cat_var.get(), price_var.get(),
+																   name_entry,
+																   price_entry, item_frames),
+						   font=("Calibre", 20, 'bold'))
 
 		header.grid(column=2, row=2)
 
@@ -250,53 +253,67 @@ class App(tk.Frame):
 		submit.grid(column=2, row=6, pady=20)
 
 
+class UpdatingCategories(tk.Frame):
 
-	def insert_item(self, name: str, category: str, price: float, name_entry: tk.Entry, price_entry: tk.Entry, item_frames: dict):
+	def __init__(self, master=None):
+		super().__init__(master)
+		self.master = master
+		self.indiv_frames = {}
+		self.buttons_dict = {}
+		self.c = 2
+
+	def insert_item(self, name: str, category: str, price: float, name_entry: tk.Entry, price_entry: tk.Entry,
+					item_frames: dict):
 		if cus.add_item(name, category, price):
 			name_entry.delete(0, 'end')
 			price_entry.delete(0, 'end')
-			self.update_cat_list(item_frames)
+			self.update_cat_list()
 
-	def show_cat_list(self, cat_frame: tk.Frame):
-		c = 2
-		indiv_frames = {}
-		buttons_dict = {}
-
+	def update_cat_list(self):
 		for i in cus.query_items():
-			div = tk.Frame(cat_frame)  # Frame that holds the category button label and the individual item frame
-			indiv_frame = tk.Frame(div)  # individual items frame
-			div.grid(column=1, row=c)
+			if i in self.indiv_frames:
+				indiv_frame = self.indiv_frames[i]
+				for j in cus.query_items()[i]:
+					self.create_item(j, indiv_frame, 2)
+			else:
+				self.create_category(i)
 
-			indiv_frames[i] = indiv_frame
-			c += 1
-			cat_label = tk.Button(div, bg='gray', command=lambda i=i: self.toggle_items(indiv_frames[i], buttons_dict[i]), text=f'{i}', font=("Calibre", 18, 'bold'))
-			buttons_dict[i] = cat_label
-			cat_label.pack(side=tk.TOP)
+	def show_cat_list(self):
+		for i in cus.query_items():
+			self.create_category(i)
 
-			self.create_item_list(indiv_frames, i)
-		return indiv_frames
+	def create_category(self, i):
+		div = tk.Frame(self.master)  # Frame that holds the category button label and the individual item frame
+		indiv_frame = tk.Frame(div)  # individual items frame
+		div.grid(column=1, row=self.c)
 
-	def create_item_list(self, indiv_frames:dict, i: str):
-			r = 2
-			indiv_frame = indiv_frames[i]
-			for j in cus.query_items()[i]:
-				name_label = tk.Label(indiv_frame, text=f'{j[0]}', font=("Calibre", 18, 'bold'))
-				price_label = tk.Label(indiv_frame, text=f'$ {j[1]}', font=("Calibre", 18, 'bold'))
-				name_label.grid(column=1, row=r)
-				price_label.grid(column=2, row=r)
-				r += 1
+		self.indiv_frames[i] = indiv_frame
+		self.c += 1
+		cat_label = tk.Button(div, bg='gray', command=lambda i=i: self.toggle_items(self.buttons_dict[i], self.indiv_frames[i]), text=f'{i}',
+							  font=("Calibre", 18, 'bold'))
+		self.buttons_dict[i] = cat_label
+		cat_label.pack(side=tk.TOP)
 
-	def toggle_items(self, div_frame: tk.Frame, btn: tk.Button):
+		count = 2
+		for j in cus.query_items()[i]:
+			edit_frame = self.indiv_frames[i]
+			self.create_item(j, edit_frame, count)
+
+	def create_item(self, j: tuple, indiv_frame, count: int):
+		name_label = tk.Label(indiv_frame, text=f'{j[0]}', font=("Calibre", 18, 'bold'))
+		price_label = tk.Label(indiv_frame, text=f'$ {j[1]}', font=("Calibre", 18, 'bold'))
+		name_label.grid(column=1, row=count)
+		price_label.grid(column=2, row=count)
+		count += 1
+
+	def toggle_items(self, btn: tk.Button, frm: tk.Frame):
 		if btn['bg'] == 'gray':
-			div_frame.pack(side=tk.BOTTOM)
+			frm.pack(side=tk.BOTTOM)
 			btn['bg'] = 'white'
 		else:
-			div_frame.pack_forget()
+			frm.pack_forget()
 			btn['bg'] = 'gray'
 
-	def update_cat_list(self, item_frames: dict):
-		for i in cus.query_items():
-			self.create_item_list(item_frames, i)
 
 def main():
 	root = tk.Tk(className="Welcome to ManEz")
