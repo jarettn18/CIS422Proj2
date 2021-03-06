@@ -3,3 +3,5 @@ __pycache__/ManClass.cpython-38.pyc
 __pycache__/ManCus.cpython-38.pyc
 __pycache__/ManDB.cpython-38.pyc
 ManEzReceipts.sqlite
+*.sqlite
+*.pyc

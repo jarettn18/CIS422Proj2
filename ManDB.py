@@ -12,7 +12,7 @@
                     v 1.1 : Edition 24 Feb 2021
 """
 
-
+import sqlalchemy_utils as db_utils
 import sqlalchemy as db
 from sqlalchemy.orm import sessionmaker
 import datetime
@@ -285,7 +285,30 @@ class EmployeesDatabase:
         return ret
 
     def delete_employee(self, name):
-        pass
+        delete = self.employees.delete().where(emp.c.name == name)
+        self.connection.execute(delete)
 
-    def edit_employee(self, name, option):
-        pass
+    def edit_employee(self, name, option, value):
+        if option == 'name':
+            update = self.employees.update().where(emp.c.name == name).values(name=value)
+            self.connection.execute(update)
+            ret = True
+        elif option == 'permission':
+            update = self.employees.update().where(emp.c.name == name).values(permission=value)
+            self.connection.execute(update)
+            ret = True
+        elif option == 'password':
+            update = self.employees.update().where(emp.c.name == name).values(pass_hash=value)
+            self.connection.execute(update)
+            ret = True
+        else:
+            print("Error: EmployeesDatabase(): edit_employee(): Invalid option.")
+            ret = False
+        return ret
+
+    def is_exist(self):
+        if db_utils.database_exists('sqlite:///ManEzEmployees.sqlite'):
+            ret = True
+        else:
+            ret = False
+        return ret

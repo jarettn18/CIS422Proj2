@@ -3,11 +3,13 @@ import ManDB as db
 
 shopEmp = {}
 
-def is_emp_db_empty() -> bool:
-    # Someone please make me a function that can check if the employee database is empty/not created yet - Alex
-    return True
+def is_emp_db_empty():
+    # not 100% functional yet. I will update it tmr. #Perat
+    emp_database = db.EmployeesDatabase()
+    ret = db.is_exist()
+    return ret
 
-def add_employee(name, password, position='emp', add_to_db=True):
+def add_employee(name, current_user, password, position='emp', add_to_db=True):
     if name:
         new_emp = mc.Employee(name=name, permission=position)
         if new_emp:
@@ -18,7 +20,7 @@ def add_employee(name, password, position='emp', add_to_db=True):
                 emp_database.start_session()
                 emp_database.add_employee(new_emp)
                 print("Employee added to database.")
-            ret = new_emp.get_name()
+            ret = new_emp.get_key()
         else:
             print("Error: ManStaff: add_employee(): Invalid name.")
             ret = 2
@@ -62,7 +64,10 @@ def remove_employee(name, current_user, password):
         if shopEmp[current_user].checkpass(password):
             if name in shopEmp:
                 del shopEmp[name]
-                print("Successfully remove employee")
+                emp_database = db.EmployeesDatabase()
+                emp_database.start_session()
+                emp_database.delete_employee(name)
+                print("Successfully remove employee.")
                 ret = 11
             else:
                 print("Error: ManStaff: remove_employee(): This Employee does not exist.")
@@ -91,6 +96,9 @@ def add_admin(name, current_user, password):
 def promote_to_admin(name, current_user, password):
     suc = shopEmp[current_user].set_to_admin(shopEmp[name], password)
     if suc == 1:
+        emp_database = db.EmployeesDatabase()
+        emp_database.start_session()
+        emp_database.edit_employee(name, 'permission', 'admin')
         print("Successfully promoted.")
         ret = 18
     elif suc == 2:
@@ -107,7 +115,10 @@ def promote_to_admin(name, current_user, password):
 def demote_from_admin(name, current_user, password):
     suc = shopEmp[current_user].demote_from_admin(shopEmp[name], password)
     if suc == 1:
-        print("Successfully promoted.")
+        emp_database = db.EmployeesDatabase()
+        emp_database.start_session()
+        emp_database.edit_employee(name, 'permission', 'emp')
+        print("Successfully demoted.")
         ret = 22
     elif suc == 2:
         print("Error: ManStaff: demote_from_admin(): Wrong Password.")
@@ -123,6 +134,9 @@ def demote_from_admin(name, current_user, password):
 def set_password(name, password):
     suc = shopEmp[name].set_password(password)
     if suc == 1:
+        emp_database = db.EmployeesDatabase()
+        emp_database.start_session()
+        emp_database.edit_employee(name, 'password', shopEmp[name].get_pass_hash())
         print("Successfully set password.")
         ret = 26
     elif suc == 2:
@@ -136,6 +150,9 @@ def set_password(name, password):
 def change_password(name, old_pass, new_pass):
     res = shopEmp[name].change_password(old_pass, new_pass)
     if res == 1:
+        emp_database = db.EmployeesDatabase()
+        emp_database.start_session()
+        emp_database.edit_employee(name, 'password', shopEmp[name].get_pass_hash())
         print("Successfully change password.")
         ret = 29
     elif res == 2:
@@ -151,6 +168,9 @@ def forgot_password(name, key, new_pass):
         print("New password has to be 4 characters.")
         ret = 32
     elif shopEmp[name].forgot_password(key, new_pass):
+        emp_database = db.EmployeesDatabase()
+        emp_database.start_session()
+        emp_database.edit_employee(name, 'password', shopEmp[name].get_pass_hash())
         print("Successfully change password.")
         ret = 33
     else:
@@ -160,70 +180,70 @@ def forgot_password(name, key, new_pass):
 
 def get_message(code):
     if code == 2:
-        ret = "Invalid name."
+        ret = "Invalid name.", False
     elif code == 3:
-        ret = "Invalid name."
+        ret = "Invalid name.", False
     elif code == 4:
-        ret = ""
+        ret = "Successfully login.", True
     elif code == 5:
-        pass
+        ret = "Already login.", False
     elif code == 6:
-        pass
+        ret = "Wrong password.", False
     elif code == 7:
-        pass
+        ret = "Successfully logout.", True
     elif code == 8:
-        pass
+        ret = "Already logout.", False
     elif code == 9:
-        pass
+        ret = "This employee did not login yet.", False
     elif code == 10:
-        pass
+        ret = "Wrong password.", False
     elif code == 11:
-        pass
+        ret = "Successfully remove employee.", True
     elif code == 12:
-        pass
+        ret = "This Employee does not exist.", False
     elif code == 13:
-        pass
+        ret = "Wrong Password.", False
     elif code == 14:
-        pass
+        ret = "Require Admin Permission.", False
     elif code == 15:
-        pass
+        ret = "Wrong Password.", False
     elif code == 16:
-        pass
+        ret = "Require Admin Permission.", False
     elif code == 17:
-        pass
+        ret = "Successfully added admin.", True
     elif code == 18:
-        pass
+        ret = "Successfully promoted.", True
     elif code == 19:
-        pass
+        ret = "Wrong Password.", False
     elif code == 20:
-        pass
+        ret = "Require Admin Permission.", False
     elif code == 21:
-        pass
+        ret = "employee is not Employee object.", False
     elif code == 22:
-        pass
+        ret = "Successfully demoted.", True
     elif code == 23:
-        pass
+        ret = "Wrong Password.", False
     elif code == 24:
-        pass
+        ret = "Require Admin Permission.", False
     elif code == 25:
-        pass
+        ret = "employee is not Employee object.", False
     elif code == 26:
-        pass
+        ret = "Successfully set password.", True
     elif code == 27:
-        pass
+        ret = "password has to be 4 characters.", False
     elif code == 28:
-        pass
+        ret = "Trying to pass this wall?? no way!!!", False
     elif code == 29:
-        pass
+        ret = "Successfully change password.", True
     elif code == 30:
-        pass
+        ret = "New password has to be 4 characters.", False
     elif code == 31:
-        pass
+        ret = "Invalid Password (Previous Password does not match).", False
     elif code == 32:
-        pass
+        ret = "New password has to be 4 characters.", False
     elif code == 33:
-        pass
+        ret = "Successfully change password.", True
     elif code == 34:
-        pass
+        ret = "Wrong recovery key.", False
     elif code > 999:
-        ret = "Successfully added new employee. Recovery key is: " + str(code)
+        ret = ("Successfully added new employee. Recovery key is: " + str(code)), True
