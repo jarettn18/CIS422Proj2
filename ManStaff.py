@@ -6,7 +6,10 @@ shopEmp = {}
 def is_emp_db_empty():
     # not 100% functional yet. I will update it tmr. #Perat
     emp_database = db.EmployeesDatabase()
-    ret = db.is_exist()
+    if db.is_exist() and not db.is_empty():
+        ret = False
+    else:
+        ret = True
     return ret
 
 def add_employee(name, current_user, password, position='emp', add_to_db=True):

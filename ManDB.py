@@ -312,3 +312,14 @@ class EmployeesDatabase:
         else:
             ret = False
         return ret
+
+    def is_empty(self):
+        Session = sessionmaker(bind=self.engine)
+        session = Session()
+        desc_expression = db.sql.expression.desc(self.employees.c.name)
+        elem = session.query(self.employees).first()
+        if elem:
+            ret = True
+        else:
+            ret = False
+        return ret
