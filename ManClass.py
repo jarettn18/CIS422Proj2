@@ -389,6 +389,14 @@ class Employee:
 			ret = False
 		return ret
 
+	def get_logout_time(self):
+		if self._logout_time:
+			ret = self._logout_time
+		else:
+			print("Error: Employee(): get_logout_time(): logout time is none")
+			ret = False
+		return ret
+
 	def get_name(self):
 		if self._name:
 			ret = self._name

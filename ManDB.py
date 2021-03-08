@@ -196,13 +196,14 @@ class ReceiptDatabase:
 """
 *   Class: ReceiptDatabase
 *   Description:
-*   Date: 27 Feb 2021
+*   Date: 7 March 2021
 *   Last Created by: Jay Shin
 *   Edit History: 27 Feb 2021 - Jay Shin
-*                 v1.0: Creating all the function.
+*                 v1.0: Creating all the functions.
+*                 v2.0: Edit functions.
 """
 
-class UserDatabase:
+class WorkTimeDatabase:
     def __init__(self):
         self.engine = None
         self.connection = None
@@ -213,34 +214,34 @@ class UserDatabase:
         self.connection = self.engine.connect()
         self.metadata = db.MetaData()
         self.receipts = db.Table('users', self.metadata,
-              db.Column('name'.String(255), nullable=False),
-              db.Column('password_hash',db.Integer()),
-              db.Column('position', db.String(255), nullable=False),
+              db.Column('name'.String(255), nullable=False)
+              db.Column('date', db.DateTime()),
               db.Column('login_time', db.DateTime()),
               db.Column('logout_time', db.DateTime()),
-              db.Column('secure_key', db.Integer())
+              db.Column('work_time', db.DateTime())
               )
 
         self.metadata.create_all(self.engine)
 
-    def add_user(self, user):
-        if type(user) == ManClass.Employee:
-            Session = sessionmaker(bind=self.engine)
-            session = Session()
-            desc_expression = db.sql.expression.desc(self.users.c.position)
-            last_item = session.query(self.receipts).order_by(desc_expression).first()
-
-            query = db.insert(self.receipts).values(name=user.add_employee(),
-                password_hash=user)
-            ResultProxy = self.connection.execute(query)
-            ret = True
+    def checkout(self, employee):
+        if type(employee) == ManClass.Employee:
+            if employee._login_time:
+                employee.set_logout_time()
+                query = db.insert(self.receipts).values(name=employee.get_name(),
+                    date=datetime.date.today(),
+                    login_time=employee.get_login_time(),
+                    logout_time=employee.get_logout_time(),
+                    work_time=(employee._logout_time-employee._login_time)
+                    )
+                ResultProxy = self.connection.execute(query)
+                ret = True
+            else:
+                print("Error: WorkTimeDatabase(): employee: require log-in first.")
+                ret = False
         else:
-            print("Error: UserDatabase(): user: Invalid data type.")
+            print("Error: WorkTimeDatabase(): employee: Invalid data type.")
             ret = False
         return ret
-
-    def delete_user(self, name):
-        pass
 
 """
 *   Class: EmployeesDatabase
