@@ -214,7 +214,7 @@ class WorkTimeDatabase:
         self.connection = self.engine.connect()
         self.metadata = db.MetaData()
         self.receipts = db.Table('users', self.metadata,
-              db.Column('name'.String(255), nullable=False)
+              db.Column('name'.String(255), nullable=False),
               db.Column('date', db.DateTime()),
               db.Column('login_time', db.DateTime()),
               db.Column('logout_time', db.DateTime()),
