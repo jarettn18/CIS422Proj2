@@ -5,8 +5,9 @@ shopEmp = {}
 
 def is_emp_db_empty():
     # not 100% functional yet. I will update it tmr. #Perat
+    # Jay fixed little mistake <3
     emp_database = db.EmployeesDatabase()
-    if db.is_exist() and not db.is_empty():
+    if emp_database.is_exist() and not emp_database.is_empty():
         ret = False
     else:
         ret = True
