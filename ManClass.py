@@ -499,5 +499,9 @@ class Employee:
 			ret = False
 		return ret
 
+	def reset_time(self):
+		self._login_time = None
+		self._logout_time = None
+
 def hashing(param_in):
 	return hashlib.sha256(param_in.encode('ascii')).hexdigest()
