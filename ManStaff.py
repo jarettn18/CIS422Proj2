@@ -63,6 +63,10 @@ def logout(name, password):
         res = shopEmp[name].set_logout_time()
         if res == 1:
             print("ManStaff: logout(): Successfully logout.")
+            timedb = db.WorkTimeDatabase()
+            timedb.start_session()
+            timedb.checkout(shopEmp[name])
+            shopEmp[name].reset_time()
             ret = 7
         elif res == 2:
             print("ManStaff: logout(): Already logout.")
