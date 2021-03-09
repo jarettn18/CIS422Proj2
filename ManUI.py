@@ -78,6 +78,19 @@ class App(tk.Frame):
 		submit.grid(row=4, column=2)
 
 	def main_login_screen(self):
+
+		def _new_order():
+			print("New Order")
+
+		def _order_history():
+			print("Order History")
+
+		def _settings():
+			print("Settings")
+
+		def _clock_in():
+			print("Clock in")
+
 		for i in range(6):
 			tk.Grid.rowconfigure(self.master, i, weight=1)
 			tk.Grid.columnconfigure(self.master, i, weight=1)
@@ -85,11 +98,43 @@ class App(tk.Frame):
 		# Choose Background Color
 		self.master.configure(background=BG_COLOR)
 
-		greeting = tk.Label(background=BG_COLOR, text="Test Text", font=("Arial", 30, 'bold'))
+		greeting = tk.Label(background=BG_COLOR, text="ManEz", font=("Arial", 25, 'bold'))
 		greeting.grid(row=0, column=2, columnspan=2)
 
+		"""
 		for r in range(6):
 			for c in range(6):
+				tk.Label(self.master, text='R%s/C%s' % (r, c),
+						 borderwidth=1).grid(row=r, column=c)
+		"""
+		new_order = tk.Button(self.master, text="New Order", command=_new_order, font=("Calibre", 50, 'bold'))
+		new_order.grid(row=1 ,column=1)
+
+		order_hist = tk.Button(self.master, text="Order History", command=_order_history, font=("Calibre", 50, 'bold'))
+		order_hist.grid(row=1, column=4)
+
+		settings = tk.Button(self.master, text="Settings", command=_settings, font=("Calibre", 30, 'bold'))
+		settings.grid(row=4, column=1)
+
+		clock_in = tk.Button(self.master, text="Clock In", command=_clock_in, font=("Calibre", 30, 'bold'))
+		clock_in.grid(row=4, column=4)
+
+		name_label = tk.Label(self.master, background=BG_COLOR, text="Administrator Use Only", font=("Calibre", 20, 'bold'))
+		name_label.grid(row=3, column=1, pady=20)
+
+	def pin_screen(self):
+
+		for i in range(7):
+			tk.Grid.rowconfigure(self.master, i, weight=1)
+			tk.Grid.columnconfigure(self.master, i, weight=1)
+		# Choose Background Color
+		self.master.configure(background=BG_COLOR)
+
+		greeting = tk.Label(background=BG_COLOR, text="ManEz", font=("Arial", 25, 'bold'))
+		greeting.grid(row=0, column=2, columnspan=2)
+
+		for r in range(7):
+			for c in range(7):
 				tk.Label(self.master, text='R%s/C%s' % (r, c),
 						 borderwidth=1).grid(row=r, column=c)
 
@@ -322,17 +367,17 @@ def main():
 	root.geometry("1024x768")
 	manez = App(root)
 
-	test = tk.Frame()
-	test.pack()
-
-	if stf.is_emp_db_empty():
-		# manez.init_screen()
-		pass
+	#test = tk.Frame()
+	#test.pack()
+	manez.pin_screen()
+	"""
+	if not stf.is_emp_db_empty():
+		manez.init_screen()
 	else:
-		# manez.main_login_screen()
-		pass
+		manez.main_login_screen()
 
-	manez.settings_menu(test)
+	#manez.settings_menu(test)
+	"""
 	manez.mainloop()
 
 
