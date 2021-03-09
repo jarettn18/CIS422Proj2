@@ -8,7 +8,7 @@ def read_emp_db():
     emp_database.start_session()
     emp_list = emp_database.read_db()
     for emp in emp_list:
-        temp = Employee(name='temp')
+        temp = mc.Employee(name='temp')
         emp_temp = temp.create(emp.name, emp.pass_hash, emp.permission, emp.recov_key)
         shopEmp[emp.name] = emp_temp
     del shopEmp['temp']

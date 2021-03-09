@@ -174,7 +174,7 @@ class App(tk.Frame):
 			perm_type = 'admin'
 		else:
 			perm_type = 'emp'
-		stf.add_employee(name, pin, perm_type)
+		stf.add_employee(name=name, current_user=None, password=pin, permission=perm_type)
 		self.settings_menu(prev)
 
 	def menu_settings(self, prev):
@@ -321,7 +321,6 @@ def main():
 	root = tk.Tk(className="Welcome to ManEz")
 	root.geometry("1024x768")
 	manez = App(root)
-
 	test = tk.Frame()
 	test.pack()
 
