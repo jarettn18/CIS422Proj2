@@ -324,3 +324,7 @@ class EmployeesDatabase:
         else:
             ret = False
         return ret
+
+    def read_db(self):
+        query = db.select([self.employees])
+        return self.connection.execute(query).fetchall()

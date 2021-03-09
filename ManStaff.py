@@ -3,9 +3,17 @@ import ManDB as db
 
 shopEmp = {}
 
+def read_emp_db():
+    emp_database = db.EmployeesDatabase()
+    emp_database.start_session()
+    emp_list = emp_database.read_db()
+    for emp in emp_list:
+        temp = Employee(name='temp')
+        emp_temp = temp.create(emp.name, emp.pass_hash, emp.permission, emp.recov_key)
+        shopEmp[emp.name] = emp_temp
+    del shopEmp['temp']
+
 def is_emp_db_empty():
-    # not 100% functional yet. I will update it tmr. #Perat
-    # Jay fixed little mistake <3
     emp_database = db.EmployeesDatabase()
     if emp_database.is_exist() and not emp_database.is_empty():
         ret = False
@@ -13,24 +21,28 @@ def is_emp_db_empty():
         ret = True
     return ret
 
-def add_employee(name, current_user, password, position='emp', add_to_db=True):
-    if name:
-        new_emp = mc.Employee(name=name, permission=position)
-        if new_emp:
-            new_emp.set_password(password)
-            print("Successfully added new employee.")
-            if add_to_db:
-                emp_database = db.EmployeesDatabase()
-                emp_database.start_session()
-                emp_database.add_employee(new_emp)
-                print("Employee added to database.")
-            ret = new_emp.get_key()
-        else:
-            print("Error: ManStaff: add_employee(): Invalid name.")
-            ret = 2
+def add_employee(name, current_user, password, permission='emp', firstrun=False, add_to_db=True):
+    if firstrun:
+        position = 'admin'
     else:
+        position = 'emp'
+
+    new_emp = shopEmp[current_user].add_employee(name)
+    if new_emp == 1:
         print("Error: ManStaff: add_employee(): Invalid name.")
+        ret = 2
+    elif new_emp == 2:
+        print("Error: ManStaff: add_employee(): Required admin permission.")
         ret = 3
+    else:
+        shopEmp[name] = new_emp
+        print("Successfully added new employee.")
+        if add_to_db:
+            emp_database = db.EmployeesDatabase()
+            emp_database.start_session()
+            emp_database.add_employee(new_emp)
+            print("Employee added to database.")
+        ret = new_emp.get_key()
     return ret
 
 def login(name, password):
@@ -186,7 +198,7 @@ def get_message(code):
     if code == 2:
         ret = "Invalid name.", False
     elif code == 3:
-        ret = "Invalid name.", False
+        ret = "Required admin permission.", False
     elif code == 4:
         ret = "Successfully login.", True
     elif code == 5:

@@ -307,6 +307,12 @@ class Employee:
 		self._logout_time = None
 		self._recovery_key = None
 
+	def create(self, name, pass_hash, permission, rec_key):
+		emp = Employee(name=name, permission=permission)
+		emp._password_hash = pass_hash
+		emp._recovery_key = rec_key
+		return emp
+
 	def is_admin(self):
 		if self._permission == 'admin':
 			ret = True
@@ -422,12 +428,16 @@ class Employee:
 			ret = 4
 		return ret
 
-	def add_employee(self, name):
-		if name:
-			ret = employee(name=name)
+	def add_employee(self, name, permission):
+		if self._permission == 'admin':
+			if name:
+				ret = Employee(name=name, permission=permission)
+			else:
+				print("Error: employee(): add_employee(): Invalid name.")
+				ret = 1
 		else:
-			print("Error: employee(): add_employee(): Invalid name.")
-			ret = False
+			print("Error: employee(): add_employee(): Required admin permission.")
+			ret = 2
 		return ret
 
 	def add_admin(self, name, password):
