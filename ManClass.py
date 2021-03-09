@@ -416,7 +416,7 @@ class Employee:
 			if self._permission == 'admin':
 				if self._password_hash == hashing(password):
 					employee._permission = 'admin'
-					ret = 1
+					ret = employee
 				else:
 					print("Error: employee(): set_to_admin(): Wrong Password.")
 					ret = 2
@@ -428,7 +428,7 @@ class Employee:
 			ret = 4
 		return ret
 
-	def add_employee(self, name, permission):
+	def add_employee(self, name, permission='emp'):
 		if self._permission == 'admin':
 			if name:
 				ret = Employee(name=name, permission=permission)
