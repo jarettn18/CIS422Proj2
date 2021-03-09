@@ -372,8 +372,6 @@ def main():
 	manez.pin_screen()
 	if not stf.is_emp_db_empty():
 		manez.init_screen()
-	test = tk.Frame()
-	test.pack()
 
 	if stf.is_emp_db_empty():
 		# manez.init_screen()
