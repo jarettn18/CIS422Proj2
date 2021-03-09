@@ -416,7 +416,7 @@ class Employee:
 			if self._permission == 'admin':
 				if self._password_hash == hashing(password):
 					employee._permission = 'admin'
-					ret = 1
+					ret = employee
 				else:
 					print("Error: employee(): set_to_admin(): Wrong Password.")
 					ret = 2
@@ -428,7 +428,7 @@ class Employee:
 			ret = 4
 		return ret
 
-	def add_employee(self, name, permission):
+	def add_employee(self, name, permission='emp'):
 		if self._permission == 'admin':
 			if name:
 				ret = Employee(name=name, permission=permission)
@@ -498,6 +498,10 @@ class Employee:
 		else:
 			ret = False
 		return ret
+
+	def reset_time(self):
+		self._login_time = None
+		self._logout_time = None
 
 def hashing(param_in):
 	return hashlib.sha256(param_in.encode('ascii')).hexdigest()

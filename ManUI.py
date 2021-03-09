@@ -219,7 +219,7 @@ class App(tk.Frame):
 			perm_type = 'admin'
 		else:
 			perm_type = 'emp'
-		stf.add_employee(name, pin, perm_type)
+		stf.add_employee(name=name, current_user=None, password=pin, permission=perm_type)
 		self.settings_menu(prev)
 
 	def menu_settings(self, prev):
@@ -370,14 +370,18 @@ def main():
 	#test = tk.Frame()
 	#test.pack()
 	manez.pin_screen()
-	"""
 	if not stf.is_emp_db_empty():
 		manez.init_screen()
+	test = tk.Frame()
+	test.pack()
+
+	if stf.is_emp_db_empty():
+		# manez.init_screen()
+		pass
 	else:
 		manez.main_login_screen()
 
 	#manez.settings_menu(test)
-	"""
 	manez.mainloop()
 
 

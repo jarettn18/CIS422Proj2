@@ -7,11 +7,10 @@ def read_emp_db():
     emp_database = db.EmployeesDatabase()
     emp_database.start_session()
     emp_list = emp_database.read_db()
+    temp = mc.Employee(name='temp')
     for emp in emp_list:
-        temp = Employee(name='temp')
         emp_temp = temp.create(emp.name, emp.pass_hash, emp.permission, emp.recov_key)
         shopEmp[emp.name] = emp_temp
-    del shopEmp['temp']
 
 def is_emp_db_empty():
     emp_database = db.EmployeesDatabase()
@@ -22,12 +21,13 @@ def is_emp_db_empty():
     return ret
 
 def add_employee(name, current_user, password, permission='emp', firstrun=False, add_to_db=True):
-    if firstrun:
-        position = 'admin'
+    if firstrun and current_user is None:
+        temp = mc.Employee(name='temp', permission='admin')
+        new_emp = temp.add_employee(name)
+        new_emp = temp.set_to_admin(new_emp, None)
     else:
-        position = 'emp'
+        new_emp = shopEmp[current_user].add_employee(name)
 
-    new_emp = shopEmp[current_user].add_employee(name)
     if new_emp == 1:
         print("Error: ManStaff: add_employee(): Invalid name.")
         ret = 2
@@ -63,6 +63,10 @@ def logout(name, password):
         res = shopEmp[name].set_logout_time()
         if res == 1:
             print("ManStaff: logout(): Successfully logout.")
+            timedb = db.WorkTimeDatabase()
+            timedb.start_session()
+            timedb.checkout(shopEmp[name])
+            shopEmp[name].reset_time()
             ret = 7
         elif res == 2:
             print("ManStaff: logout(): Already logout.")
@@ -111,7 +115,7 @@ def add_admin(name, current_user, password):
 
 def promote_to_admin(name, current_user, password):
     suc = shopEmp[current_user].set_to_admin(shopEmp[name], password)
-    if suc == 1:
+    if type(suc) == mc.Employee:
         emp_database = db.EmployeesDatabase()
         emp_database.start_session()
         emp_database.edit_employee(name, 'permission', 'admin')
