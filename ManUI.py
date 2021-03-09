@@ -297,6 +297,26 @@ class App(tk.Frame):
 
 		submit.grid(column=2, row=6, pady=20)
 
+	def order_screen(self, prev: tk.Frame):
+		prev.pack_forget()
+
+		order_main_frame = tk.Frame(self.master)
+		order_main_frame.pack()
+
+		title_frame = tk.Frame(order_main_frame)
+		title_frame.grid(row=1)
+
+		title = tk.Label(title_frame, text='New Order', font=("Calibre", 20, 'bold'), width='15', height='5')
+		title.grid(row=1, column=2)
+
+		back = tk.Button(title_frame, text="Back", font=("Calibre", 20, 'bold'))
+		back.grid(row=1, column=1)
+
+		menu_frame = tk.Frame(order_main_frame)
+		menu_frame.grid(row=2, column=2)
+
+		category_buttons = DynamicMenu(menu_frame)
+		category_buttons.show_cat_list()
 
 class UpdatingCategories(tk.Frame):
 
@@ -321,7 +341,6 @@ class UpdatingCategories(tk.Frame):
 				for j in cus.query_items()[i]:
 					self.create_item(j, indiv_frame, count)
 					count += 1
-
 			else:
 				self.create_category(i)
 
@@ -361,25 +380,68 @@ class UpdatingCategories(tk.Frame):
 			frm.pack_forget()
 			btn['bg'] = 'gray'
 
+class DynamicMenu(tk.Frame):
+
+	def __init__(self, master=None):
+		super().__init__(master)
+		self.master = master
+		self.active = None
+		self.indiv_frames = {}
+		self.buttons_dict = {}
+		self.c = 1
+
+	def show_cat_list(self):
+		div = tk.Frame(self.master)
+		div.pack(side=tk.LEFT)
+		for i in cus.query_items():
+			self.create_category(i, div)
+
+	def create_category(self, i, cont: tk.Frame):
+		cat_label = tk.Button(cont, bg='gray', width="15", height="5", command=lambda i=i: self.create_items(i), text=f'{i}',
+							  font=("Calibre", 18, 'bold'))
+		self.buttons_dict[i] = cat_label
+		cat_label.grid(column=1, row=self.c)
+		self.c += 1
+
+	def create_items(self, i: int):
+		col = True
+		if self.active:
+			self.active.pack_forget()
+		selections = tk.Frame(self.master)
+		selections.pack(side=tk.RIGHT)
+		self.active = selections
+		count = 1
+		for j in cus.query_items()[i]:
+			name_label = tk.Button(selections, width="15", height="5", text=f'{j[0]}', font=("Calibre", 18, 'bold'))
+			if col:
+				val = 1
+			else:
+				val = 2
+			name_label.grid(column=val, row=count)
+			if val == 2:
+				count += 1
+			col = not col
+
+	def toggle_items(self, btn: tk.Button):
+		if btn['bg'] == 'gray':
+
+			btn['bg'] = 'white'
+		else:
+			btn['bg'] = 'gray'
 
 def main():
 	root = tk.Tk(className="Welcome to ManEz")
 	root.geometry("1024x768")
 	manez = App(root)
 
-	#test = tk.Frame()
-	#test.pack()
-	manez.pin_screen()
+	test = tk.Frame()
+	test.pack()
+	#manez.pin_screen()
 	if not stf.is_emp_db_empty():
-		manez.init_screen()
-
-	if stf.is_emp_db_empty():
-		# manez.init_screen()
+		#manez.init_screen()
 		pass
-	else:
-		manez.main_login_screen()
 
-	#manez.settings_menu(test)
+	manez.order_screen(test)
 	manez.mainloop()
 
 
