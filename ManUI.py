@@ -312,10 +312,10 @@ class App(tk.Frame):
 		back = tk.Button(title_frame, text="Back", font=("Calibre", 20, 'bold'))
 		back.grid(row=1, column=1)
 
-		menu_frame = tk.Frame(order_main_frame)
-		menu_frame.grid(row=2, column=2)
+		action_frame = tk.Frame(order_main_frame)
+		action_frame.grid(row=2)
 
-		category_buttons = DynamicMenu(menu_frame)
+		category_buttons = DynamicMenu(action_frame)
 		category_buttons.show_cat_list()
 
 class UpdatingCategories(tk.Frame):
@@ -386,33 +386,43 @@ class DynamicMenu(tk.Frame):
 		super().__init__(master)
 		self.master = master
 		self.active = None
-		self.indiv_frames = {}
 		self.buttons_dict = {}
-		self.c = 1
+		self.line = 1
+		ticket_frame = tk.Frame(self.master)
+		ticket_frame.grid(row=1, column=1)
+		self.ticket = tk.Text(ticket_frame, font=("Calibre", 18, 'bold'), width="25")
+		ys = tk.Scrollbar(ticket_frame, orient='vertical', command=self.ticket.yview)
+		self.ticket['yscrollcommand'] = ys.set
+		self.ticket.pack()
+		self.ticket['state'] = 'disabled'
+		cus.set_itemlist()
+
 
 	def show_cat_list(self):
-		div = tk.Frame(self.master)
-		div.pack(side=tk.LEFT)
+		order_frame = tk.Frame(self.master)
+		order_frame.grid(row=1, column=2)
+
+		cat_frame = tk.Frame(order_frame)
+		cat_frame.pack(side=tk.LEFT)
+		c = 1
 		for i in cus.query_items():
-			self.create_category(i, div)
-
-	def create_category(self, i, cont: tk.Frame):
-		cat_label = tk.Button(cont, bg='gray', width="15", height="5", command=lambda i=i: self.create_items(i), text=f'{i}',
+			cat_label = tk.Button(cat_frame, bg='gray', width="15", height="5", command=lambda i=i: self.create_items(i, order_frame), text=f'{i}',
 							  font=("Calibre", 18, 'bold'))
-		self.buttons_dict[i] = cat_label
-		cat_label.grid(column=1, row=self.c)
-		self.c += 1
+			self.buttons_dict[i] = cat_label
+			cat_label.grid(column=1, row=c)
+			c += 1
 
-	def create_items(self, i: int):
+	def create_items(self, i: str, order_frame: tk.Frame):
 		col = True
 		if self.active:
 			self.active.pack_forget()
-		selections = tk.Frame(self.master)
+		selections = tk.Frame(order_frame)
 		selections.pack(side=tk.RIGHT)
+
 		self.active = selections
 		count = 1
 		for j in cus.query_items()[i]:
-			name_label = tk.Button(selections, width="15", height="5", text=f'{j[0]}', font=("Calibre", 18, 'bold'))
+			name_label = tk.Button(selections, command=lambda j=j: self.insert_item(j), width="15", height="5", text=f'{j[0]}', font=("Calibre", 18, 'bold'))
 			if col:
 				val = 1
 			else:
@@ -422,12 +432,14 @@ class DynamicMenu(tk.Frame):
 				count += 1
 			col = not col
 
-	def toggle_items(self, btn: tk.Button):
-		if btn['bg'] == 'gray':
-
-			btn['bg'] = 'white'
-		else:
-			btn['bg'] = 'gray'
+	def insert_item(self, j: tuple):
+		self.ticket['state'] = 'normal'
+		self.ticket.insert(f'{self.line}.0', f'{j[0]} \t \t {j[1]}\n')
+		self.line += 1
+		self.ticket['state'] = 'disabled'
+		cus.add_order(j[0], 1)
+		print(cus.show_order())
+		print(cus.get_total())
 
 def main():
 	root = tk.Tk(className="Welcome to ManEz")
