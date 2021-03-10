@@ -317,6 +317,9 @@ class App(tk.Frame):
 
 		category_buttons = DynamicMenu(action_frame)
 		category_buttons.show_cat_list()
+		send_button = category_buttons.get_send_button()
+		send_button['command'] = lambda: category_buttons.send_order(self, order_main_frame)
+
 
 class UpdatingCategories(tk.Frame):
 
@@ -395,9 +398,19 @@ class DynamicMenu(tk.Frame):
 		self.ticket['yscrollcommand'] = ys.set
 		self.ticket.pack()
 		self.ticket['state'] = 'disabled'
-		self.total = tk.Label(ticket_frame, text="No Items Selected", font=("Calibre", 18, 'bold'))
-		self.total.pack(side=tk.BOTTOM)
+		self.total = tk.Label(ticket_frame, text="Total: No Items Selected", font=("Calibre", 18, 'bold'))
+		self.total.pack(side=tk.TOP)
+		name_bar = tk.Frame(ticket_frame)
+		name_bar.pack(side=tk.TOP)
+		name_label = tk.Label(name_bar, text="Customer Name: ", font=("Calibre", 18, 'bold'))
+		name_label.pack(side=tk.LEFT)
+		self.name_var = tk.StringVar()
+		name_entry = tk.Entry(name_bar, textvariable=self.name_var, font=("Calibre", 16))
+		name_entry.pack(side=tk.RIGHT)
+		self.send_button = tk.Button(ticket_frame, width="30", height="5", text="Pay Order", font=("Calibre", 20, 'bold'))
 
+	def get_send_button(self):
+		return self.send_button
 
 	def show_cat_list(self):
 		order_frame = tk.Frame(self.master)
@@ -447,10 +460,17 @@ class DynamicMenu(tk.Frame):
 			line += 1
 		self.ticket['state'] = 'disabled'
 		self.total['text'] = f'Total: ${round(cus.get_total(), 2)}'
+		self.send_button.pack(side=tk.BOTTOM)
+
+	def send_order(self, app, prev: tk.Frame):
+		if cus.pay_order(self.name_var.get()):
+			app.settings_menu(prev)
+
+
 
 def main():
 	root = tk.Tk(className="Welcome to ManEz")
-	root.geometry("1024x768")
+	root.geometry("1200x2000")
 	manez = App(root)
 
 	test = tk.Frame()
