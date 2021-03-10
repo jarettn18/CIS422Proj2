@@ -395,7 +395,6 @@ class DynamicMenu(tk.Frame):
 		self.ticket['yscrollcommand'] = ys.set
 		self.ticket.pack()
 		self.ticket['state'] = 'disabled'
-		cus.set_itemlist()
 		self.total = tk.Label(ticket_frame, text="No Items Selected", font=("Calibre", 18, 'bold'))
 		self.total.pack(side=tk.BOTTOM)
 

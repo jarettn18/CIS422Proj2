@@ -26,8 +26,25 @@ navigator_symbol = "/" # This will make the program runnable on any unix based e
 if os.name == "nt":
     navigator_symbol = "\\" # This will make the program runnable on Windows
 
+#ManCus ONLY
+def set_itemlist():
+    #Just to set item list from database
+    itemdb = ManDB.ItemDatabase()
+    itemdb.start_session()
+    items = itemdb.read_db()
+    for item in items:
+        data = ManClass.item()
+        data.name = item[0]
+        data.category = item[1]
+        data.price = item[2]
+        data.discount = item[3]
+        list_items[item[0]] = data
+    return True
+#fresh item list from database
+set_itemlist()
+
 #Discount will be optional argument by using *
-def add_item(name, category, price, discount=0.0, add_to_db=True):
+def add_item(name, category, price, discount=0, add_to_db=True):
     try:
         #add new data into the list
         #read and write lists from the file
@@ -36,7 +53,8 @@ def add_item(name, category, price, discount=0.0, add_to_db=True):
         item.set_category(category)
         item.set_price(price)
         #default should be 1.0
-        item.set_discount(discount)
+        if discount:
+            item.set_discount(discount)
 
         list_items[name] = item
         if add_to_db:
@@ -72,15 +90,6 @@ def add_order(name, amount):
         print("Item does not exist")
         ret = False
     return ret
-
-def set_itemlist():
-    #Just to set item list from database
-    itemdb = ManDB.ItemDatabase()
-    itemdb.start_session()
-    items = itemdb.read_db()
-    for item in items:
-        add_item(item.name, item.category, item.price, item.discount, False)
-    return True
 
 def edit_item(name, factor, newkey):
     #edit item data

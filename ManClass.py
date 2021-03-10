@@ -157,7 +157,7 @@ class receipt:
 		if type(new_order) == order:
 			name = new_order.get_item().get_name()
 			if name in self.orders:
-				self.orders[name].set_amount(int(new_order.get_amount() + new_order.get_amount()))
+				self.orders[name].set_amount(elem.get_amount() + order.get_amount())
 				self.cal_total()
 				return True
 			self.orders[name] = new_order
