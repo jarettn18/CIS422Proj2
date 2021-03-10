@@ -364,7 +364,7 @@ class App(tk.Frame):
 		title = tk.Label(title_frame, text='New Order', font=("Calibre", 20, 'bold'), width='15', height='5')
 		title.grid(row=1, column=2)
 
-		back = tk.Button(title_frame, text="Back", font=("Calibre", 20, 'bold'))
+		back = tk.Button(title_frame, command=lambda: self.main_login_screen(), text="Back", font=("Calibre", 20, 'bold'))
 		back.grid(row=1, column=1)
 
 		action_frame = tk.Frame(order_main_frame)
