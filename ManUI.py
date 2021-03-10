@@ -27,18 +27,22 @@ class App(tk.Frame):
 		def _init_submit_button():
 			name = name_var.get()
 			pin = pin_var.get()
+			confirm = confirm_pin_var.get()
 
-			# insert name/pin in database
-			print(name)
-			print(pin)
+			if (pin != confirm):
+				confirm_pin_label = tk.Label(self.master, background=BG_COLOR, text="Pin Must Be Equal", font=("Calibre", 15, 'bold'))
+				confirm_pin_label.grid(row=5, column=2)
+			else:
+				# insert name/pin in database
+				print(name)
+				print(pin)
 
-			name_var.set("")
-			pin_var.set("")
+				name_var.set("")
+				pin_var.set("")
+				for widget in self.master.winfo_children():
+					widget.destroy()
 
-			for widget in self.master.winfo_children():
-				widget.destroy()
-
-			self.main_login_screen()
+				self.main_login_screen()
 
 		for i in range(6):
 			tk.Grid.rowconfigure(self.master, i, weight=1)
@@ -61,6 +65,7 @@ class App(tk.Frame):
 
 		name_var = tk.StringVar()
 		pin_var = tk.StringVar()
+		confirm_pin_var = tk.StringVar()
 
 		name_label = tk.Label(self.master, background=BG_COLOR, text="Name", font=("Calibre", 20, 'bold'))
 		name_entry = tk.Entry(self.master, textvariable=name_var, font=("Calibre", 20))
@@ -68,14 +73,20 @@ class App(tk.Frame):
 		pin_label = tk.Label(self.master, background=BG_COLOR, text="Pin", font=("Calibre", 20, 'bold'))
 		pin_entry = tk.Entry(self.master, textvariable=pin_var, font=("Calibre", 20))
 
+		confirm_pin_label = tk.Label(self.master, background=BG_COLOR, text="Confirm Pin", font=("Calibre", 20, 'bold'))
+		confirm_pin_entry = tk.Entry(self.master, textvariable=confirm_pin_var, font=("Calibre", 20))
+
 		name_label.grid(row=2, column=2)
 		name_entry.grid(row=2, column=3)
 
 		pin_label.grid(row=3, column=2)
 		pin_entry.grid(row=3, column=3)
 
+		confirm_pin_label.grid(row=4, column=2)
+		confirm_pin_entry.grid(row=4, column=3)
+
 		submit = tk.Button(self.master, text="Submit", command=_init_submit_button, font=("Calibre", 20, 'bold'))
-		submit.grid(row=4, column=2)
+		submit.grid(row=5, column=3)
 
 	def main_login_screen(self):
 
@@ -107,6 +118,7 @@ class App(tk.Frame):
 				tk.Label(self.master, text='R%s/C%s' % (r, c),
 						 borderwidth=1).grid(row=r, column=c)
 		"""
+
 		new_order = tk.Button(self.master, text="New Order", command=_new_order, font=("Calibre", 50, 'bold'))
 		new_order.grid(row=1 ,column=1)
 
@@ -124,25 +136,72 @@ class App(tk.Frame):
 
 	def pin_screen(self):
 
+		def login():
+			pin = pin_var.get()
+			#login with pin number
+			print(pin)
+
+		def add_char(c):
+			pin = pin_var.get()
+			pin_var.set(pin + c)
+
+		def delete_char():
+			pin = pin_var.get()
+			pin_var.set(pin[:len(pin)-1])
+
 		for i in range(7):
 			tk.Grid.rowconfigure(self.master, i, weight=1)
 			tk.Grid.columnconfigure(self.master, i, weight=1)
 		# Choose Background Color
 		self.master.configure(background=BG_COLOR)
-
-		greeting = tk.Label(background=BG_COLOR, text="ManEz", font=("Arial", 25, 'bold'))
-		greeting.grid(row=0, column=2, columnspan=2)
-
+		"""
 		for r in range(7):
 			for c in range(7):
 				tk.Label(self.master, text='R%s/C%s' % (r, c),
 						 borderwidth=1).grid(row=r, column=c)
+		"""
+		pin_var = tk.StringVar()
+		pin_label = tk.Label(self.master, background=BG_COLOR, text="Pin", font=("Calibre", 20, 'bold'))
+		pin_entry = tk.Entry(self.master, textvariable=pin_var, font=("Calibre", 18))
 
-	# TODO
-	# Add New Order Button
-	# Add Order History Button
-	# Add Settings Button
-	# Add Clock In Button
+		pin_label.grid(row=0, column=2)
+		pin_entry.grid(row=0, column=3)
+
+		button1 = tk.Button(self.master, text="1", command= lambda: add_char("1"), font=("Calibre", 50, 'bold'))
+		button1.grid(row=1, column=2)
+
+		button2 = tk.Button(self.master, text="2", command=lambda: add_char("2"), font=("Calibre", 50, 'bold'))
+		button2.grid(row=1, column=3)
+
+		button3 = tk.Button(self.master, text="3", command=lambda: add_char("3"), font=("Calibre", 50, 'bold'))
+		button3.grid(row=1, column=4)
+
+		button4 = tk.Button(self.master, text="4", command=lambda: add_char("4"), font=("Calibre", 50, 'bold'))
+		button4.grid(row=2, column=2)
+
+		button5 = tk.Button(self.master, text="5", command=lambda: add_char("5"), font=("Calibre", 50, 'bold'))
+		button5.grid(row=2, column=3)
+
+		button6 = tk.Button(self.master, text="6", command=lambda: add_char("6"), font=("Calibre", 50, 'bold'))
+		button6.grid(row=2, column=4)
+
+		button7 = tk.Button(self.master, text="7", command=lambda: add_char("7"), font=("Calibre", 50, 'bold'))
+		button7.grid(row=3, column=2)
+
+		button8 = tk.Button(self.master, text="8", command=lambda: add_char("8"), font=("Calibre", 50, 'bold'))
+		button8.grid(row=3, column=3)
+
+		button9 = tk.Button(self.master, text="9", command=lambda: add_char("9"), font=("Calibre", 50, 'bold'))
+		button9.grid(row=3, column=4)
+
+		button0 = tk.Button(self.master, text="0", command=lambda: add_char("0"), font=("Calibre", 50, 'bold'))
+		button0.grid(row=4, column=3)
+
+		button0 = tk.Button(self.master, text="DEL", command=delete_char, font=("Calibre", 30, 'bold'))
+		button0.grid(row=4, column=4)
+
+		login_button = tk.Button(self.master, text="login", command=login, font=("Calibre", 25, 'bold'))
+		login_button.grid(row=0, column=4)
 
 	def settings_menu(self, prev: tk.Frame):
 		prev.pack_forget()
@@ -455,12 +514,10 @@ def main():
 
 	test = tk.Frame()
 	test.pack()
+	#manez.init_screen()
 	#manez.pin_screen()
-	if not stf.is_emp_db_empty():
-		#manez.init_screen()
-		pass
-	#manez.settings_menu(test)
-	manez.order_screen(test)
+	manez.settings_menu(test)
+	#manez.order_screen(test)
 	manez.mainloop()
 
 
