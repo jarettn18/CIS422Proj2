@@ -27,7 +27,7 @@ if os.name == "nt":
     navigator_symbol = "\\" # This will make the program runnable on Windows
 
 #Discount will be optional argument by using *
-def add_item(name, category, price, discount=0, add_to_db=True):
+def add_item(name, category, price, discount=0.0, add_to_db=True):
     try:
         #add new data into the list
         #read and write lists from the file
@@ -36,8 +36,7 @@ def add_item(name, category, price, discount=0, add_to_db=True):
         item.set_category(category)
         item.set_price(price)
         #default should be 1.0
-        if discount:
-            item.set_discount(discount)
+        item.set_discount(discount)
 
         list_items[name] = item
         if add_to_db:
@@ -80,10 +79,9 @@ def set_itemlist():
     itemdb.start_session()
     items = itemdb.read_db()
     for item in items:
+        print(item.discount)
         add_item(item.name, item.category, item.price, item.discount, False)
     return True
-#fresh item list from database
-set_itemlist()
 
 def edit_item(name, factor, newkey):
     #edit item data

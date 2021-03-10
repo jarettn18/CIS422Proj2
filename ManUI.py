@@ -435,6 +435,7 @@ class DynamicMenu(tk.Frame):
 	def insert_item(self, j: tuple):
 		self.ticket['state'] = 'normal'
 		self.ticket.insert(f'{self.line}.0', f'{j[0]} \t \t {j[1]}\n')
+		print(j)
 		self.line += 1
 		self.ticket['state'] = 'disabled'
 		cus.add_order(j[0], 1)
@@ -452,7 +453,7 @@ def main():
 	if not stf.is_emp_db_empty():
 		#manez.init_screen()
 		pass
-
+	#manez.settings_menu(test)
 	manez.order_screen(test)
 	manez.mainloop()
 
