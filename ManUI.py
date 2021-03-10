@@ -390,7 +390,7 @@ class DynamicMenu(tk.Frame):
 		self.line = 1
 		ticket_frame = tk.Frame(self.master)
 		ticket_frame.grid(row=1, column=1)
-		self.ticket = tk.Text(ticket_frame, font=("Calibre", 18, 'bold'), width="25")
+		self.ticket = tk.Text(ticket_frame, font=("Calibre", 18, 'bold'), width="30")
 		ys = tk.Scrollbar(ticket_frame, orient='vertical', command=self.ticket.yview)
 		self.ticket['yscrollcommand'] = ys.set
 		self.ticket.pack()
@@ -435,12 +435,17 @@ class DynamicMenu(tk.Frame):
 
 	def insert_item(self, j: tuple):
 		self.ticket['state'] = 'normal'
-		self.ticket.insert(f'{self.line}.0', f'{j[0]} \t \t {j[1]}\n')
-		self.line += 1
-		self.ticket['state'] = 'disabled'
 		cus.add_order(j[0], 1)
-		print(cus.show_order())
-		print(cus.get_total())
+		items = cus.show_order()
+		self.ticket.delete(1.0, tk.END)
+		line = 1
+		for order in reversed(list(items.keys())):
+			amount = int(items[order].get_amount())
+			name = items[order].get_item().get_name()
+			price = items[order].get_item().get_price()
+			self.ticket.insert(f'{self.line}.0', f'{amount}  {name} \t \t {price}\n')
+			line += 1
+		self.ticket['state'] = 'disabled'
 		self.total['text'] = f'Total: ${round(cus.get_total(), 2)}'
 
 def main():
