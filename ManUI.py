@@ -396,6 +396,8 @@ class DynamicMenu(tk.Frame):
 		self.ticket.pack()
 		self.ticket['state'] = 'disabled'
 		cus.set_itemlist()
+		self.total = tk.Label(ticket_frame, text="No Items Selected", font=("Calibre", 18, 'bold'))
+		self.total.pack(side=tk.BOTTOM)
 
 
 	def show_cat_list(self):
@@ -441,6 +443,7 @@ class DynamicMenu(tk.Frame):
 		cus.add_order(j[0], 1)
 		print(cus.show_order())
 		print(cus.get_total())
+		self.total['text'] = f'Total: ${round(cus.get_total(), 2)}'
 
 def main():
 	root = tk.Tk(className="Welcome to ManEz")
