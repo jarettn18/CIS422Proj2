@@ -79,7 +79,6 @@ def set_itemlist():
     itemdb.start_session()
     items = itemdb.read_db()
     for item in items:
-        print(item.discount)
         add_item(item.name, item.category, item.price, item.discount, False)
     return True
 
