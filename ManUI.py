@@ -10,8 +10,10 @@
 *	Date Created: 22 Feb 2022
 """
 import tkinter as tk
+from tkinter import ttk
 import ManCus as cus
 import ManStaff as stf
+import ManReport as rep
 
 BG_COLOR = 'gray'
 
@@ -232,7 +234,8 @@ class App(tk.Frame):
 								text='Create New Account', width='25', height='10', font=("Calibre", 20, 'bold'))
 		new_account.grid(row=2, column=1)
 
-		sales = tk.Button(settings_frame, cursor='circle', text='Sales Analytics', width='25', height='10',
+		sales = tk.Button(settings_frame, cursor='circle', command=lambda: self.analysis(), text='Sales Analytics',
+						  width='25', height='10',
 						  font=("Calibre", 20, 'bold'))
 		sales.grid(row=2, column=3)
 
@@ -241,7 +244,8 @@ class App(tk.Frame):
 						 font=("Calibre", 20, 'bold'))
 		edit.grid(row=3, column=3)
 
-		employee = tk.Button(settings_frame, cursor='circle', text='Employee Analytics', width='25', height='10',
+		employee = tk.Button(settings_frame, cursor='circle', command=lambda: self.emp_analysis(),
+							 text='Employee Analytics', width='25', height='10',
 							 font=("Calibre", 20, 'bold'))
 		employee.grid(row=3, column=1)
 
@@ -364,7 +368,8 @@ class App(tk.Frame):
 		title = tk.Label(title_frame, text='New Order', font=("Calibre", 20, 'bold'), width='15', height='5')
 		title.grid(row=1, column=2)
 
-		back = tk.Button(title_frame, command=lambda: self.main_login_screen(), text="Back", font=("Calibre", 20, 'bold'))
+		back = tk.Button(title_frame, command=lambda: self.main_login_screen(), text="Back",
+						 font=("Calibre", 20, 'bold'))
 		back.grid(row=1, column=1)
 
 		action_frame = tk.Frame(order_main_frame)
@@ -374,6 +379,103 @@ class App(tk.Frame):
 		category_buttons.show_cat_list()
 		send_button = category_buttons.get_send_button()
 		send_button['command'] = lambda: category_buttons.send_order(self)
+
+	def analysis(self):
+		self.reset()
+
+		title_frame = tk.Frame(self.master, background=BG_COLOR)
+		title_frame.grid(row=1, column=3)
+
+		back = tk.Button(title_frame, command=lambda: self.settings_menu(), text="Back", font=("Calibre", 20, 'bold'))
+		back.pack(side=tk.LEFT)
+
+		title = tk.Label(title_frame, text='Sales Analytics', background=BG_COLOR, font=("Calibre", 20, 'bold'),
+						 width='20', height='5')
+		title.pack(side=tk.LEFT)
+
+		date = tk.Label(self.master, text='Date Range:', background=BG_COLOR, font=("Calibre", 16, 'bold'), width='15',
+						height='5')
+		date.grid(row=2, column=1)
+
+		to = tk.Label(self.master, text='To:', background=BG_COLOR, font=("Calibre", 16, 'bold'), width='10',
+						height='5')
+		to.grid(row=2, column=3)
+
+		from_frame = tk.Frame(self.master)
+		from_frame.grid(row=2, column=2)
+
+		to_frame = tk.Frame(self.master)
+		to_frame.grid(row=2, column=4)
+
+		style = ttk.Style()
+		style.configure("bg.TCombobox", forground=BG_COLOR, background=BG_COLOR)
+
+		monthvar = tk.StringVar()
+		month = ttk.Combobox(from_frame, state="readonly", style="bg.TCombobox", textvariable=monthvar,
+							 font=("Calibre", 16, 'bold'), width='10', height='5')
+		month['values'] = (
+		'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November',
+		'December')
+		month.pack(side=tk.LEFT)
+
+		dayvar = tk.IntVar()
+		day = ttk.Combobox(from_frame, state="readonly", style="bg.TCombobox", textvariable=dayvar,
+						   font=("Calibre", 16, 'bold'), width='5', height='5')
+		day['values'] = [x for x in range(1, 32)]
+		day.pack(side=tk.LEFT)
+
+		yearvar = tk.IntVar()
+		year = ttk.Combobox(from_frame, state="readonly", style="bg.TCombobox", textvariable=yearvar,
+						   font=("Calibre", 16, 'bold'), width='5', height='5')
+		year['values'] = (2021)
+		year.pack(side=tk.LEFT)
+
+		tomonthvar = tk.StringVar()
+		tomonth = ttk.Combobox(to_frame, state="readonly", style="bg.TCombobox", textvariable=tomonthvar,
+							 font=("Calibre", 16, 'bold'), width='10', height='5')
+		tomonth['values'] = (
+			'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October',
+			'November',
+			'December')
+		tomonth.pack(side=tk.LEFT)
+
+		todayvar = tk.IntVar()
+		today = ttk.Combobox(to_frame, state="readonly", style="bg.TCombobox", textvariable=todayvar,
+						   font=("Calibre", 16, 'bold'), width='5', height='5')
+		today['values'] = [x for x in range(1, 32)]
+		today.pack(side=tk.LEFT)
+
+		toyearvar = tk.IntVar()
+		toyear = ttk.Combobox(to_frame, state="readonly", style="bg.TCombobox", textvariable=toyearvar,
+							font=("Calibre", 16, 'bold'), width='5', height='5')
+		toyear['values'] = (2021)
+		toyear.pack(side=tk.LEFT)
+
+		button_frame = tk.Frame(self.master, background=BG_COLOR,)
+		button_frame.grid(row=2, column=5)
+
+		findBy = tk.Label(button_frame, text='Find By:', background=BG_COLOR, font=("Calibre", 16, 'bold'),
+						 width='20')
+		findBy.pack(side=tk.TOP)
+
+		findBySale = tk.Button(button_frame, background=BG_COLOR, command=lambda: self.settings_menu(), text="Sales", font=("Calibre", 16, 'bold'))
+		findBySale.pack(side=tk.TOP)
+
+		findByItem = tk.Button(button_frame, background=BG_COLOR, command=lambda: self.settings_menu(), text="Items", font=("Calibre", 16, 'bold'))
+		findByItem.pack(side=tk.TOP)
+
+		findByCat = tk.Button(button_frame, background=BG_COLOR, command=lambda: self.settings_menu(), text="Categories", font=("Calibre", 16, 'bold'))
+		findByCat.pack(side=tk.TOP)
+
+
+	def emp_analysis(self):
+		self.reset()
+
+		title = tk.Label(self.master, text='Employee Analytics', font=("Calibre", 20, 'bold'), width='15', height='5')
+		title.grid(row=1, column=4)
+
+		back = tk.Button(self.master, command=lambda: self.settings_menu(), text="Back", font=("Calibre", 20, 'bold'))
+		back.grid(row=1, column=3)
 
 
 class UpdatingCategories(tk.Frame):
