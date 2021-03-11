@@ -5,6 +5,8 @@
 *   Last Created by: Jay Shin
 *   Edit History: 25 Feb 2021 - Jay Shin
 *                 v1.0: Creating all the function.
+                  10 March 2021 - Jay Shin
+                  v1.5: wrap up.
 """
 import datetime
 import ManDB
@@ -118,7 +120,3 @@ def report_by_category(start_date, end_date):
     else:
         print("Invalid Input")
         return False
-
-#Not sure if we need this
-def report_by_date(start_date, end_date):
-    pass
