@@ -14,6 +14,7 @@ from tkinter import ttk
 import ManCus as cus
 import ManStaff as stf
 import ManReport as rep
+import datetime as dt
 
 BG_COLOR = 'gray'
 
@@ -454,11 +455,13 @@ class App(tk.Frame):
 		button_frame = tk.Frame(self.master, background=BG_COLOR,)
 		button_frame.grid(row=2, column=5)
 
+		saleData = ShowSaleData(self.master)
+
 		findBy = tk.Label(button_frame, text='Find By:', background=BG_COLOR, font=("Calibre", 16, 'bold'),
 						 width='20')
 		findBy.pack(side=tk.TOP)
 
-		findBySale = tk.Button(button_frame, background=BG_COLOR, command=lambda: self.settings_menu(), text="Sales", font=("Calibre", 16, 'bold'))
+		findBySale = tk.Button(button_frame, background=BG_COLOR, command=lambda: saleData.findBySale((yearvar.get(), monthvar.get(), dayvar.get()), (toyearvar.get(), tomonthvar.get(), todayvar.get())), text="Sales", font=("Calibre", 16, 'bold'))
 		findBySale.pack(side=tk.TOP)
 
 		findByItem = tk.Button(button_frame, background=BG_COLOR, command=lambda: self.settings_menu(), text="Items", font=("Calibre", 16, 'bold'))
@@ -476,6 +479,15 @@ class App(tk.Frame):
 
 		back = tk.Button(self.master, command=lambda: self.settings_menu(), text="Back", font=("Calibre", 20, 'bold'))
 		back.grid(row=1, column=3)
+
+class ShowSaleData(tk.Frame):
+
+	def __init__(self, master=None):
+		super().__init__(master)
+		self.master = master
+
+	def findBySale(self, startdate: tuple, enddate: tuple):
+		print(startdate, enddate)
 
 
 class UpdatingCategories(tk.Frame):
