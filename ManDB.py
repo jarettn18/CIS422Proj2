@@ -28,7 +28,7 @@ from decimal import Decimal
 *   Edit History: 21 Feb 2021 - Theodore Yun
 *                 v1.0: Creating all the function.
 """
-
+# Create item Database for saving data
 class ItemDatabase:
     def __init__(self):
         self.engine = None
@@ -40,6 +40,7 @@ class ItemDatabase:
         self.connection = self.engine.connect()
         self.metadata = db.MetaData()
 
+        # Set each column for each variable
         self.item = db.Table('item', self.metadata,
               db.Column('name', db.String(255), nullable=False),
               db.Column('category', db.String(255), nullable=False),
@@ -47,7 +48,7 @@ class ItemDatabase:
               db.Column('discount', db.Float(), default=1.0)
               )
         self.metadata.create_all(self.engine)
-
+    # Add item into item list
     def add_item(self, item):
         if item:
             query = db.insert(self.item).values(name=item.get_name(), category=item.get_category(),
@@ -58,7 +59,7 @@ class ItemDatabase:
             print("Invalid Input")
             ret = False
         return ret
-
+    # Delete selected item in item list
     def delete_item(self, name):
         if name:
             query = db.delete(self.item)
@@ -68,7 +69,7 @@ class ItemDatabase:
             print("Invalid Input")
             ret = False
         return ret
-
+    # Modify information of the item
     def edit_item(self, name):
         if name:
             query = db.update(self.item).values(name=self.item.name)
@@ -78,7 +79,7 @@ class ItemDatabase:
             print("Invalid Input")
             ret = False
         return ret
-
+    # Read data of item from item database
     def read_db(self):
         query = db.select([self.item])
         return self.connection.execute(query).fetchall()

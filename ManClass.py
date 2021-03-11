@@ -29,24 +29,29 @@ import datetime
 import random
 
 class item:
+    # Set the default with initialization
 	def __init__(self):
 		self.name = None
 		self.category = None
 		self.price = 0.0
 		self.discount = 1.0
-
+    # getter for name
 	def get_name(self):
 		return self.name
 
+	# getter for category
 	def get_category(self):
 		return self.category
 
+	# getter for price
 	def get_price(self):
 		return self.price
 
+	# getter for discount
 	def get_discount(self):
 		return self.discount
 
+	# setter for name
 	def set_name(self, name):
 		if name:
 			self.name = name
@@ -55,6 +60,7 @@ class item:
 			print("Invalid Name")
 			return False
 
+	# setter for category
 	def set_category(self, category):
 		if category:
 			self.category = category
@@ -63,6 +69,7 @@ class item:
 			print("Invalid Category")
 			return False
 
+	# setter for price
 	def set_price(self, price):
 		if price > 0:
 			self.price = price
@@ -71,6 +78,7 @@ class item:
 			print("Invalid Price")
 			return False
 
+	# setter for discount
 	def set_discount(self, discount):
 		if discount >= 0 and discount <= 100:
 			self.discount = (100 - discount) / 100
@@ -83,19 +91,22 @@ class item:
 *   Class: order
 *   Description: This class contains details of a order. It contains
 *
-*   Date: 20 Feb 2021
+*   Date: 18 Feb 2021
 *   Last Created by: Jay Shin
 *   Edit History: v1.0: Creating all the function.
 *				  20 Feb 2021 - Perat Damrongsiri
 *				  v1.1: Added type checking for setters.
+				  11 Mar 2021 - Theodore Yun
+				  v1.2: Added comments
 """
 
 class order():
 	"""docstring for order"""
+	# Set default with initialization
 	def __init__(self):
 		self.item = None
 		self.amount = 1
-
+	# getter for item
 	def get_item(self):
 		if self.item:
 			ret = self.item
@@ -104,6 +115,7 @@ class order():
 			ret = False
 		return ret
 
+	# getter for amount
 	def get_amount(self):
 		if self.item:
 			ret = self.amount
@@ -112,6 +124,7 @@ class order():
 			ret = False
 		return ret
 
+	# setter for item
 	def set_item(self, value):
 		if value and type(value) == item:
 			self.item = copy.deepcopy(value)
@@ -121,6 +134,7 @@ class order():
 			ret = False
 		return ret
 
+	# setter for amount
 	def set_amount(self, amount):
 		if amount > 0 and str(amount).isdigit():
 			self.amount = float(amount)
@@ -145,7 +159,7 @@ class order():
 *				  v1.2: Remove orders setter. Added functions related to orders.
 """
 
-
+# Set default with initialization
 class receipt:
 	def __init__(self):
 		self.customer = None
@@ -153,6 +167,7 @@ class receipt:
 		self.total = 0.0
 		self.discount = 1.0
 
+	# Class variable for adding order
 	def add_order(self, new_order):
 		if type(new_order) == order:
 			name = new_order.get_item().get_name()
@@ -167,6 +182,7 @@ class receipt:
 			print("Error: receipt(): add_order(): new_order is not order object")
 			return False
 
+	# Class variable for deleting order
 	def delete_order(self, name):
 		if name in self.orders:
 			del self.orders[name]
@@ -177,6 +193,7 @@ class receipt:
 			ret = False
 		return ret
 
+	# Class variable for editing order
 	def edit_order(self, name, option, new_value):
 		if name in self.orders:
 			if option == 'item':
@@ -194,6 +211,7 @@ class receipt:
 		print("Error: receipt(): edit_order(): ", name, "does not exist in orders.")
 		return False
 
+	# getter for customer
 	def get_customer(self):
 		if self.customer:
 			ret = self.customer
@@ -202,6 +220,7 @@ class receipt:
 			ret = False
 		return ret
 
+	# getter for order
 	def get_orders(self):
 		if self.orders:
 			ret = self.orders
@@ -210,6 +229,7 @@ class receipt:
 			ret = False
 		return ret
 
+	# getter for total that is calculated by cal_total
 	def get_total(self):
 		if self.total:
 			ret = self.total
@@ -218,6 +238,7 @@ class receipt:
 			ret = False
 		return ret
 
+	# getter for discount rate
 	def get_discount(self):
 		if self.discount:
 			ret = self.discount
@@ -226,6 +247,7 @@ class receipt:
 			ret = False
 		return ret
 
+	# setter for customer
 	def set_customer(self, name):
 		if isinstance(name, str):
 			self.customer = name
@@ -235,6 +257,7 @@ class receipt:
 			ret = False
 		return ret
 
+	# Calculation function for get total price of order
 	def cal_total(self):
 		if self.orders:
 			self.total = 0
@@ -248,6 +271,7 @@ class receipt:
 			ret = False
 		return ret
 
+	# setter for setting discount
 	def set_discount(self, discount):
 		if discount >= 0 and discount <= 100:
 			self.discount = (100 - discount) / 100
@@ -257,6 +281,7 @@ class receipt:
 			ret = False
 		return ret
 
+	# module for printing receipt of order
 	def get_receipt(self):
 		ret_str = 'Date: '
 		ret_str += datetime.datetime.now().strftime("%m/%d/%Y, %H:%M:%S") + '\n'
