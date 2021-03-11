@@ -367,7 +367,7 @@ class Employee:
 	def change_password(self, old_pass, new_pass):
 		old_pass_hash = hashing(old_pass)
 		if self._password_hash == old_pass_hash:
-			if len(password) == 4:
+			if len(new_pass) == 4:
 				self._password_hash = hashing(new_pass)
 				ret = 1
 			else:
@@ -379,7 +379,7 @@ class Employee:
 		return ret
 
 	def forgot_password(self, key, new_pass):
-		if key == self._recovery_key:
+		if int(key) == self._recovery_key:
 			self._password_hash = hashing(new_pass)
 			ret = True
 		else:
@@ -414,7 +414,10 @@ class Employee:
 	def set_to_admin(self, employee, password):
 		if type(employee) == Employee:
 			if self._permission == 'admin':
-				if self._password_hash == hashing(password):
+				if password == None and self._name == 'temp@#$':
+					employee._permission = 'admin'
+					ret = employee
+				elif self._password_hash == hashing(password):
 					employee._permission = 'admin'
 					ret = employee
 				else:
@@ -432,6 +435,7 @@ class Employee:
 		if self._permission == 'admin':
 			if name:
 				ret = Employee(name=name, permission=permission)
+				ret.set_recovery_key()
 			else:
 				print("Error: employee(): add_employee(): Invalid name.")
 				ret = 1
@@ -445,6 +449,7 @@ class Employee:
 			if self._password_hash == hashing(password):
 				new_employee = Employee(name=name, permission='admin')
 				ret = new_employee
+				ret.set_recovery_key()
 			else:
 				print("Error: employee(): add_admin(): Wrong Password.")
 				ret = 2
@@ -454,20 +459,16 @@ class Employee:
 		return ret
 
 	def demote_from_admin(self, admin, password):
-		if type(employee) == admin:
-			if self._permission == 'admin':
-				if self._password_hash == hashing(password):
-					admin._permission = 'emp'
-					ret = 1
-				else:
-					print("Error: employee(): set_to_admin(): Wrong Password.")
-					ret = 2
+		if self._permission == 'admin':
+			if self._password_hash == hashing(password):
+				admin._permission = 'emp'
+				ret = 1
 			else:
-				print("Error: employee(): set_to_admin(): Require Admin Permission.")
-				ret = 3
+				print("Error: employee(): set_to_admin(): Wrong Password.")
+				ret = 2
 		else:
-			print("Error: employee(): set_to_admin(): employee is not Employee object.")
-			ret = 4
+			print("Error: employee(): set_to_admin(): Require Admin Permission.")
+			ret = 3
 		return ret
 
 	def checkpass(self, password):

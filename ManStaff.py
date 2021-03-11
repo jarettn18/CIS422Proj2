@@ -14,15 +14,19 @@ def read_emp_db():
 
 def is_emp_db_empty():
     emp_database = db.EmployeesDatabase()
-    if emp_database.is_exist() and not emp_database.is_empty():
-        ret = False
-    else:
+    if not emp_database.is_exist():
         ret = True
+    else:
+        emp_database.start_session()
+        if emp_database.read_db() == []:
+            ret = True
+        else:
+            ret = False
     return ret
 
 def add_employee(name, current_user, password, permission='emp', firstrun=False, add_to_db=True):
     if firstrun and current_user is None:
-        temp = mc.Employee(name='temp', permission='admin')
+        temp = mc.Employee(name='temp@#$', permission='admin')
         new_emp = temp.add_employee(name)
         new_emp = temp.set_to_admin(new_emp, None)
     else:
@@ -36,6 +40,7 @@ def add_employee(name, current_user, password, permission='emp', firstrun=False,
         ret = 3
     else:
         shopEmp[name] = new_emp
+        shopEmp[name].set_password(password)
         print("Successfully added new employee.")
         if add_to_db:
             emp_database = db.EmployeesDatabase()
@@ -46,8 +51,8 @@ def add_employee(name, current_user, password, permission='emp', firstrun=False,
     return ret
 
 def login(name, password):
-    if shopEmp[name].checkpass():
-        if shopEmp[name].set_logout_time():
+    if shopEmp[name].checkpass(password):
+        if shopEmp[name].set_login_time():
             print("ManStaff: login(): Successfully login.")
             ret = 4
         else:
@@ -100,8 +105,8 @@ def remove_employee(name, current_user, password):
         ret = 14
     return ret
 
-def add_admin(name, current_user, password):
-    new_admin = shopEmp[current_user].add_admin(name, password)
+def add_admin(name, current_user, new_ad_pass, curr_user_pass):
+    new_admin = shopEmp[current_user].add_admin(name, curr_user_pass)
     if new_admin == 2:
         print("Error: ManStaff: add_admin(): Wrong Password.")
         ret = 15
@@ -109,8 +114,14 @@ def add_admin(name, current_user, password):
         print("Error: ManStaff: add_admin(): Require Admin Permission.")
         ret = 16
     else:
+        new_admin.set_password(new_ad_pass)
+        shopEmp[name] = new_admin
         print("Successfully added admin.")
-        ret = 17
+        emp_database = db.EmployeesDatabase()
+        emp_database.start_session()
+        emp_database.add_employee(new_admin)
+        print("admin added to database.")
+        ret = new_admin.get_key()
     return ret
 
 def promote_to_admin(name, current_user, password):
@@ -146,9 +157,6 @@ def demote_from_admin(name, current_user, password):
     elif suc == 3:
         print("Error: ManStaff: demote_from_admin(): Require Admin Permission.")
         ret = 24
-    elif suc == 4:
-        print("Error: ManStaff: demote_from_admin(): employee is not Employee object.")
-        ret = 25
     return ret
 
 def set_password(name, password):
@@ -266,4 +274,4 @@ def get_message(code):
     elif code == 34:
         ret = "Wrong recovery key.", False
     elif code > 999:
-        ret = ("Successfully added new employee. Recovery key is: " + str(code)), True
+        ret = ("Successfully added new admin/employee. Recovery key is: " + str(code)), True

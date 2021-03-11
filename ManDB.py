@@ -18,7 +18,6 @@ from sqlalchemy.orm import sessionmaker
 import datetime
 import ManClass
 #just for read_db function
-import ManCus
 from decimal import Decimal
 
 """
@@ -213,12 +212,12 @@ class WorkTimeDatabase:
         self.engine = db.create_engine('sqlite:///ManEzUsers.sqlite')
         self.connection = self.engine.connect()
         self.metadata = db.MetaData()
-        self.receipts = db.Table('users', self.metadata,
-              db.Column('name'.String(255), nullable=False),
-              db.Column('date', db.DateTime()),
+        self.work = db.Table('users', self.metadata,
+              db.Column('name', db.String(255), nullable=False),
+              db.Column('date', db.Date()),
               db.Column('login_time', db.DateTime()),
               db.Column('logout_time', db.DateTime()),
-              db.Column('work_time', db.DateTime())
+              db.Column('work_time', db.Interval())
               )
 
         self.metadata.create_all(self.engine)
@@ -226,12 +225,11 @@ class WorkTimeDatabase:
     def checkout(self, employee):
         if type(employee) == ManClass.Employee:
             if employee._login_time:
-                employee.set_logout_time()
-                query = db.insert(self.receipts).values(name=employee.get_name(),
+                query = db.insert(self.work).values(name=employee.get_name(),
                     date=datetime.date.today(),
                     login_time=employee.get_login_time(),
                     logout_time=employee.get_logout_time(),
-                    work_time=(employee._logout_time-employee._login_time)
+                    work_time=(employee.get_logout_time()-employee.get_login_time())
                     )
                 ResultProxy = self.connection.execute(query)
                 ret = True
@@ -286,20 +284,20 @@ class EmployeesDatabase:
         return ret
 
     def delete_employee(self, name):
-        delete = self.employees.delete().where(emp.c.name == name)
+        delete = self.employees.delete().where(self.employees.c.name == name)
         self.connection.execute(delete)
 
     def edit_employee(self, name, option, value):
         if option == 'name':
-            update = self.employees.update().where(emp.c.name == name).values(name=value)
+            update = self.employees.update().where(self.employees.c.name == name).values(name=value)
             self.connection.execute(update)
             ret = True
         elif option == 'permission':
-            update = self.employees.update().where(emp.c.name == name).values(permission=value)
+            update = self.employees.update().where(self.employees.c.name == name).values(permission=value)
             self.connection.execute(update)
             ret = True
         elif option == 'password':
-            update = self.employees.update().where(emp.c.name == name).values(pass_hash=value)
+            update = self.employees.update().where(self.employees.c.name == name).values(pass_hash=value)
             self.connection.execute(update)
             ret = True
         else:
@@ -309,17 +307,6 @@ class EmployeesDatabase:
 
     def is_exist(self):
         if db_utils.database_exists('sqlite:///ManEzEmployees.sqlite'):
-            ret = True
-        else:
-            ret = False
-        return ret
-
-    def is_empty(self):
-        Session = sessionmaker(bind=self.engine)
-        session = Session()
-        desc_expression = db.sql.expression.desc(self.employees.c.name)
-        elem = session.query(self.employees).first()
-        if elem:
             ret = True
         else:
             ret = False
