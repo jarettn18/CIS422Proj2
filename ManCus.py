@@ -306,8 +306,6 @@ def pay_order(customer):
             list_dict['list_orders'] = ManClass.receipt()
         except TypeError:
             return False
-        except:
-            return False
     else:
         print("Invalid Input")
         ret = False
