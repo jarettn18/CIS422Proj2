@@ -1,7 +1,5 @@
-
-# ManCus
-# This module have functions for users
 """
+*   Title: ManCus
 *   Description: Functions for Point of Sales
 *   Date: 10 Mar 2021
 *   Last Created by: Theodore Yun
@@ -20,11 +18,12 @@ import ManClass
 # Global lists
 list_items = {}
 # read the newest item list
-list_dict = {'list_orders': ManClass.receipt()}
+list_dict = {'list_orders': ManClass.Receipt()}
 
-navigator_symbol = "/" # This will make the program runnable on any unix based enviroument because it has differnet file system
+# This will make the program runnable on any unix based enviroument because it has differnet file system
+navigator_symbol = "/"
 if os.name == "nt":
-    navigator_symbol = "\\" # This will make the program runnable on Windows
+    navigator_symbol = "\\"  # This will make the program runnable on Windows
 
 # ManCus ONLY
 """
@@ -36,19 +35,22 @@ if os.name == "nt":
 *                  20 Feb 2021
 *                  v1.1: Jay end of basic functions
 """
+
+
 def set_itemlist():
     # Just to set item list from database
     itemdb = ManDB.ItemDatabase()
     itemdb.start_session()
     items = itemdb.read_db()
     for item in items:
-        data = ManClass.item()
+        data = ManClass.Item()
         data.name = item[0]
         data.category = item[1]
         data.price = item[2]
         data.discount = item[3]
         list_items[item[0]] = data
     return True
+
 
 # fresh item list from database
 set_itemlist()
@@ -62,12 +64,14 @@ set_itemlist()
 *                  20 Feb 2021
 *                  v1.1: Jay end of basic functions
 """
+
+
 # Discount will be optional argument by using *
 def add_item(name, category, price, discount=0, add_to_db=True):
     try:
         # add new data into the list
         # read and write lists from the file
-        item = ManClass.item()
+        item = ManClass.Item()
         item.set_name(name)
         item.set_category(category)
         item.set_price(price)
@@ -83,6 +87,8 @@ def add_item(name, category, price, discount=0, add_to_db=True):
         return True
     except:
         return False
+
+
 """
 *   Function: query_items
 *   Description: Add item to menu dictionary
@@ -92,6 +98,8 @@ def add_item(name, category, price, discount=0, add_to_db=True):
 *                  20 Feb 2021
 *                  v1.1: Jay end of basic functions
 """
+
+
 def query_items():
     menu_dict = {}
     itemdb = ManDB.ItemDatabase()
@@ -104,6 +112,7 @@ def query_items():
             menu_dict[i[1]].append((i[0], i[2], i[3]))
     return menu_dict
 
+
 """
 *   Function: add_order
 *   Description: Make order with item name and amount
@@ -113,12 +122,14 @@ def query_items():
 *                  20 Feb 2021
 *                  v1.1: Jay end of basic functions
 """
+
+
 def add_order(name, amount):
     # add order
     # copy and paste selected item to order list
     ret = list_items[name]
     if ret:
-        order = ManClass.order()
+        order = ManClass.Order()
         order.set_item(ret)
         order.set_amount(amount)
         ret = list_dict['list_orders'].add_order(order)
@@ -127,6 +138,7 @@ def add_order(name, amount):
         print("Item does not exist")
         ret = False
     return ret
+
 
 """
 *   Function: edit_item
@@ -137,6 +149,8 @@ def add_order(name, amount):
 *                  20 Feb 2021
 *                  v1.1: Jay end of basic functions
 """
+
+
 def edit_item(name, factor, newkey):
     # edit item data
     # read and write the list
@@ -156,6 +170,7 @@ def edit_item(name, factor, newkey):
         print("Invalid Input")
         return False
 
+
 """
 *   Function: edit_order
 *   Description: Edit the features of order
@@ -165,10 +180,13 @@ def edit_item(name, factor, newkey):
 *                  20 Feb 2021
 *                  v1.1: Jay end of basic functions
 """
+
+
 def edit_order(name, factor, newkey):
     # edit order data
     # read and write the list
     return list_dict['list_orders'].edit_order(name, factor, newkey)
+
 
 """
 *   Function: delete_menu
@@ -179,6 +197,8 @@ def edit_order(name, factor, newkey):
 *                  20 Feb 2021
 *                  v1.1: Jay end of basic functions
 """
+
+
 def delete_menu(name):
     # delete menu from list
     # read and write lists from the file?
@@ -191,6 +211,7 @@ def delete_menu(name):
         print("Option does not exist")
         return False
 
+
 """
 *   Function: delete_order
 *   Description: deleting function the order from order list
@@ -200,11 +221,14 @@ def delete_menu(name):
 *                  20 Feb 2021
 *                  v1.1: Jay end of basic functions
 """
+
+
 def delete_order(name):
     # delete order from list
     # read and write the list
     print(list_dict['list_orders'])
     return list_dict['list_orders'].delete_order(name)
+
 
 """
 *   Function: show_item
@@ -215,6 +239,8 @@ def delete_order(name):
 *                  20 Feb 2021
 *                  v1.1: Jay end of basic functions
 """
+
+
 def show_item():
     # present item from list
     # read the item
@@ -223,6 +249,7 @@ def show_item():
     else:
         print("Option is empty")
         return False
+
 
 """
 *   Function: show_order
@@ -233,10 +260,13 @@ def show_item():
 *                  20 Feb 2021
 *                  v1.1: Jay end of basic functions
 """
+
+
 def show_order():
     # present orders from list
     # read the orders
     return list_dict['list_orders'].get_orders()
+
 
 """
 *   Function: get_total
@@ -247,9 +277,12 @@ def show_order():
 *                  20 Feb 2021
 *                  v1.1: Jay end of basic functions
 """
+
+
 def get_total():
     # get total price of the each order
     return list_dict['list_orders'].get_total()
+
 
 """
 *   Function: pay_order
@@ -260,6 +293,8 @@ def get_total():
 *                  20 Feb 2021
 *                  v1.1: Jay end of basic functions
 """
+
+
 def pay_order(customer):
     if customer:
         list_dict['list_orders'].set_customer(customer)
@@ -268,7 +303,7 @@ def pay_order(customer):
         receiptdb = ManDB.ReceiptDatabase()
         receiptdb.start_session()
         receiptdb.add_receipt(list_dict['list_orders'])
-        list_dict['list_orders'] = ManClass.receipt()
+        list_dict['list_orders'] = ManClass.Receipt()
     else:
         print("Invalid Input")
         ret = False
