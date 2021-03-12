@@ -96,12 +96,19 @@ class ItemDatabase:
 
 class ReceiptDatabase:
     def __init__(self):
+        """
+        class variables
+        """
         self.engine = None
         self.connection = None
         self.metadata = None
         self.receipts = None
 
     def start_session(self):
+        """
+        Binding the sql engine to the receipt database. If the receipt database
+        does not exist, it will create one.
+        """
         self.engine = db.create_engine('sqlite:///ManEzReceipts.sqlite')
         self.connection = self.engine.connect()
         self.metadata = db.MetaData()
@@ -119,10 +126,13 @@ class ReceiptDatabase:
         self.metadata.create_all(self.engine)
 
     def add_receipt(self, receipt):
+        """
+        Add the receipt to the receipt database
+        """
         if type(receipt) == ManClass.receipt:
             Session = sessionmaker(bind=self.engine)
             session = Session()
-            desc_expression = db.sql.expression.desc(self.receipts.c.date)
+            desc_expression = db.sql.expression.desc(self.receipts.c.datetime)
             last_item = session.query(self.receipts).order_by(desc_expression).first()
             if last_item and last_item.date == datetime.date.today():
                 rec_num = last_item.number + 1
@@ -143,6 +153,9 @@ class ReceiptDatabase:
         return ret
 
     def delete_receipt(self, receipt_num, date, name):
+        """
+        Remove the specific receipt from the database
+        """
         if Decimal(receipt_num) % 1 == 0 and Decimal(receipt_num) > 0:
             if isinstance(date, datetime.date):
                 if isinstance(name, str):
@@ -176,6 +189,9 @@ class ReceiptDatabase:
         return ret
 
     def get_period(self, start_date, end_date):
+        """
+        Get the dictionary of receipts during start_date to end_date
+        """
         if isinstance(start_date, datetime.date) and isinstance(end_date, datetime.date):
             #regular database calls
             Session = sessionmaker(bind=self.engine)
@@ -194,7 +210,7 @@ class ReceiptDatabase:
         return ret
 
 """
-*   Class: ReceiptDatabase
+*   Class: WorkTimeDatabase
 *   Description:
 *   Date: 7 March 2021
 *   Last Created by: Jay Shin
@@ -253,12 +269,19 @@ class WorkTimeDatabase:
 
 class EmployeesDatabase:
     def __init__(self):
+        """
+        class variables
+        """
         self.engine = None
         self.connection = None
         self.metadata = None
         self.employees = None
 
     def start_session(self):
+        """
+        Binding the sql engine to the employees database. If the employees database
+        does not exist, it will create one.
+        """
         self.engine = db.create_engine('sqlite:///ManEzEmployees.sqlite')
         self.connection = self.engine.connect()
         self.metadata = db.MetaData()
@@ -272,6 +295,9 @@ class EmployeesDatabase:
         self.metadata.create_all(self.engine)
 
     def add_employee(self, employee):
+        """
+        add employee to the database.
+        """
         if type(employee) == ManClass.Employee:
             query = db.insert(self.employees).values(name=employee.get_name(),
                 permission=employee.get_permission(),
