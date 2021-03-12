@@ -8,3 +8,4 @@ __pycache__/ManStaff.cpython-37.pyc
 ManEzReceipts.sqlite
 *.sqlite
 *.pyc
+*.pyc
