@@ -39,8 +39,9 @@ def total_sale_by_date(start_date,end_date):
     if sales:
         delta = datetime.timedelta(days=1)
         while start_date <= end_date:
-            total_sale = sales[start_date][-1][0]
-            sales[start_date] = total_sale
+            if sales[start_date]:
+                total_sale = sales[start_date][-1][0]
+                sales[start_date] = total_sale
             start_date += delta
         return sales
     else:

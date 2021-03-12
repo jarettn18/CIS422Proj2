@@ -15,6 +15,7 @@ import ManCus as cus
 import ManStaff as stf
 import ManReport as rep
 import datetime as dt
+import copy as cp
 
 BG_COLOR = 'gray'
 
@@ -26,6 +27,8 @@ class App(tk.Frame):
 		self.master = master
 		self.grid()
 		self.clocked = []
+		self.active = None
+		stf.read_emp_db()
 
 	def reset(self):
 		"""Reset the list of participants"""
@@ -98,6 +101,7 @@ class App(tk.Frame):
 		submit.grid(row=5, column=3)
 
 	def main_login_screen(self, clear_screen=True):
+		self.active=None
 		if clear_screen:
 			self.reset()
 
@@ -177,6 +181,7 @@ class App(tk.Frame):
 			# login with pin number
 			if mode == "settings":
 				if stf.is_admin(name.lower()) and stf.admin_entry(name.lower(), pin) == 39:
+					self.active = name
 					self.settings_menu()
 				else:
 					admin_label = tk.Label(self.master, background=BG_COLOR, text="Invalid Login",
@@ -280,106 +285,104 @@ class App(tk.Frame):
 
 	def settings_menu(self):
 		self.reset()
-		settings_frame = tk.Frame(self.master)
-		settings_frame.grid(column=1)
 
-		title = tk.Label(settings_frame, text='ManEz Settings', font=("Calibre", 20, 'bold'), width='15', height='5')
-		title.grid(row=1, column=2)
+		title = tk.Label(self.master, text='ManEz Settings', font=("Calibre", 20, 'bold'), background=BG_COLOR)
+		title.grid(row=1, column=3)
 
-		back = tk.Button(settings_frame, text="Back", command=lambda: self.main_login_screen(),
+		back = tk.Button(self.master, text="Back", command=lambda: self.main_login_screen(),
 						 font=("Calibre", 20, 'bold'))
-		back.grid(row=1, column=1)
+		back.grid(row=1, column=2)
 
-		new_account = tk.Button(settings_frame, cursor='circle', command=lambda: self.new_account(),
+		new_account = tk.Button(self.master, cursor='circle', command=lambda: self.new_account(),
 								text='Create New Account', width='25', height='10', font=("Calibre", 20, 'bold'))
-		new_account.grid(row=2, column=1)
+		new_account.grid(row=2, column=2)
 
-		sales = tk.Button(settings_frame, cursor='circle', command=lambda: self.analysis(), text='Sales Analytics',
+		sales = tk.Button(self.master, cursor='circle', command=lambda: self.analysis(), text='Sales Analytics',
 						  width='25', height='10',
 						  font=("Calibre", 20, 'bold'))
-		sales.grid(row=2, column=3)
+		sales.grid(row=2, column=4)
 
-		edit = tk.Button(settings_frame, cursor='circle', text='Menu Settings',
+		edit = tk.Button(self.master, cursor='circle', text='Menu Settings',
 						 command=lambda: self.add_menu(), width='25', height='10',
 						 font=("Calibre", 20, 'bold'))
-		edit.grid(row=3, column=3)
+		edit.grid(row=3, column=4)
 
-		employee = tk.Button(settings_frame, cursor='circle', command=lambda: self.emp_analysis(),
+		employee = tk.Button(self.master, cursor='circle', command=lambda: self.emp_analysis(),
 							 text='Employee Analytics', width='25', height='10',
 							 font=("Calibre", 20, 'bold'))
-		employee.grid(row=3, column=1)
+		employee.grid(row=3, column=2)
 
 	def new_account(self):
 		self.reset()
-		account_frame = tk.Frame(self.master)
-		account_frame.grid(column=1)
 
-		title = tk.Label(account_frame, text='Create New Account', font=("Calibre", 20, 'bold'), width='15', height='5')
-		title.grid(row=1, column=2)
+		title = tk.Label(self.master, text='Create New Account', font=("Calibre", 20, 'bold'), background=BG_COLOR)
 
-		back = tk.Button(account_frame, text="Back", command=lambda: self.settings_menu(),
+		title.grid(row=1, column=3)
+
+		back = tk.Button(self.master, text="Back", command=lambda: self.settings_menu(),
 						 font=("Calibre", 20, 'bold'))
-		back.grid(row=1, column=1)
+		back.grid(row=1, column=2)
 
-		type_var = tk.IntVar()
 		name_var = tk.StringVar()
 		pin_var = tk.StringVar()
+		confirmvar = tk.StringVar()
 
-		radio_label = tk.Label(account_frame, text='Select Account Type:', font=("Calibre", 18, 'bold'))
-		admin = tk.Radiobutton(account_frame, text="Administrator", variable=type_var, value=1)
-		emplo = tk.Radiobutton(account_frame, text='Employee', variable=type_var, value=2)
+		name_label = tk.Label(self.master, text="Name", font=("Calibre", 18, 'bold'), background=BG_COLOR)
+		name_entry = tk.Entry(self.master, textvariable=name_var, font=("Calibre", 16))
 
-		name_label = tk.Label(account_frame, text="Name", font=("Calibre", 18, 'bold'))
-		name_entry = tk.Entry(account_frame, textvariable=name_var, font=("Calibre", 16))
+		pin_label = tk.Label(self.master, text="Pin", font=("Calibre", 18, 'bold'), background=BG_COLOR)
+		pin_entry = tk.Entry(self.master, textvariable=pin_var, font=("Calibre", 16))
 
-		pin_label = tk.Label(account_frame, text="Pin", font=("Calibre", 18, 'bold'))
-		pin_entry = tk.Entry(account_frame, textvariable=pin_var, font=("Calibre", 16))
+		confirm_label = tk.Label(self.master, text="Pin", font=("Calibre", 18, 'bold'), background=BG_COLOR)
+		confirm_entry = tk.Entry(self.master, textvariable=confirmvar, font=("Calibre", 16))
 
-		submit = tk.Button(account_frame, text="Create",
+		submit = tk.Button(self.master, text="Create",
 						   command=lambda: self.create_account(name_var.get(), pin_var.get(),
-															   type_var.get()), font=("Calibre", 20, 'bold'))
+															   confirmvar.get()), font=("Calibre", 20, 'bold'))
 
-		radio_label.grid(row=2, column=1)
-		admin.grid(row=2, column=2)
-		emplo.grid(row=2, column=3)
 
-		name_label.grid(row=3, column=1, pady=20)
-		name_entry.grid(row=3, column=2, columnspan=2, pady=20)
+		name_label.grid(row=2, column=2, pady=20)
+		name_entry.grid(row=2, column=3, columnspan=2, pady=20)
 
-		pin_label.grid(row=4, column=1, pady=20)
-		pin_entry.grid(row=4, column=2, columnspan=2, pady=20)
+		pin_label.grid(row=3, column=2, pady=20)
+		pin_entry.grid(row=3, column=3, columnspan=2, pady=20)
 
-		submit.grid(row=5, column=2)
+		confirm_label.grid(row=4, column=2, pady=20)
+		confirm_entry.grid(row=4, column=3, columnspan=2, pady=20)
 
-	def create_account(self, name: str, pin: str, permission: int):
-		if permission == 1:
-			perm_type = 'admin'
+		submit.grid(row=5, column=3)
+
+	def create_account(self, name: str, pin: str, confirm: int):
+		confirm_pin_label = tk.Label(self.master, background=BG_COLOR,
+									 font=("Calibre", 15, 'bold'))
+		if (pin != confirm):
+			confirm_pin_label['text'] = "Pin Must Be Equal"
+			confirm_pin_label.grid(row=6, column=3)
 		else:
-			perm_type = 'emp'
-		stf.add_employee(name=name, current_user=None, password=pin, permission=perm_type)
-		self.settings_menu()
+			# insert name/pin in database
+			if self.active:
+				stf.add_employee(name.lower(), self.active.lower(), pin)
+				self.settings_menu()
+			else:
+				confirm_pin_label['text'] = "Need a clocked in Admin to create account"
+				confirm_pin_label.grid(row=6, column=3)
 
 	def add_menu(self):
 		self.reset()
-		men_main_frame = tk.Frame(self.master)
-		men_main_frame.grid(column=1)
 
-		add_men_frame = tk.Frame(men_main_frame)
-		add_men_frame.pack(side=tk.LEFT)
+		curr_men_frame = tk.Frame(self.master, background=BG_COLOR)
+		curr_men_frame.grid(row=1, column=4, rowspan=5)
 
-		curr_men_frame = tk.Frame(men_main_frame)
-		curr_men_frame.pack(side=tk.RIGHT)
-
-		currents_header = tk.Label(curr_men_frame, text="Current Menu", font=("Calibre", 18, 'bold'))
+		currents_header = tk.Label(curr_men_frame, text="Current Menu", font=("Calibre", 18, 'bold'), background=BG_COLOR)
 		currents_header.grid(column=1, row=1, padx=50)
 
 		item_frames = UpdatingCategories(curr_men_frame)
 		item_frames.show_cat_list()
 
-		title = tk.Label(add_men_frame, text='Add New Menu', font=("Calibre", 20, 'bold'), width='15', height='5')
+		title = tk.Label(self.master, text='Add New Menu', font=("Calibre", 20, 'bold'), background=BG_COLOR)
 		title.grid(row=1, column=2)
 
-		back = tk.Button(add_men_frame, text="Back", command=lambda: self.settings_menu(),
+		back = tk.Button(self.master, text="Back", command=lambda: self.settings_menu(),
 						 font=("Calibre", 20, 'bold'))
 		back.grid(row=1, column=1)
 
@@ -387,21 +390,21 @@ class App(tk.Frame):
 		price_var = tk.DoubleVar()
 		cat_var = tk.StringVar()
 
-		header = tk.Label(add_men_frame, text="New Item", font=("Calibre", 18, 'bold'))
-		item_name = tk.Label(add_men_frame, text="Name", font=("Calibre", 16, 'bold'))
-		name_entry = tk.Entry(add_men_frame, textvariable=name_var, font=("Calibre", 16))
+		header = tk.Label(self.master, text="New Item", font=("Calibre", 18, 'bold'), background=BG_COLOR)
+		item_name = tk.Label(self.master, text="Name", font=("Calibre", 16, 'bold'), background=BG_COLOR)
+		name_entry = tk.Entry(self.master, textvariable=name_var, font=("Calibre", 16))
 
-		item_price = tk.Label(add_men_frame, text="Price", font=("Calibre", 16, 'bold'))
-		price_entry = tk.Entry(add_men_frame, textvariable=price_var, font=("Calibre", 16))
+		item_price = tk.Label(self.master, text="Price", font=("Calibre", 16, 'bold'), background=BG_COLOR)
+		price_entry = tk.Entry(self.master, textvariable=price_var, font=("Calibre", 16))
 
-		item_category = tk.Label(add_men_frame, text="Category", font=("Calibre", 16, 'bold'))
-		category_entry = tk.Entry(add_men_frame, textvariable=cat_var, font=("Calibre", 16))
+		item_category = tk.Label(self.master, text="Category", font=("Calibre", 16, 'bold'), background=BG_COLOR)
+		category_entry = tk.Entry(self.master, textvariable=cat_var, font=("Calibre", 16))
 
-		submit = tk.Button(add_men_frame, text="Add",
+		submit = tk.Button(self.master, text="Add",
 						   command=lambda: item_frames.insert_item(name_var.get(), cat_var.get(), price_var.get(),
 																   name_entry,
 																   price_entry),
-						   font=("Calibre", 20, 'bold'))
+						   font=("Calibre", 20, 'bold'), width="10", height="3")
 
 		header.grid(column=2, row=2)
 
@@ -419,24 +422,23 @@ class App(tk.Frame):
 	def order_screen(self):
 		self.reset()
 
-		order_main_frame = tk.Frame(self.master)
-		order_main_frame.grid()
+		title_frame = tk.Frame(self.master, background=BG_COLOR)
+		title_frame.grid(row=1, column=2, columnspan=2)
 
-		title_frame = tk.Frame(order_main_frame)
-		title_frame.grid(row=1)
-
-		title = tk.Label(title_frame, text='New Order', font=("Calibre", 20, 'bold'), width='15', height='5')
+		title = tk.Label(title_frame, text='New Order', font=("Calibre", 20, 'bold'), background=BG_COLOR)
 		title.grid(row=1, column=2)
 
-		back = tk.Button(title_frame, command=lambda: self.main_login_screen(), text="Back",
-						 font=("Calibre", 20, 'bold'))
-		back.grid(row=1, column=1)
-
-		action_frame = tk.Frame(order_main_frame)
-		action_frame.grid(row=2)
+		action_frame = tk.Frame(self.master)
+		action_frame.grid(row=3, column=1, columnspan=4)
 
 		category_buttons = DynamicMenu(action_frame)
 		category_buttons.show_cat_list()
+
+		back = tk.Button(title_frame, command=lambda: category_buttons.delete_whole_order(self), text="Back",
+						 font=("Calibre", 20, 'bold'))
+		back.grid(row=1, column=1)
+
+
 		send_button = category_buttons.get_send_button()
 		send_button['command'] = lambda: category_buttons.send_order(self)
 
@@ -538,22 +540,28 @@ class App(tk.Frame):
 							   text="Sales", font=("Calibre", 16, 'bold'))
 		findBySale.pack(side=tk.TOP)
 
-		findByItem = tk.Button(button_frame, width="10", background=BG_COLOR, command=lambda: self.settings_menu(), text="Items",
+		findByItem = tk.Button(button_frame, width="10", background=BG_COLOR, command=lambda: saleData.findByItem((yearvar.get(), monthvar.get(), dayvar.get()),
+																   (toyearvar.get(), tomonthvar.get(), todayvar.get())), text="Items",
 							   font=("Calibre", 16, 'bold'))
 		findByItem.pack(side=tk.TOP)
 
-		findByCat = tk.Button(button_frame, width="10", background=BG_COLOR, command=lambda: self.settings_menu(),
+		findByCat = tk.Button(button_frame, width="10", background=BG_COLOR, command=lambda: saleData.findByCategory((yearvar.get(), monthvar.get(), dayvar.get()),
+																   (toyearvar.get(), tomonthvar.get(), todayvar.get())),
 							  text="Categories", font=("Calibre", 16, 'bold'))
 		findByCat.pack(side=tk.TOP)
 
 	def emp_analysis(self):
 		self.reset()
 
-		title = tk.Label(self.master, text='Employee Analytics', font=("Calibre", 20, 'bold'), width='15', height='5')
-		title.grid(row=1, column=4)
+		title_frame = tk.Frame(self.master, background=BG_COLOR)
+		title_frame.grid(row=1, column=2, columnspan=3)
 
-		back = tk.Button(self.master, command=lambda: self.settings_menu(), text="Back", font=("Calibre", 20, 'bold'))
-		back.grid(row=1, column=3)
+		back = tk.Button(title_frame, command=lambda: self.settings_menu(), text="Back", font=("Calibre", 20, 'bold'))
+		back.pack(side=tk.LEFT)
+
+		title = tk.Label(title_frame, text='Employee Analytics', background=BG_COLOR, font=("Calibre", 20, 'bold'),
+						 width='20', height='5')
+		title.pack(side=tk.LEFT)
 
 
 class ShowSaleData(tk.Frame):
@@ -602,8 +610,6 @@ class ShowSaleData(tk.Frame):
 		end = dt.date(enddate[0], self.months[enddate[1]], enddate[2])
 		sales = rep.get_sale_list(start, end)
 		total_sales = rep.total_sale_by_date(start, end)
-		print(rep.report_by_category(start, end))
-		print(rep.report_by_item(start, end))
 		period_totals = []
 		for entry in sales:
 			if sales[entry]:
@@ -642,12 +648,54 @@ class ShowSaleData(tk.Frame):
 					self.ticket.insert(tk.END, "\n\n")
 		if self.empty:
 			self.title['text'] = "No Orders To Show In Date Range"
+			self.empty = True
 		else:
 			all_totals = self._calcTotalPeriod(period_totals)
 			self.title[
 				'text'] = f"Showing Sales From {start} to {end} \t Period Total: ${all_totals[0]} from {all_totals[1]} Sales"
 		self.ticket['state'] = 'disabled'
 
+	def findByCategory(self, startdate: tuple, enddate: tuple):
+		self.ticket['state'] = 'normal'
+		self.ticket.delete('1.0', tk.END)
+		start = dt.date(startdate[0], self.months[startdate[1]], startdate[2])
+		end = dt.date(enddate[0], self.months[enddate[1]], enddate[2])
+		dates = rep.report_by_category(start, end)
+		for date in dates:
+			if dates[date]:
+				self.empty = False
+				self.ticket.insert(tk.END, f"Showing Category Sales On {date} \n")
+				self.ticket.insert(tk.END, "________________________________________\n\n")
+				for cat in dates[date]:
+					self.ticket.insert(tk.END, f"\t{dates[date][cat]} \t {cat}\n")
+				self.ticket.insert(tk.END, "\n\n")
+		if self.empty:
+			self.title['text'] = "No Sales To Show In Date Range"
+			self.empty = True
+		else:
+			self.title['text'] = f"Showing Category Sales From {start} to {end}"
+		self.ticket['state'] = 'disabled'
+
+	def findByItem(self, startdate: tuple, enddate: tuple):
+		self.ticket['state'] = 'normal'
+		self.ticket.delete('1.0', tk.END)
+		start = dt.date(startdate[0], self.months[startdate[1]], startdate[2])
+		end = dt.date(enddate[0], self.months[enddate[1]], enddate[2])
+		dates = rep.report_by_item(start, end)
+		for date in dates:
+			if dates[date]:
+				self.empty = False
+				self.ticket.insert(tk.END, f"Showing Item Sales On {date} \n")
+				self.ticket.insert(tk.END, "________________________________________\n\n")
+				for cat in dates[date]:
+					self.ticket.insert(tk.END, f"\t{dates[date][cat]} \t {cat}\n")
+				self.ticket.insert(tk.END, "\n\n")
+		if self.empty:
+			self.title['text'] = "No Sales To Show In Date Range"
+			self.empty = True
+		else:
+			self.title['text'] = f"Showing Item Sales From {start} to {end}"
+		self.ticket['state'] = 'disabled'
 
 
 class UpdatingCategories(tk.Frame):
@@ -690,7 +738,7 @@ class UpdatingCategories(tk.Frame):
 		cat_label = tk.Button(div, bg='gray',
 							  command=lambda i=i: self.toggle_items(self.buttons_dict[i], self.indiv_frames[i]),
 							  text=f'{i}',
-							  font=("Calibre", 18, 'bold'))
+							  font=("Calibre", 18, 'bold'), width="20")
 		self.buttons_dict[i] = cat_label
 		cat_label.pack(side=tk.TOP)
 
@@ -701,8 +749,8 @@ class UpdatingCategories(tk.Frame):
 			count += 1
 
 	def create_item(self, j: tuple, indiv_frame, count: int):
-		name_label = tk.Label(indiv_frame, text=f'{j[0]}', font=("Calibre", 18, 'bold'))
-		price_label = tk.Label(indiv_frame, text=f'$ {j[1]}', font=("Calibre", 18, 'bold'))
+		name_label = tk.Label(indiv_frame, text=f'{j[0]}', font=("Calibre", 18, 'bold'), width="10")
+		price_label = tk.Label(indiv_frame, text=f'$ {j[1]}', font=("Calibre", 18, 'bold'), width="10")
 		name_label.grid(column=1, row=count)
 		price_label.grid(column=2, row=count)
 
@@ -722,14 +770,20 @@ class DynamicMenu(tk.Frame):
 		self.master = master
 		self.active = None
 		self.buttons_dict = {}
+		self.items = {}
 		self.line = 1
+
 		ticket_frame = tk.Frame(self.master)
 		ticket_frame.grid(row=1, column=1)
+		self.order_grid = tk.Frame(ticket_frame, width="50")
+		self.order_grid.pack()
+		'''
 		self.ticket = tk.Text(ticket_frame, font=("Calibre", 18, 'bold'), width="30")
 		ys = tk.Scrollbar(ticket_frame, orient='vertical', command=self.ticket.yview)
 		self.ticket['yscrollcommand'] = ys.set
 		self.ticket.pack()
 		self.ticket['state'] = 'disabled'
+		'''
 		self.total = tk.Label(ticket_frame, text="Total: No Items Selected", font=("Calibre", 18, 'bold'))
 		self.total.pack(side=tk.TOP)
 		name_bar = tk.Frame(ticket_frame)
@@ -760,6 +814,7 @@ class DynamicMenu(tk.Frame):
 			cat_label.grid(column=1, row=c)
 			c += 1
 
+
 	def create_items(self, i: str, order_frame: tk.Frame):
 		col = True
 		if self.active:
@@ -770,7 +825,7 @@ class DynamicMenu(tk.Frame):
 		self.active = selections
 		count = 1
 		for j in cus.query_items()[i]:
-			name_label = tk.Button(selections, command=lambda j=j: self.insert_item(j), width="15", height="5",
+			name_label = tk.Button(selections, command=lambda j=j: self.insert_item2(j), width="15", height="5",
 								   text=f'{j[0]}', font=("Calibre", 18, 'bold'))
 			if col:
 				val = 1
@@ -780,6 +835,49 @@ class DynamicMenu(tk.Frame):
 			if val == 2:
 				count += 1
 			col = not col
+
+	def insert_item2(self, j: tuple):
+
+		cus.add_order(j[0], 1)
+		items = cus.show_order()
+
+		self._delete_order_grid()
+		self.items = {}
+		i = 0;
+		for order in reversed(list(items.keys())):
+			order_button = tk.Button(self.order_grid, command=lambda i=i: self.delete_item(i), font=("Calibre", 18, 'bold'), width="30", justify="left", anchor="w")
+			amount = int(items[order].get_amount())
+			name = items[order].get_item().get_name()
+			price = items[order].get_item().get_price()
+			order_button['text'] = f'{amount}  {name} \t\t {price}\n'
+			order_button.pack(side=tk.TOP)
+			self.items[i] = (order_button, name)
+			i += 1;
+		self.order_grid.pack(side=tk.TOP)
+		self.total['text'] = f'Total: ${round(cus.get_total(), 2)}'
+		self.send_button.pack(side=tk.BOTTOM)
+
+	def delete_item(self, i):
+		cus.delete_order(self.items[i][1])
+		self.items[i][0].destroy()
+		del self.items[i]
+		self.total['text'] = f'Total: ${round(cus.get_total(), 2)}'
+		if not self.items:
+			self.total['text'] = "Total: No Items Selected"
+
+
+	def _delete_order_grid(self):
+		"""Reset the list of participants"""
+		for child in self.order_grid.winfo_children():
+			child.destroy()
+
+	def delete_whole_order(self, app):
+		items = cp.deepcopy(cus.show_order())
+		print(items)
+		if items:
+			for order in items:
+				cus.delete_order(order)
+		app.main_login_screen()
 
 	def insert_item(self, j: tuple):
 		self.ticket['state'] = 'normal'
@@ -791,7 +889,7 @@ class DynamicMenu(tk.Frame):
 			amount = int(items[order].get_amount())
 			name = items[order].get_item().get_name()
 			price = items[order].get_item().get_price()
-			self.ticket.insert(f'{self.line}.0', f'{amount}  {name} \t \t {price}\n')
+			self.ticket.insert(f'{self.line}.0', f'{amount}  {name} \t\t {price}\n')
 			line += 1
 		self.ticket['state'] = 'disabled'
 		self.total['text'] = f'Total: ${round(cus.get_total(), 2)}'

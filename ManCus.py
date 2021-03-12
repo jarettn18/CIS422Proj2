@@ -203,6 +203,7 @@ def delete_menu(name):
 def delete_order(name):
     # delete order from list
     # read and write the list
+    print(list_dict['list_orders'])
     return list_dict['list_orders'].delete_order(name)
 
 """
