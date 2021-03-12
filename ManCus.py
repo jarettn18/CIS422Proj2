@@ -226,7 +226,6 @@ def delete_menu(name):
 def delete_order(name):
     # delete order from list
     # read and write the list
-    print(list_dict['list_orders'])
     return list_dict['list_orders'].delete_order(name)
 
 
@@ -299,11 +298,16 @@ def pay_order(customer):
     if customer:
         list_dict['list_orders'].set_customer(customer)
         # database move
-        ret = list_dict['list_orders'].get_receipt()
-        receiptdb = ManDB.ReceiptDatabase()
-        receiptdb.start_session()
-        receiptdb.add_receipt(list_dict['list_orders'])
-        list_dict['list_orders'] = ManClass.Receipt()
+        try:
+            ret = list_dict['list_orders'].get_receipt()
+            receiptdb = ManDB.ReceiptDatabase()
+            receiptdb.start_session()
+            receiptdb.add_receipt(list_dict['list_orders'])
+            list_dict['list_orders'] = ManClass.receipt()
+        except TypeError:
+            return False
+        except:
+            return False
     else:
         print("Invalid Input")
         ret = False
