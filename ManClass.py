@@ -320,11 +320,16 @@ class receipt:
 *   Date: 27 Feb 2021
 *   Last Created by: Perat Damrongsiri
 *   Edit History: v1.0: Creating all the function.
+*				  11 Mar 2021 - Perat Damrongsiri
+*				  v1.1 Bugs fixed
 """
 
 
 class Employee:
 	def __init__(self, name=None, permission='emp', login=None):
+		"""
+		class variables
+		"""
 		self._name = name
 		self._password_hash = None
 		self._permission = permission
@@ -333,12 +338,17 @@ class Employee:
 		self._recovery_key = None
 
 	def create(self, name, pass_hash, permission, rec_key):
+		"""
+		create an employee object.
+		"""
 		emp = Employee(name=name, permission=permission)
 		emp._password_hash = pass_hash
-		emp._recovery_key = rec_key
 		return emp
 
 	def is_admin(self):
+		"""
+		return boolean indicating that it is an admin or not
+		"""
 		if self._permission == 'admin':
 			ret = True
 		else:
@@ -346,6 +356,9 @@ class Employee:
 		return ret
 
 	def set_login_time(self):
+		"""
+		setter for _login_time
+		"""
 		if not self._login_time:
 			self._login_time = datetime.datetime.now()
 			ret = True
@@ -355,6 +368,9 @@ class Employee:
 		return ret
 
 	def set_logout_time(self):
+		"""
+		setter for _logout_time
+		"""
 		if self._login_time:
 			if not self._logout_time:
 				self._logout_time = datetime.datetime.now()
@@ -368,6 +384,9 @@ class Employee:
 		return ret
 
 	def set_password(self, password):
+		"""
+		setter for _password_hash
+		"""
 		if not self._password_hash:
 			if len(password) == 4:
 				self._password_hash = hashing(password)
@@ -381,6 +400,9 @@ class Employee:
 		return ret
 
 	def set_recovery_key(self):
+		"""
+		generate and set recovery key
+		"""
 		if not self._recovery_key:
 			self._recovery_key = random.randint(1000, 10000)
 			ret = self._recovery_key
@@ -390,6 +412,9 @@ class Employee:
 		return ret
 
 	def change_password(self, old_pass, new_pass):
+		"""
+		function for changing the password using old password as an authenticator
+		"""
 		old_pass_hash = hashing(old_pass)
 		if self._password_hash == old_pass_hash:
 			if len(new_pass) == 4:
@@ -404,6 +429,9 @@ class Employee:
 		return ret
 
 	def forgot_password(self, key, new_pass):
+		"""
+		function for reseting the password using recovery key as an authenticator
+		"""
 		if int(key) == self._recovery_key:
 			self._password_hash = hashing(new_pass)
 			ret = True
@@ -413,6 +441,9 @@ class Employee:
 		return ret
 
 	def get_login_time(self):
+		"""
+		getter for _login_time
+		"""
 		if self._login_time:
 			ret = self._login_time
 		else:
@@ -421,6 +452,9 @@ class Employee:
 		return ret
 
 	def get_logout_time(self):
+		"""
+		getter for _logout_time
+		"""
 		if self._logout_time:
 			ret = self._logout_time
 		else:
@@ -429,6 +463,9 @@ class Employee:
 		return ret
 
 	def get_name(self):
+		"""
+		getter for _name
+		"""
 		if self._name:
 			ret = self._name
 		else:
@@ -437,6 +474,9 @@ class Employee:
 		return ret
 
 	def set_to_admin(self, employee, password):
+		"""
+		set employee to admin
+		"""
 		if type(employee) == Employee:
 			if self._permission == 'admin':
 				if password == None and self._name == 'temp@#$':
@@ -457,6 +497,9 @@ class Employee:
 		return ret
 
 	def add_employee(self, name, permission='emp'):
+		"""
+		create employee object with emp permission and return it
+		"""
 		if self._permission == 'admin':
 			if name:
 				ret = Employee(name=name, permission=permission)
@@ -470,6 +513,9 @@ class Employee:
 		return ret
 
 	def add_admin(self, name, password):
+		"""
+		create employee object with admin permission and return it
+		"""
 		if self._permission == 'admin':
 			if self._password_hash == hashing(password):
 				new_employee = Employee(name=name, permission='admin')
@@ -484,6 +530,9 @@ class Employee:
 		return ret
 
 	def demote_from_admin(self, admin, password):
+		"""
+		demote admin back to emp
+		"""
 		if self._permission == 'admin':
 			if self._password_hash == hashing(password):
 				admin._permission = 'emp'
@@ -497,6 +546,9 @@ class Employee:
 		return ret
 
 	def checkpass(self, password):
+		"""
+		check that the password is correct or not.
+		"""
 		if self._password_hash == hashing(password):
 			ret = True
 		else:
@@ -505,6 +557,9 @@ class Employee:
 		return ret
 
 	def get_key(self):
+		"""
+		getter for _recovery_key
+		"""
 		if self._recovery_key:
 			ret = self._recovery_key
 		else:
@@ -512,6 +567,9 @@ class Employee:
 		return ret
 
 	def get_permission(self):
+		"""
+		getter for _permission
+		"""
 		if self._permission:
 			ret = self._permission
 		else:
@@ -519,6 +577,9 @@ class Employee:
 		return ret
 
 	def get_pass_hash(self):
+		"""
+		getter for _password_hash
+		"""
 		if self._password_hash:
 			ret = self._password_hash
 		else:
@@ -526,8 +587,14 @@ class Employee:
 		return ret
 
 	def reset_time(self):
+		"""
+		reset the login time and logout time to None.
+		"""
 		self._login_time = None
 		self._logout_time = None
 
 def hashing(param_in):
+	"""
+	hashing function using sha256.
+	"""
 	return hashlib.sha256(param_in.encode('ascii')).hexdigest()
