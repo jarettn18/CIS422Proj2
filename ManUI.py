@@ -43,7 +43,7 @@ class App(tk.Frame):
 				# insert name/pin in database
 				print(name)
 				print(pin)
-
+				stf.add_admin(name, )
 				name_var.set("")
 				pin_var.set("")
 				for widget in self.master.winfo_children():
@@ -95,23 +95,19 @@ class App(tk.Frame):
 		submit = tk.Button(self.master, text="Submit", command=_init_submit_button, font=("Calibre", 20, 'bold'))
 		submit.grid(row=5, column=3)
 
-	def main_login_screen(self, clear_screen=True):
+	def main_login_screen(self, clear_screen=True, clocked_in=None):
 		if clear_screen:
 			self.reset()
 
 		def _new_order():
-
 			print("New Order")
 
 		def _order_history():
 			print("Order History")
 
-		def _settings():
-			print("Settings")
-
-		def _clock_in():
-			print("Clock in")
-
+		if clocked_in is not None:
+			user = tk.Label(background=BG_COLOR, text=("Clocked in as: " + clocked_in), font=("Arial", 25, 'bold'))
+			user.grid(row=3, column=4, columnspan=2)
 		for i in range(6):
 			tk.Grid.rowconfigure(self.master, i, weight=1)
 			tk.Grid.columnconfigure(self.master, i, weight=1)
@@ -136,23 +132,28 @@ class App(tk.Frame):
 		order_hist = tk.Button(self.master, text="Order History", command=_order_history, font=("Calibre", 50, 'bold'))
 		order_hist.grid(row=1, column=4)
 
-		settings = tk.Button(self.master, text="Settings", command=lambda: self.settings_menu(),
+		settings = tk.Button(self.master, text="Settings", command=lambda: self.pin_screen("settings"),
 							 font=("Calibre", 30, 'bold'))
 		settings.grid(row=4, column=1)
 
-		clock_in = tk.Button(self.master, text="Clock In", command=_clock_in, font=("Calibre", 30, 'bold'))
+		clock_in = tk.Button(self.master, text="Clock In", command=lambda: self.pin_screen("clock"), font=("Calibre", 30, 'bold'))
 		clock_in.grid(row=4, column=4)
 
 		name_label = tk.Label(self.master, background=BG_COLOR, text="Administrator Use Only",
 							  font=("Calibre", 20, 'bold'))
 		name_label.grid(row=3, column=1, pady=20)
 
-	def pin_screen(self):
+	def pin_screen(self, mode):
+		self.reset()
 
-		def login():
+		def login(mode):
 			pin = pin_var.get()
 			# login with pin number
 			print(pin)
+			if mode == "settings":
+				self.settings_menu()
+			elif mode == "clock":
+				self.main_login_screen(True, "Jarett")
 
 		def add_char(c):
 			pin = pin_var.get()
@@ -213,7 +214,7 @@ class App(tk.Frame):
 		button0 = tk.Button(self.master, text="DEL", command=delete_char, font=("Calibre", 30, 'bold'))
 		button0.grid(row=4, column=4)
 
-		login_button = tk.Button(self.master, text="login", command=login, font=("Calibre", 25, 'bold'))
+		login_button = tk.Button(self.master, text="login", command=lambda: login(mode), font=("Calibre", 25, 'bold'))
 		login_button.grid(row=0, column=4)
 
 	def settings_menu(self):
