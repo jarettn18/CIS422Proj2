@@ -101,7 +101,21 @@ class App(tk.Frame):
 			self.reset()
 
 		def _order_history():
+			self.reset()
 			print("Order History")
+			date = dt.datetime.now()
+			date = date.strftime("%d %B %Y")
+			splits = date.split()
+			tup = (int(splits[2]), splits[1], int(splits[0]))
+
+			analysis = ShowSaleData(self.master)
+			analysis.findBySale(tup, tup)
+
+			back = tk.Button(self.master, text="Back", command=lambda: self.main_login_screen(), font=("Calibre", 20, 'bold'))
+			back.grid(row=2, column=1)
+
+			title = tk.Label(background=BG_COLOR, text="Order History", font=("Arial", 50, 'bold'))
+			title.grid(row=1, column=2, columnspan=2)
 
 		if len(self.clocked) > 0:
 			clocked_in = ""
