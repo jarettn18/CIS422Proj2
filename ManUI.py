@@ -158,22 +158,22 @@ class App(tk.Frame):
 			name = name_var.get()
 			pin = pin_var.get()
 			# login with pin number
-			print(pin)
 			if mode == "settings":
+
 				self.settings_menu()
 			elif mode == "clock":
 				stf.read_emp_db()
 				succ = stf.login(name.lower(), pin)
-				print(succ)
-				if (succ == 4):
+				msg, success = stf.get_message(succ)
+				if (success == True):
 					self.clocked.append(name)
 					self.main_login_screen()
 				else:
 					self.main_login_screen(True)
 			elif mode == "clock_out":
-				stf.read_emp_db()
 				succ = stf.logout(name.lower(), pin)
-				if (succ == 1):
+				msg, success = stf.get_message(succ)
+				if (success == True):
 					self.clocked.remove(name)
 					self.main_login_screen()
 				else:
