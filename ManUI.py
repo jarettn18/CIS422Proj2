@@ -534,7 +534,30 @@ class ShowSaleData(tk.Frame):
 		self.ticket['state'] = 'normal'
 		for entry in sales:
 			if sales[entry]:
-				self.ticket.insert(tk.END, sales[entry])
+				receipt_collection = {}
+				receipt_info = {}
+				for item in sales[entry]:
+					if item[0] in receipt_collection:
+						receipt_collection[item[0]].append((item[6], item[4], item[7], item[5])) # amount, item name, price, discount
+					else:
+						receipt_collection[item[0]] = []
+						receipt_collection[item[0]].append((item[6], item[4], item[7], item[5]))
+						hr = item[2].strftime("%H")
+						if int(hr) > 12:
+							ampm = "PM"
+						else:
+							ampm = "AM"
+						time = item[2].strftime("%I:%M:%S") + f" {ampm}"
+						receipt_info[item[0]] = (item[3], item[1], time) # Customer Name, Date, Time
+				for item in receipt_collection:
+					self.ticket.insert(tk.END, f"Receipt#: {item} \t Customer: {receipt_info[item][0]}\n")
+					self.ticket.insert(tk.END, f"Date: {receipt_info[item][1]} \t Time: {receipt_info[item][2]}\n ")
+					self.ticket.insert(tk.END, "___________________________________\n")
+					for food in receipt_collection[item]:
+						self.ticket.insert(tk.END, f"{food[0]} \t {food[1]} \t\t {food[2] * food[3]}\n")
+						if int(food[3]) != 1:
+							self.ticket.insert(tk.END, f"Price Adjust by %{food[3]}\n")
+					self.ticket.insert(tk.END, "\n\n")
 		self.ticket['state'] = 'disabled'
 
 
