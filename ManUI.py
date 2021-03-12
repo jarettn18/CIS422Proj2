@@ -640,11 +640,11 @@ class ShowSaleData(tk.Frame):
 					self.ticket.insert(tk.END, f"\t\tDate: {receipt_info[item][1]} \t Time: {receipt_info[item][2]}\n ")
 					self.ticket.insert(tk.END, "\t\t________________________________________\n")
 					for food in receipt_collection[item]:  # order of food: amount, item name, price, discount
-						self.ticket.insert(tk.END, f"\t\t{food[0]} \t {food[1]} \t\t ${food[0] * food[2] * food[3]}\n")
+						self.ticket.insert(tk.END, f"\t\t{food[0]} \t {food[1]} \t\t ${food[0] * food[2] * food[3]:.2f}\n")
 						if int(food[3]) != 1:
-							self.ticket.insert(tk.END, f"\t\t\t    Price Adjust by %{food[3]}\n")
+							self.ticket.insert(tk.END, f"\t\t\t    Price Adjust by %{food[3]:.2f}\n")
 					self.ticket.insert(tk.END, "\t\t\t_______________________________\n")
-					self.ticket.insert(tk.END, f"\t\t\t Total: \t\t ${self._calcTotal(receipt_collection[item])}\n")
+					self.ticket.insert(tk.END, f"\t\t\t Total: \t\t ${self._calcTotal(receipt_collection[item]):.2f}\n")
 					self.ticket.insert(tk.END, "\n\n")
 		if self.empty:
 			self.title['text'] = "No Orders To Show In Date Range"
@@ -652,7 +652,7 @@ class ShowSaleData(tk.Frame):
 		else:
 			all_totals = self._calcTotalPeriod(period_totals)
 			self.title[
-				'text'] = f"Showing Sales From {start} to {end} \t Period Total: ${all_totals[0]} from {all_totals[1]} Sales"
+				'text'] = f"Showing Sales From {start} to {end} \t Period Total: ${all_totals[0]:.2f} from {all_totals[1]} Sales"
 		self.ticket['state'] = 'disabled'
 
 	def findByCategory(self, startdate: tuple, enddate: tuple):
@@ -738,7 +738,7 @@ class UpdatingCategories(tk.Frame):
 		cat_label = tk.Button(div, bg='gray',
 							  command=lambda i=i: self.toggle_items(self.buttons_dict[i], self.indiv_frames[i]),
 							  text=f'{i}',
-							  font=("Calibre", 18, 'bold'), width="20")
+							  font=("Calibre", 18, 'bold'), width="40")
 		self.buttons_dict[i] = cat_label
 		cat_label.pack(side=tk.TOP)
 
@@ -749,8 +749,8 @@ class UpdatingCategories(tk.Frame):
 			count += 1
 
 	def create_item(self, j: tuple, indiv_frame, count: int):
-		name_label = tk.Label(indiv_frame, text=f'{j[0]}', font=("Calibre", 18, 'bold'), width="10")
-		price_label = tk.Label(indiv_frame, text=f'$ {j[1]}', font=("Calibre", 18, 'bold'), width="10")
+		name_label = tk.Label(indiv_frame, text=f'{j[0]}', font=("Calibre", 18, 'bold'), width="30")
+		price_label = tk.Label(indiv_frame, text=f'$ {j[1]:.2f}', font=("Calibre", 18, 'bold'), width="10")
 		name_label.grid(column=1, row=count)
 		price_label.grid(column=2, row=count)
 
@@ -849,7 +849,7 @@ class DynamicMenu(tk.Frame):
 			amount = int(items[order].get_amount())
 			name = items[order].get_item().get_name()
 			price = items[order].get_item().get_price()
-			order_button['text'] = f'{amount}  {name:50} \t {price:10.2f}\n'
+			order_button['text'] = f' {amount}  {name:50} \n\t\t\t\t {price:10.2f}\n'
 			order_button.pack(side=tk.TOP)
 			self.items[i] = (order_button, name)
 			i += 1;
