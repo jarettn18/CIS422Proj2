@@ -775,7 +775,7 @@ class DynamicMenu(tk.Frame):
 
 		ticket_frame = tk.Frame(self.master)
 		ticket_frame.grid(row=1, column=1)
-		self.order_grid = tk.Frame(ticket_frame, width="50")
+		self.order_grid = tk.Frame(ticket_frame, width="50", height="200")
 		self.order_grid.pack()
 		'''
 		self.ticket = tk.Text(ticket_frame, font=("Calibre", 18, 'bold'), width="30")
@@ -845,16 +845,16 @@ class DynamicMenu(tk.Frame):
 		self.items = {}
 		i = 0;
 		for order in reversed(list(items.keys())):
-			order_button = tk.Button(self.order_grid, command=lambda i=i: self.delete_item(i), font=("Calibre", 18, 'bold'), width="30", justify="left", anchor="w")
+			order_button = tk.Button(self.order_grid, command=lambda i=i: self.delete_item(i), font=("Calibre", 18, 'bold'), width="40", justify="left", anchor="w")
 			amount = int(items[order].get_amount())
 			name = items[order].get_item().get_name()
 			price = items[order].get_item().get_price()
-			order_button['text'] = f'{amount}  {name} \t\t {price}\n'
+			order_button['text'] = f'{amount}  {name:50} \t {price:10.2f}\n'
 			order_button.pack(side=tk.TOP)
 			self.items[i] = (order_button, name)
 			i += 1;
 		self.order_grid.pack(side=tk.TOP)
-		self.total['text'] = f'Total: ${round(cus.get_total(), 2)}'
+		self.total['text'] = f'Total: ${cus.get_total():.2f}'
 		self.send_button.pack(side=tk.BOTTOM)
 
 	def delete_item(self, i):
