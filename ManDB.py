@@ -91,6 +91,9 @@ class ItemDatabase:
 *   Last Created by: Perat Damrongsiri
 *   Edit History: 21 Feb 2021 - Perat Damrongsiri
 *                 v1.0: Creating all the function.
+*                 11 Mar 2021 - Perat Damrongsiri
+*                 v1.0.1: fix datetime different on the same receipt problem.
+*                         fixed the logic problem in delete_receipt.
 """
 
 
@@ -129,20 +132,27 @@ class ReceiptDatabase:
         """
         Add the receipt to the receipt database
         """
+        # check the datatype of receipt
         if type(receipt) == ManClass.receipt:
+            # finding the latest added receipt
             Session = sessionmaker(bind=self.engine)
             session = Session()
             desc_expression = db.sql.expression.desc(self.receipts.c.datetime)
             last_item = session.query(self.receipts).order_by(desc_expression).first()
+            # checking the date of the latest receipt and today date
             if last_item and last_item.date == datetime.date.today():
+                # on the same date. increse the receipt number by 1
                 rec_num = last_item.number + 1
             else:
+                # different date. reset receipt number to 1
                 rec_num = 1
 
             orders = receipt.get_orders()
             date = datetime.date.today()
             datetime = datetime.datetime.now()
+            # loop through orders in receipt
             for elem in orders:
+                # put each order into each row
                 query = db.insert(self.receipts).values(number=rec_num, date=date,
                     datetime=datetime, name=receipt.get_customer(),
                     orders=elem, discount=receipt.get_discount(),
@@ -150,6 +160,7 @@ class ReceiptDatabase:
                 ResultProxy = self.connection.execute(query)
             ret = True
         else:
+            # invalid datatype
             print("Error: ReceiptDatabase(): add_receipt(): receipt: Invalid data type.")
             ret = False
         return ret
@@ -158,27 +169,19 @@ class ReceiptDatabase:
         """
         Remove the specific receipt from the database
         """
+        # checking the receipt number
         if Decimal(receipt_num) % 1 == 0 and Decimal(receipt_num) > 0:
+            # check the date parameter
             if isinstance(date, datetime.date):
+                # check the name
                 if isinstance(name, str):
-                    Session = sessionmaker(bind=self.engine)
-                    session = Session()
-                    query_res = session.query(self.receipts).filter(self.receipts.c.number == receipt_num). \
-                        filter(self.receipts.c.date == date).filter(self.receipts.c.name == name).all()
-                    if len(query_res) > 1:
-                        if len(query_res) == 0:
-                            query = db.delete(self.receipts)
-                            query = query.where(self.receipts.c.number == receipt_num). \
-                                where(self.receipts.c.date == date). \
-                                where(self.receipts.c.name == name)
-                            self.connection.execute(query)
-                            ret = True
-                        else:
-                            print("Error: ReceiptDatabase(): delete_receipt(): Receipt not found.")
-                            ret = False
-                    else:
-                        print("Error: ReceiptDatabase(): delete_receipt(): Found more than 1 receipt.")
-                        ret = False
+                    # delete the receipt.
+                    query = db.delete(self.receipts)
+                    query = query.where(self.receipts.c.number == receipt_num). \
+                        where(self.receipts.c.date == date). \
+                        where(self.receipts.c.name == name)
+                    self.connection.execute(query)
+                    ret = True
                 else:
                     print("Error: ReceiptDatabase(): delete_receipt(): Invalid name's data type")
                     ret = False
@@ -300,7 +303,9 @@ class EmployeesDatabase:
         """
         add employee to the database.
         """
+        # check the datatype of employee
         if type(employee) == ManClass.Employee:
+            # add employee to the database
             query = db.insert(self.employees).values(name=employee.get_name(),
                 permission=employee.get_permission(),
                 pass_hash=employee.get_pass_hash(),
@@ -313,19 +318,29 @@ class EmployeesDatabase:
         return ret
 
     def delete_employee(self, name):
+        """
+        delete employee from database
+        """
         delete = self.employees.delete().where(self.employees.c.name == name)
         self.connection.execute(delete)
 
     def edit_employee(self, name, option, value):
+        """
+        edit employee's data in database according to the options which are name,
+        permission, and password.
+        """
         if option == 'name':
+            # change name.
             update = self.employees.update().where(self.employees.c.name == name).values(name=value)
             self.connection.execute(update)
             ret = True
         elif option == 'permission':
+            # change permission
             update = self.employees.update().where(self.employees.c.name == name).values(permission=value)
             self.connection.execute(update)
             ret = True
         elif option == 'password':
+            # change password
             update = self.employees.update().where(self.employees.c.name == name).values(pass_hash=value)
             self.connection.execute(update)
             ret = True
@@ -335,6 +350,9 @@ class EmployeesDatabase:
         return ret
 
     def is_exist(self):
+        """
+        checking that the database is exist or not.
+        """
         if db_utils.database_exists('sqlite:///ManEzEmployees.sqlite'):
             ret = True
         else:
@@ -342,5 +360,8 @@ class EmployeesDatabase:
         return ret
 
     def read_db(self):
+        """
+        read the database and return the data as a list.
+        """
         query = db.select([self.employees])
         return self.connection.execute(query).fetchall()
