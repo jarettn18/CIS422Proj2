@@ -8,6 +8,8 @@
 ## User Guide
 ## Documentation
     Python files that we used and funtions in each file.
+#### ManUI.py
+    UI
 #### ManCus.py
     add_item() : add new data into the list
     query_item() : add new data into the list
