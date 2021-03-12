@@ -156,7 +156,7 @@ class ReceiptDatabase:
                 query = db.insert(self.receipts).values(number=rec_num, date=date,
                     datetime=dt, name=receipt.get_customer(),
                     orders=elem, discount=receipt.get_discount(),
-                    amount=orders[elem].get_amount(), price=receipt.get_total())
+                    amount=orders[elem].get_amount(), price=orders[elem].get_item().get_price())
                 ResultProxy = self.connection.execute(query)
             ret = True
         else:

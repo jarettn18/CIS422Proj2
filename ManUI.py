@@ -272,7 +272,7 @@ class App(tk.Frame):
 								text='Create New Account', width='25', height='10', font=("Calibre", 20, 'bold'))
 		new_account.grid(row=2, column=1)
 
-		sales = tk.Button(settings_frame, cursor='circle', command=lambda: self.analysis(),text='Sales Analytics', width='25', height='10',
+		sales = tk.Button(settings_frame, cursor='circle', command=lambda: self.analysis() ,text='Sales Analytics', width='25', height='10',
 						  font=("Calibre", 20, 'bold'))
 		sales.grid(row=2, column=3)
 
@@ -281,7 +281,7 @@ class App(tk.Frame):
 						 font=("Calibre", 20, 'bold'))
 		edit.grid(row=3, column=3)
 
-		employee = tk.Button(settings_frame, cursor='circle', text='Employee Analytics', width='25', height='10',
+		employee = tk.Button(settings_frame, cursor='circle', command=lambda: self.emp_analysis(), text='Employee Analytics', width='25', height='10',
 							 font=("Calibre", 20, 'bold'))
 		employee.grid(row=3, column=1)
 
@@ -445,6 +445,11 @@ class App(tk.Frame):
 		style = ttk.Style()
 		style.configure("bg.TCombobox", forground=BG_COLOR, background=BG_COLOR)
 
+		date_today = dt.date.today()
+		year_today = date_today.year
+		month_today = date_today.month
+		day_today = date_today.day
+
 		monthvar = tk.StringVar()
 		month = ttk.Combobox(from_frame, state="readonly", style="bg.TCombobox", textvariable=monthvar,
 							 font=("Calibre", 16, 'bold'), width='10', height='5')
@@ -452,18 +457,21 @@ class App(tk.Frame):
 		'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November',
 		'December')
 		month.pack(side=tk.LEFT)
+		month.current(int(month_today)-1)
 
 		dayvar = tk.IntVar()
 		day = ttk.Combobox(from_frame, state="readonly", style="bg.TCombobox", textvariable=dayvar,
 						   font=("Calibre", 16, 'bold'), width='5', height='5')
 		day['values'] = [x for x in range(1, 32)]
 		day.pack(side=tk.LEFT)
+		day.current(int(day_today)-1)
 
 		yearvar = tk.IntVar()
 		year = ttk.Combobox(from_frame, state="readonly", style="bg.TCombobox", textvariable=yearvar,
 						   font=("Calibre", 16, 'bold'), width='5', height='5')
 		year['values'] = (2021)
 		year.pack(side=tk.LEFT)
+		yearvar.set(int(year_today))
 
 		tomonthvar = tk.StringVar()
 		tomonth = ttk.Combobox(to_frame, state="readonly", style="bg.TCombobox", textvariable=tomonthvar,
@@ -473,18 +481,21 @@ class App(tk.Frame):
 			'November',
 			'December')
 		tomonth.pack(side=tk.LEFT)
+		tomonth.current(int(month_today)-1)
 
 		todayvar = tk.IntVar()
 		today = ttk.Combobox(to_frame, state="readonly", style="bg.TCombobox", textvariable=todayvar,
 						   font=("Calibre", 16, 'bold'), width='5', height='5')
 		today['values'] = [x for x in range(1, 32)]
 		today.pack(side=tk.LEFT)
+		today.current(int(day_today)-1)
 
 		toyearvar = tk.IntVar()
 		toyear = ttk.Combobox(to_frame, state="readonly", style="bg.TCombobox", textvariable=toyearvar,
 							font=("Calibre", 16, 'bold'), width='5', height='5')
 		toyear['values'] = (2021)
 		toyear.pack(side=tk.LEFT)
+		toyearvar.set(int(year_today))
 
 		button_frame = tk.Frame(self.master, background=BG_COLOR,)
 		button_frame.grid(row=2, column=5)
@@ -552,8 +563,8 @@ class ShowSaleData(tk.Frame):
 					self.ticket.insert(tk.END, f"Receipt#: {item} \t Customer: {receipt_info[item][0]}\n")
 					self.ticket.insert(tk.END, f"Date: {receipt_info[item][1]} \t Time: {receipt_info[item][2]}\n ")
 					self.ticket.insert(tk.END, "___________________________________\n")
-					for food in receipt_collection[item]:
-						self.ticket.insert(tk.END, f"{food[0]} \t {food[1]} \t\t {food[2] * food[3]}\n")
+					for food in receipt_collection[item]: #order of food: amout, item name, price, discount
+						self.ticket.insert(tk.END, f"{food[0]} \t {food[1]} \t\t ${food[2] * food[3]}\n")
 						if int(food[3]) != 1:
 							self.ticket.insert(tk.END, f"Price Adjust by %{food[3]}\n")
 					self.ticket.insert(tk.END, "\n\n")
