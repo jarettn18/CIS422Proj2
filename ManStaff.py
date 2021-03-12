@@ -89,40 +89,52 @@ def is_emp_db_empty():
 *                 v1.1.2: Fixed functionality issue.
 *                 10 Mar 2021 - Perat Damrongsiri
 *                 v1.1.3: Bugs fixed.
+*                 11 Mar 2021 - Perat Damrongsiri
+*                 v1.2: added username checking.
 """
 def add_employee(name, current_user, password, firstrun=False, add_to_db=True):
-    # checking the optional parameter.
-    if firstrun and current_user is None:
-        # if firstrun is true and current_user is None, it will automatically make the
-        # first employee as an admin
-        temp = mc.Employee(name='temp@#$', permission='admin')
-        new_emp = temp.add_employee(name)
-        new_emp = temp.set_to_admin(new_emp, None)
-    else:
-        # if not, create employee normally.
-        new_emp = shopEmp[current_user].add_employee(name)
+    # check that name is not in the dictionary
+    if name not in shopEmp:
+        # check that the current user is in the dictionary
+        if current_user in shopEmp:
+            # checking the optional parameter.
+            if firstrun and current_user is None:
+                # if firstrun is true and current_user is None, it will automatically make the
+                # first employee as an admin
+                temp = mc.Employee(name='temp@#$', permission='admin')
+                new_emp = temp.add_employee(name)
+                new_emp = temp.set_to_admin(new_emp, None)
+            else:
+                # if not, create employee normally.
+                new_emp = shopEmp[current_user].add_employee(name)
 
-    # checking the return value from creating employee/admin
-    if new_emp == 1:
-        # Error #1 invalid name (string is empty)
-        print("Error: ManStaff: add_employee(): Invalid name.")
-        ret = 2
-    elif new_emp == 2:
-        # Error #2 current_user is not an admin
-        print("Error: ManStaff: add_employee(): Required admin permission.")
-        ret = 3
+            # checking the return value from creating employee/admin
+            if new_emp == 1:
+                # Error #1 invalid name (string is empty)
+                print("Error: ManStaff: add_employee(): Invalid name.")
+                ret = 2
+            elif new_emp == 2:
+                # Error #2 current_user is not an admin
+                print("Error: ManStaff: add_employee(): Required admin permission.")
+                ret = 3
+            else:
+                # Successfully create
+                shopEmp[name] = new_emp
+                shopEmp[name].set_password(password)
+                print("Successfully added new employee.")
+                if add_to_db:
+                    # add to database
+                    emp_database = db.EmployeesDatabase()
+                    emp_database.start_session()
+                    emp_database.add_employee(new_emp)
+                    print("Employee added to database.")
+                ret = new_emp.get_key()
+        else:
+            print("Error: ManStaff: add_employee(): current user does not exist.")
+            ret = 37
     else:
-        # Successfully create
-        shopEmp[name] = new_emp
-        shopEmp[name].set_password(password)
-        print("Successfully added new employee.")
-        if add_to_db:
-            # add to database
-            emp_database = db.EmployeesDatabase()
-            emp_database.start_session()
-            emp_database.add_employee(new_emp)
-            print("Employee added to database.")
-        ret = new_emp.get_key()
+        print("Error: ManStaff: add_employee(): name is already exist.")
+        ret = 36
     return ret
 
 """
@@ -223,35 +235,43 @@ def logout(name, password):
 *                 v1.1: Linked it to employee database.
 *                 10 Mar 2021 - Perat Damrongsiri
 *                 v1.1.1: Bugs fixed
+*                 11 Mar 2021 - Perat Damrongsiri
+*                 v1.2: added username checking.
 """
 def remove_employee(name, current_user, password):
-    # checking that current user is an admin
-    if shopEmp[current_user].is_admin():
-        # check the admin's password
-        if shopEmp[current_user].checkpass(password):
-            # checking that the employee exist.
-            if name in shopEmp:
-                # the employee exist
-                # delete from dictionary
-                del shopEmp[name]
-                # delete from employee database
-                emp_database = db.EmployeesDatabase()
-                emp_database.start_session()
-                emp_database.delete_employee(name)
-                print("Successfully remove employee.")
-                ret = 11
+    # checking that thte current_user is exist
+    if current_user in shopEmp:
+        # checking that current user is an admin
+        if shopEmp[current_user].is_admin():
+            # check the admin's password
+            if shopEmp[current_user].checkpass(password):
+                # checking that the employee exist.
+                if name in shopEmp:
+                    # the employee exist
+                    # delete from dictionary
+                    del shopEmp[name]
+                    # delete from employee database
+                    emp_database = db.EmployeesDatabase()
+                    emp_database.start_session()
+                    emp_database.delete_employee(name)
+                    print("Successfully remove employee.")
+                    ret = 11
+                else:
+                    # the employee does not exist
+                    print("Error: ManStaff: remove_employee(): This Employee does not exist.")
+                    ret = 12
             else:
-                # the employee does not exist
-                print("Error: ManStaff: remove_employee(): This Employee does not exist.")
-                ret = 12
+                # wrong password
+                print("Error: ManStaff: remove_employee(): Wrong Password.")
+                ret = 13
         else:
-            # wrong password
-            print("Error: ManStaff: remove_employee(): Wrong Password.")
-            ret = 13
+            # the current user is not an admin
+            print("Error: ManStaff: remove_employee(): Require Admin Permission.")
+            ret = 14
     else:
-        # the current user is not an admin
-        print("Error: ManStaff: remove_employee(): Require Admin Permission.")
-        ret = 14
+        # the current user not exist
+        print("Error: ManStaff: remove_employee(): current user does not exist.")
+        ret = 37
     return ret
 
 """
@@ -267,30 +287,38 @@ def remove_employee(name, current_user, password):
 *                 v1.1: Linked it to employee database.
 *                 10 Mar 2021 - Perat Damrongsiri
 *                 v1.1.1: Bugs fixed
+*                 11 Mar 2021 - Perat Damrongsiri
+*                 v1.2: added username checking.
 """
 def add_admin(name, current_user, new_ad_pass, curr_user_pass):
-    # create new employee object with admin permission
-    new_admin = shopEmp[current_user].add_admin(name, curr_user_pass)
-    # check the return value of add_admin
-    if new_admin == 2:
-        # wrong admin's password
-        print("Error: ManStaff: add_admin(): Wrong Password.")
-        ret = 15
-    elif new_admin == 3:
-        # the current_user is not an admin
-        print("Error: ManStaff: add_admin(): Require Admin Permission.")
-        ret = 16
+    # checking that thte current_user is exist
+    if current_user in shopEmp:
+        # create new employee object with admin permission
+        new_admin = shopEmp[current_user].add_admin(name, curr_user_pass)
+        # check the return value of add_admin
+        if new_admin == 2:
+            # wrong admin's password
+            print("Error: ManStaff: add_admin(): Wrong Password.")
+            ret = 15
+        elif new_admin == 3:
+            # the current_user is not an admin
+            print("Error: ManStaff: add_admin(): Require Admin Permission.")
+            ret = 16
+        else:
+            # successfully created
+            new_admin.set_password(new_ad_pass)
+            shopEmp[name] = new_admin
+            print("Successfully added admin.")
+            # add to database
+            emp_database = db.EmployeesDatabase()
+            emp_database.start_session()
+            emp_database.add_employee(new_admin)
+            print("admin added to database.")
+            ret = new_admin.get_key()
     else:
-        # successfully created
-        new_admin.set_password(new_ad_pass)
-        shopEmp[name] = new_admin
-        print("Successfully added admin.")
-        # add to database
-        emp_database = db.EmployeesDatabase()
-        emp_database.start_session()
-        emp_database.add_employee(new_admin)
-        print("admin added to database.")
-        ret = new_admin.get_key()
+        # the current user not exist
+        print("Error: ManStaff: add_admin(): current user does not exist.")
+        ret = 37
     return ret
 
 """
@@ -307,31 +335,45 @@ def add_admin(name, current_user, new_ad_pass, curr_user_pass):
 *                 v1.1.1: Bugs Fixed.
 *                 10 Mar 2021 - Perat Damrongsiri
 *                 v1.1.2: Bugs fixed
+*                 11 Mar 2021 - Perat Damrongsiri
+*                 v1.2: added username checking.
 """
 def promote_to_admin(name, current_user, password):
-    # set the employee to admin
-    suc = shopEmp[current_user].set_to_admin(shopEmp[name], password)
-    # check the return value of set admin
-    if type(suc) == mc.Employee:
-        # suc is employee
-        # update the database
-        emp_database = db.EmployeesDatabase()
-        emp_database.start_session()
-        emp_database.edit_employee(name, 'permission', 'admin')
-        print("Successfully promoted.")
-        ret = 18
-    elif suc == 2:
-        # wrong admin's password
-        print("Error: ManStaff: promote_to_admin(): Wrong Password.")
-        ret = 19
-    elif suc == 3:
-        # current_user is not an admin
-        print("Error: ManStaff: promote_to_admin(): Require Admin Permission.")
-        ret = 20
-    elif suc == 4:
-        # employee is not Employee object
-        print("Error: ManStaff: promote_to_admin(): employee is not Employee object.")
-        ret = 21
+    # checking that thte current_user is exist
+    if current_user in shopEmp:
+        # checking that thte name is exist
+        if name in shopEmp:
+            # set the employee to admin
+            suc = shopEmp[current_user].set_to_admin(shopEmp[name], password)
+            # check the return value of set admin
+            if type(suc) == mc.Employee:
+                # suc is employee
+                # update the database
+                emp_database = db.EmployeesDatabase()
+                emp_database.start_session()
+                emp_database.edit_employee(name, 'permission', 'admin')
+                print("Successfully promoted.")
+                ret = 18
+            elif suc == 2:
+                # wrong admin's password
+                print("Error: ManStaff: promote_to_admin(): Wrong Password.")
+                ret = 19
+            elif suc == 3:
+                # current_user is not an admin
+                print("Error: ManStaff: promote_to_admin(): Require Admin Permission.")
+                ret = 20
+            elif suc == 4:
+                # employee is not Employee object
+                print("Error: ManStaff: promote_to_admin(): employee is not Employee object.")
+                ret = 21
+        else:
+            # name does not exist
+            print("Error: ManStaff: promote_to_admin(): name does not exist.")
+            ret = 38
+    else:
+        # the current user not exist
+        print("Error: ManStaff: promote_to_admin(): current user does not exist.")
+        ret = 37
     return ret
 
 """
@@ -346,27 +388,41 @@ def promote_to_admin(name, current_user, password):
 *                 v1.1: Linked it to employee database.
 *                 10 Mar 2021 - Perat Damrongsiri
 *                 v1.1.1: Bugs fixed.
+*                 11 Mar 2021 - Perat Damrongsiri
+*                 v1.2: added username checking.
 """
 def demote_from_admin(name, current_user, password):
-    # demote admin to employee
-    suc = shopEmp[current_user].demote_from_admin(shopEmp[name], password)
-    # check the return value
-    if suc == 1:
-        # successfully demote
-        # update the database
-        emp_database = db.EmployeesDatabase()
-        emp_database.start_session()
-        emp_database.edit_employee(name, 'permission', 'emp')
-        print("Successfully demoted.")
-        ret = 22
-    elif suc == 2:
-        # wrong admin's password
-        print("Error: ManStaff: demote_from_admin(): Wrong Password.")
-        ret = 23
-    elif suc == 3:
-        # current_user is not an admin
-        print("Error: ManStaff: demote_from_admin(): Require Admin Permission.")
-        ret = 24
+    # checking that thte current_user is exist
+    if current_user in shopEmp:
+        # checking that thte name is exist
+        if name in shopEmp:
+            # demote admin to employee
+            suc = shopEmp[current_user].demote_from_admin(shopEmp[name], password)
+            # check the return value
+            if suc == 1:
+                # successfully demote
+                # update the database
+                emp_database = db.EmployeesDatabase()
+                emp_database.start_session()
+                emp_database.edit_employee(name, 'permission', 'emp')
+                print("Successfully demoted.")
+                ret = 22
+            elif suc == 2:
+                # wrong admin's password
+                print("Error: ManStaff: demote_from_admin(): Wrong Password.")
+                ret = 23
+            elif suc == 3:
+                # current_user is not an admin
+                print("Error: ManStaff: demote_from_admin(): Require Admin Permission.")
+                ret = 24
+        else:
+            # name does not exist
+            print("Error: ManStaff: demote_from_admin(): name does not exist.")
+            ret = 38
+    else:
+        # the current user not exist
+        print("Error: ManStaff: demote_from_admin(): current user does not exist.")
+        ret = 37
     return ret
 
 """
@@ -381,27 +437,35 @@ def demote_from_admin(name, current_user, password):
 *                 v1.1: Update the logic and returning value to be more robust.
 *                 6 Mar 2021 - Perat Damrongsiri
 *                 v1.2: Linked it to employee database.
+*                 11 Mar 2021 - Perat Damrongsiri
+*                 v1.3: added username checking.
 """
 def change_password(name, old_pass, new_pass):
-    # call change password in ManClass
-    res = shopEmp[name].change_password(old_pass, new_pass)
-    # check the return value
-    if res == 1:
-        # successfully changes password
-        # update the database
-        emp_database = db.EmployeesDatabase()
-        emp_database.start_session()
-        emp_database.edit_employee(name, 'password', shopEmp[name].get_pass_hash())
-        print("Successfully change password.")
-        ret = 29
-    elif res == 2:
-        # invalid new password
-        print("New password has to be 4 characters.")
-        ret = 29
-    elif res == 3:
-        # invalid old password
-        print("Invalid Password (Previous Password does not match).")
-        ret = 31
+    # checking that thte name is exist
+    if name in shopEmp:
+        # call change password in ManClass
+        res = shopEmp[name].change_password(old_pass, new_pass)
+        # check the return value
+        if res == 1:
+            # successfully changes password
+            # update the database
+            emp_database = db.EmployeesDatabase()
+            emp_database.start_session()
+            emp_database.edit_employee(name, 'password', shopEmp[name].get_pass_hash())
+            print("Successfully change password.")
+            ret = 29
+        elif res == 2:
+            # invalid new password
+            print("New password has to be 4 characters.")
+            ret = 29
+        elif res == 3:
+            # invalid old password
+            print("Invalid Password (Previous Password does not match).")
+            ret = 31
+    else:
+        # name does not exist
+        print("Error: ManStaff: demote_from_admin(): name does not exist.")
+        ret = 38
     return ret
 
 """
@@ -415,24 +479,32 @@ def change_password(name, old_pass, new_pass):
 *                 v1.0: Created.
 *                 6 Mar 2021 - Perat Damrongsiri
 *                 v1.1: Linked it to employee database.
+*                 11 Mar 2021 - Perat Damrongsiri
+*                 v1.2: added username checking.
 """
 def forgot_password(name, key, new_pass):
-    if len(new_pass) != 4:
-        # invalid new password
-        print("New password has to be 4 characters.")
-        ret = 32
-    elif shopEmp[name].forgot_password(key, new_pass):
-        # successfully reset password
-        # update the database
-        emp_database = db.EmployeesDatabase()
-        emp_database.start_session()
-        emp_database.edit_employee(name, 'password', shopEmp[name].get_pass_hash())
-        print("Successfully change password.")
-        ret = 33
+    # checking that thte name is exist
+    if name in shopEmp:
+        if len(new_pass) != 4:
+            # invalid new password
+            print("New password has to be 4 characters.")
+            ret = 32
+        elif shopEmp[name].forgot_password(key, new_pass):
+            # successfully reset password
+            # update the database
+            emp_database = db.EmployeesDatabase()
+            emp_database.start_session()
+            emp_database.edit_employee(name, 'password', shopEmp[name].get_pass_hash())
+            print("Successfully change password.")
+            ret = 33
+        else:
+            # wrong recovery key
+            print("Error: ManStaff: forgot_password(): Wrong recovery key.")
+            ret = 34
     else:
-        # wrong recovery key
-        print("Error: ManStaff: forgot_password(): Wrong recovery key.")
-        ret = 34
+        # name does not exist
+        print("Error: ManStaff: demote_from_admin(): name does not exist.")
+        ret = 38
     return ret
 
 """
@@ -445,6 +517,7 @@ def forgot_password(name, key, new_pass):
 *                 v1.0: Created.
 """
 def is_admin(name):
+    # check that the name is exist
     if name in shopEmp:
         ret = shopEmp[name].is_admin()
     else:
@@ -535,6 +608,12 @@ def get_message(code):
         ret = "Wrong recovery key.", False
     elif code == 35:
         ret = "Username does not exist.", False
+    elif code == 36:
+        ret = "Username is already exist.", False
+    elif code == 37:
+        ret = "current user does not exist.", False
+    elif code == 38:
+        ret = "name does not exist.", False
     elif code > 999:
         ret = ("Successfully added new admin/employee. Recovery key is: " + str(code)), True
     return ret
