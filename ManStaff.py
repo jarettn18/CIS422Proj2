@@ -24,7 +24,7 @@ shopEmp = {}
 *   Created by: Perat Damrongsiri
 *   Edit History: 8 Mar 2021 - Perat Damrongsiri
 *                 v1.0: Created this function.
-*                 11 Mar 2021 - Perat Damrongsiri
+*                 10 Mar 2021 - Perat Damrongsiri
 *                 v1.1: Bugs fixed
 """
 def read_emp_db():
@@ -51,7 +51,7 @@ def read_emp_db():
 *                 v1.0: Added half of the functionality.
 *                 6 Mar 2021 - Perat Damrongsiri
 *                 v1.0.1: Finished creating the function
-*                 11 Mar 2021 - Perat Damrongsiri
+*                 10 Mar 2021 - Perat Damrongsiri
 *                 v1.1: Bugs fixed
 """
 def is_emp_db_empty():
@@ -87,7 +87,7 @@ def is_emp_db_empty():
 *                 v1.1.1: Fixed the some changes.
 *                 8 Mar 2021 - Perat Damrongsiri
 *                 v1.1.2: Fixed functionality issue.
-*                 11 Mar 2021 - Perat Damrongsiri
+*                 10 Mar 2021 - Perat Damrongsiri
 *                 v1.1.3: Bugs fixed.
 """
 def add_employee(name, current_user, password, firstrun=False, add_to_db=True):
@@ -135,25 +135,32 @@ def add_employee(name, current_user, password, firstrun=False, add_to_db=True):
 *                 v1.0: Created.
 *                 8 Mar 2021 - Perat Damrongsiri
 *                 v1.0.1: Fixed the wrong error message.
-*                 11 Mar 2021 - Perat Damrongsiri
+*                 10 Mar 2021 - Perat Damrongsiri
 *                 v1.1: Bugs fixed
+*                 11 Mar 2021 - Perat Damrongsiri
+*                 v1.2: add checking username
 """
 def login(name, password):
-    # checking the password
-    if shopEmp[name].checkpass(password):
-        # check that is the user login already or not.
-        if shopEmp[name].set_login_time():
-            # successfully login
-            print("ManStaff: login(): Successfully login.")
-            ret = 4
+    # check that the username is exist
+    if name in shopEmp:
+        # checking the password
+        if shopEmp[name].checkpass(password):
+            # check that is the user login already or not.
+            if shopEmp[name].set_login_time():
+                # successfully login
+                print("ManStaff: login(): Successfully login.")
+                ret = 4
+            else:
+                # already login
+                print("ManStaff: login(): Already login.")
+                ret = 5
         else:
-            # already login
-            print("ManStaff: login(): Already login.")
-            ret = 5
+            # wrong password
+            print("ManStaff: login(): Wrong password.")
+            ret = 6
     else:
-        # wrong password
-        print("ManStaff: login(): Wrong password.")
-        ret = 6
+        print("ManStaff: login(): Employee does not exist.")
+        ret = 35
     return ret
 
 """
@@ -167,34 +174,41 @@ def login(name, password):
 *                 v1.0: Created.
 *                 8 Mar 2021 - Perat Damrongsiri
 *                 v1.1: Linked it to work time database.
+*                 11 Mar 2021 - Perat Damrongsiri
+*                 v1.2: add checking username
 """
 def logout(name, password):
-    # checking password
-    if shopEmp[name].checkpass(password):
-        res = shopEmp[name].set_logout_time()
-        # check the return value from set logout time
-        if res == 1:
-            # successfully logout
-            print("ManStaff: logout(): Successfully logout.")
-            # add work time to the database using ManDB
-            timedb = db.WorkTimeDatabase()
-            timedb.start_session()
-            timedb.checkout(shopEmp[name])
-            # set login and logout time to None
-            shopEmp[name].reset_time()
-            ret = 7
-        elif res == 2:
-            # already logout
-            print("ManStaff: logout(): Already logout.")
-            ret = 8
+    # check that the username is exist
+    if name in shopEmp:
+        # checking password
+        if shopEmp[name].checkpass(password):
+            res = shopEmp[name].set_logout_time()
+            # check the return value from set logout time
+            if res == 1:
+                # successfully logout
+                print("ManStaff: logout(): Successfully logout.")
+                # add work time to the database using ManDB
+                timedb = db.WorkTimeDatabase()
+                timedb.start_session()
+                timedb.checkout(shopEmp[name])
+                # set login and logout time to None
+                shopEmp[name].reset_time()
+                ret = 7
+            elif res == 2:
+                # already logout
+                print("ManStaff: logout(): Already logout.")
+                ret = 8
+            else:
+                # did not login yet.
+                print("ManStaff: logout(): This employee did not login yet.")
+                ret = 9
         else:
-            # did not login yet.
-            print("ManStaff: logout(): This employee did not login yet.")
-            ret = 9
+            # wrong password
+            print("ManStaff: logout(): Wrong password.")
+            ret = 10
     else:
-        # wrong password
-        print("ManStaff: logout(): Wrong password.")
-        ret = 10
+        print("ManStaff: logout(): Employee does not exist.")
+        ret = 35
     return ret
 
 """
@@ -207,7 +221,7 @@ def logout(name, password):
 *                 v1.0: Created.
 *                 6 Mar 2021 - Perat Damrongsiri
 *                 v1.1: Linked it to employee database.
-*                 11 Mar 2021 - Perat Damrongsiri
+*                 10 Mar 2021 - Perat Damrongsiri
 *                 v1.1.1: Bugs fixed
 """
 def remove_employee(name, current_user, password):
@@ -251,7 +265,7 @@ def remove_employee(name, current_user, password):
 *                 v1.0: Created.
 *                 6 Mar 2021 - Perat Damrongsiri
 *                 v1.1: Linked it to employee database.
-*                 11 Mar 2021 - Perat Damrongsiri
+*                 10 Mar 2021 - Perat Damrongsiri
 *                 v1.1.1: Bugs fixed
 """
 def add_admin(name, current_user, new_ad_pass, curr_user_pass):
@@ -291,7 +305,7 @@ def add_admin(name, current_user, new_ad_pass, curr_user_pass):
 *                 v1.1: Linked it to employee database.
 *                 8 Mar 2021 - Perat Damrongsiri
 *                 v1.1.1: Bugs Fixed.
-*                 11 Mar 2021 - Perat Damrongsiri
+*                 10 Mar 2021 - Perat Damrongsiri
 *                 v1.1.2: Bugs fixed
 """
 def promote_to_admin(name, current_user, password):
@@ -330,7 +344,7 @@ def promote_to_admin(name, current_user, password):
 *                 v1.0: Created.
 *                 6 Mar 2021 - Perat Damrongsiri
 *                 v1.1: Linked it to employee database.
-*                 11 Mar 2021 - Perat Damrongsiri
+*                 10 Mar 2021 - Perat Damrongsiri
 *                 v1.1.1: Bugs fixed.
 """
 def demote_from_admin(name, current_user, password):
@@ -422,6 +436,22 @@ def forgot_password(name, key, new_pass):
     return ret
 
 """
+*   Function: is_admin
+*   Description: This function check that the <name> is an admin or not
+*
+*   Date: 11 Mar 2021
+*   Created by: Perat Damrongsiri
+*   Edit History: 11 Mar 2021 - Perat Damrongsiri
+*                 v1.0: Created.
+"""
+def is_admin(name):
+    if name in shopEmp:
+        ret = shopEmp[name].is_admin()
+    else:
+        ret = False
+    return ret
+
+"""
 *   Function: get_message
 *   Description: This function will convert the error code to error message, and
 *                boolean to indicate that it's error or success.
@@ -432,7 +462,7 @@ def forgot_password(name, key, new_pass):
 *                 v1.0: Created.
 *                 6 Mar 2021 - Perat Damrongsiri
 *                 v1.1: Added the message and boolean that are needed to return.
-*                 11 Mar 2021 - Perat Damrongsiri
+*                 10 Mar 2021 - Perat Damrongsiri
 *                 v1.2: Fixed some message.
 """
 def get_message(code):
@@ -503,5 +533,8 @@ def get_message(code):
         ret = "Successfully change password.", True
     elif code == 34:
         ret = "Wrong recovery key.", False
+    elif code == 35:
+        ret = "Username does not exist.", False
     elif code > 999:
         ret = ("Successfully added new admin/employee. Recovery key is: " + str(code)), True
+    return ret
