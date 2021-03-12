@@ -470,7 +470,6 @@ class App(tk.Frame):
 		findByCat = tk.Button(button_frame, background=BG_COLOR, command=lambda: self.settings_menu(), text="Categories", font=("Calibre", 16, 'bold'))
 		findByCat.pack(side=tk.TOP)
 
-
 	def emp_analysis(self):
 		self.reset()
 
@@ -480,14 +479,29 @@ class App(tk.Frame):
 		back = tk.Button(self.master, command=lambda: self.settings_menu(), text="Back", font=("Calibre", 20, 'bold'))
 		back.grid(row=1, column=3)
 
+
 class ShowSaleData(tk.Frame):
 
 	def __init__(self, master=None):
 		super().__init__(master)
 		self.master = master
+		self.months = {'January': 1, 'February': 2, 'March': 3, 'April': 4, 'May': 5, 'June': 6, 'July': 7, 'August': 8, 'September': 9, 'October': 10,'November': 11,'December': 12}
+		self.ticket = tk.Text(self.master, font=("Calibre", 18, 'bold'))
+		ys = tk.Scrollbar(self.master, orient='vertical', command=self.ticket.yview)
+		self.ticket['yscrollcommand'] = ys.set
+		self.ticket.grid(column=1, row=3, columnspan=6, rowspan=3)
+		self.ticket['state'] = 'disabled'
 
 	def findBySale(self, startdate: tuple, enddate: tuple):
-		print(startdate, enddate)
+		start = dt.date(startdate[0], self.months[startdate[1]], startdate[2])
+		end = dt.date(enddate[0], self.months[enddate[1]], enddate[2])
+		sales = rep.get_sale_list(start, end)
+		self.ticket['state'] = 'normal'
+		for entry in sales:
+			if sales[entry]:
+				self.ticket.insert(tk.END, sales[entry])
+		self.ticket['state'] = 'disabled'
+
 
 
 class UpdatingCategories(tk.Frame):
