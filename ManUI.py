@@ -273,7 +273,7 @@ class App(tk.Frame):
 								text='Create New Account', width='25', height='10', font=("Calibre", 20, 'bold'))
 		new_account.grid(row=2, column=1)
 
-		sales = tk.Button(settings_frame, cursor='circle', text='Sales Analytics', width='25', height='10',
+		sales = tk.Button(settings_frame, cursor='circle', command=lambda: self.analysis(),text='Sales Analytics', width='25', height='10',
 						  font=("Calibre", 20, 'bold'))
 		sales.grid(row=2, column=3)
 
