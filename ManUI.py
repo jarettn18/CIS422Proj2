@@ -333,7 +333,7 @@ class App(tk.Frame):
 		pin_label = tk.Label(self.master, text="Pin", font=("Calibre", 18, 'bold'), background=BG_COLOR)
 		pin_entry = tk.Entry(self.master, textvariable=pin_var, font=("Calibre", 16))
 
-		confirm_label = tk.Label(self.master, text="Pin", font=("Calibre", 18, 'bold'), background=BG_COLOR)
+		confirm_label = tk.Label(self.master, text="Confirm Pin", font=("Calibre", 18, 'bold'), background=BG_COLOR)
 		confirm_entry = tk.Entry(self.master, textvariable=confirmvar, font=("Calibre", 16))
 
 		submit = tk.Button(self.master, text="Create",
