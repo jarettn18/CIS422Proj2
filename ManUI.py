@@ -10,12 +10,11 @@
 *	Date Created: 22 Feb 2022
 """
 import tkinter as tk
-from tkinter import ttk
+import tkinter.ttk as ttk
 import ManCus as cus
 import ManStaff as stf
 import ManReport as rep
 import datetime as dt
-
 BG_COLOR = 'gray'
 
 
@@ -25,6 +24,7 @@ class App(tk.Frame):
 		super().__init__(master)
 		self.master = master
 		self.grid()
+		self.clocked = []
 
 	def reset(self):
 		"""Reset the list of participants"""
@@ -44,9 +44,7 @@ class App(tk.Frame):
 				confirm_pin_label.grid(row=5, column=2)
 			else:
 				# insert name/pin in database
-				print(name)
-				print(pin)
-
+				stf.add_employee(name.lower(), None, pin, firstrun=True)
 				name_var.set("")
 				pin_var.set("")
 				for widget in self.master.winfo_children():
@@ -103,17 +101,19 @@ class App(tk.Frame):
 			self.reset()
 
 		def _new_order():
-
 			print("New Order")
 
 		def _order_history():
 			print("Order History")
 
-		def _settings():
-			print("Settings")
-
-		def _clock_in():
-			print("Clock in")
+		if len(self.clocked) > 0:
+			clocked_in = ""
+			for emp in self.clocked:
+				clocked_in += emp
+				clocked_in += ", "
+			clocked_in = clocked_in[:len(clocked_in) - 2]
+			user = tk.Label(background=BG_COLOR, text=("Clocked in as: " + clocked_in), font=("Arial", 25, 'bold'))
+			user.grid(row=3, column=4, columnspan=2)
 
 		for i in range(6):
 			tk.Grid.rowconfigure(self.master, i, weight=1)
@@ -139,23 +139,47 @@ class App(tk.Frame):
 		order_hist = tk.Button(self.master, text="Order History", command=_order_history, font=("Calibre", 50, 'bold'))
 		order_hist.grid(row=1, column=4)
 
-		settings = tk.Button(self.master, text="Settings", command=lambda: self.settings_menu(),
+		settings = tk.Button(self.master, text="Settings", command=lambda: self.pin_screen("settings"),
 							 font=("Calibre", 30, 'bold'))
 		settings.grid(row=4, column=1)
 
-		clock_in = tk.Button(self.master, text="Clock In", command=_clock_in, font=("Calibre", 30, 'bold'))
+		clock_in = tk.Button(self.master, text="Clock In", command=lambda: self.pin_screen("clock"), font=("Calibre", 30, 'bold'))
 		clock_in.grid(row=4, column=4)
+
+		clock_in = tk.Button(self.master, text="Clock Out", command=lambda: self.pin_screen("clock_out"), font=("Calibre", 30, 'bold'))
+		clock_in.grid(row=5, column=4)
 
 		name_label = tk.Label(self.master, background=BG_COLOR, text="Administrator Use Only",
 							  font=("Calibre", 20, 'bold'))
 		name_label.grid(row=3, column=1, pady=20)
 
-	def pin_screen(self):
+	def pin_screen(self, mode):
+		self.reset()
 
-		def login():
+		def login(mode):
+			name = name_var.get()
 			pin = pin_var.get()
 			# login with pin number
-			print(pin)
+			if mode == "settings":
+
+				self.settings_menu()
+			elif mode == "clock":
+				stf.read_emp_db()
+				succ = stf.login(name.lower(), pin)
+				msg, success = stf.get_message(succ)
+				if (success == True):
+					self.clocked.append(name)
+					self.main_login_screen()
+				else:
+					self.main_login_screen(True)
+			elif mode == "clock_out":
+				succ = stf.logout(name.lower(), pin)
+				msg, success = stf.get_message(succ)
+				if (success == True):
+					self.clocked.remove(name)
+					self.main_login_screen()
+				else:
+					self.main_login_screen()
 
 		def add_char(c):
 			pin = pin_var.get()
@@ -176,48 +200,62 @@ class App(tk.Frame):
 				tk.Label(self.master, text='R%s/C%s' % (r, c),
 						 borderwidth=1).grid(row=r, column=c)
 		"""
+		name_var = tk.StringVar()
+		name_label = tk.Label(self.master, background=BG_COLOR, text="Name", font=("Calibre", 20, 'bold'))
+		name_entry = tk.Entry(self.master, textvariable=name_var, font=("Calibre", 18))
+
+		name_label.grid(row=0, column=2)
+		name_entry.grid(row=0, column=3)
+
 		pin_var = tk.StringVar()
 		pin_label = tk.Label(self.master, background=BG_COLOR, text="Pin", font=("Calibre", 20, 'bold'))
 		pin_entry = tk.Entry(self.master, textvariable=pin_var, font=("Calibre", 18))
 
-		pin_label.grid(row=0, column=2)
-		pin_entry.grid(row=0, column=3)
+		pin_label.grid(row=1, column=2)
+		pin_entry.grid(row=1, column=3)
 
 		button1 = tk.Button(self.master, text="1", command=lambda: add_char("1"), font=("Calibre", 50, 'bold'))
-		button1.grid(row=1, column=2)
+		button1.grid(row=2, column=2)
 
 		button2 = tk.Button(self.master, text="2", command=lambda: add_char("2"), font=("Calibre", 50, 'bold'))
-		button2.grid(row=1, column=3)
+		button2.grid(row=2, column=3)
 
 		button3 = tk.Button(self.master, text="3", command=lambda: add_char("3"), font=("Calibre", 50, 'bold'))
-		button3.grid(row=1, column=4)
+		button3.grid(row=2, column=4)
 
 		button4 = tk.Button(self.master, text="4", command=lambda: add_char("4"), font=("Calibre", 50, 'bold'))
-		button4.grid(row=2, column=2)
+		button4.grid(row=3, column=2)
 
 		button5 = tk.Button(self.master, text="5", command=lambda: add_char("5"), font=("Calibre", 50, 'bold'))
-		button5.grid(row=2, column=3)
+		button5.grid(row=3, column=3)
 
 		button6 = tk.Button(self.master, text="6", command=lambda: add_char("6"), font=("Calibre", 50, 'bold'))
-		button6.grid(row=2, column=4)
+		button6.grid(row=3, column=4)
 
 		button7 = tk.Button(self.master, text="7", command=lambda: add_char("7"), font=("Calibre", 50, 'bold'))
-		button7.grid(row=3, column=2)
+		button7.grid(row=4, column=2)
 
 		button8 = tk.Button(self.master, text="8", command=lambda: add_char("8"), font=("Calibre", 50, 'bold'))
-		button8.grid(row=3, column=3)
+		button8.grid(row=4, column=3)
 
 		button9 = tk.Button(self.master, text="9", command=lambda: add_char("9"), font=("Calibre", 50, 'bold'))
-		button9.grid(row=3, column=4)
+		button9.grid(row=4, column=4)
 
 		button0 = tk.Button(self.master, text="0", command=lambda: add_char("0"), font=("Calibre", 50, 'bold'))
-		button0.grid(row=4, column=3)
+		button0.grid(row=5, column=3)
 
 		button0 = tk.Button(self.master, text="DEL", command=delete_char, font=("Calibre", 30, 'bold'))
-		button0.grid(row=4, column=4)
+		button0.grid(row=5, column=4)
 
-		login_button = tk.Button(self.master, text="login", command=login, font=("Calibre", 25, 'bold'))
-		login_button.grid(row=0, column=4)
+		if mode == "clock":
+			login_button = tk.Button(self.master, text="login", command=lambda: login(mode), font=("Calibre", 25, 'bold'))
+			login_button.grid(row=1, column=4)
+		else:
+			login_button = tk.Button(self.master, text="logout", command=lambda: login(mode), font=("Calibre", 25, 'bold'))
+			login_button.grid(row=1, column=4)
+
+		back = tk.Button(self.master, text="Back", command=lambda: self.main_login_screen(), font=("Calibre", 20, 'bold'))
+		back.grid(row=1, column=1)
 
 	def settings_menu(self):
 		self.reset()
@@ -235,8 +273,7 @@ class App(tk.Frame):
 								text='Create New Account', width='25', height='10', font=("Calibre", 20, 'bold'))
 		new_account.grid(row=2, column=1)
 
-		sales = tk.Button(settings_frame, cursor='circle', command=lambda: self.analysis(), text='Sales Analytics',
-						  width='25', height='10',
+		sales = tk.Button(settings_frame, cursor='circle', text='Sales Analytics', width='25', height='10',
 						  font=("Calibre", 20, 'bold'))
 		sales.grid(row=2, column=3)
 
@@ -245,8 +282,7 @@ class App(tk.Frame):
 						 font=("Calibre", 20, 'bold'))
 		edit.grid(row=3, column=3)
 
-		employee = tk.Button(settings_frame, cursor='circle', command=lambda: self.emp_analysis(),
-							 text='Employee Analytics', width='25', height='10',
+		employee = tk.Button(settings_frame, cursor='circle', text='Employee Analytics', width='25', height='10',
 							 font=("Calibre", 20, 'bold'))
 		employee.grid(row=3, column=1)
 
@@ -369,8 +405,7 @@ class App(tk.Frame):
 		title = tk.Label(title_frame, text='New Order', font=("Calibre", 20, 'bold'), width='15', height='5')
 		title.grid(row=1, column=2)
 
-		back = tk.Button(title_frame, command=lambda: self.main_login_screen(), text="Back",
-						 font=("Calibre", 20, 'bold'))
+		back = tk.Button(title_frame, command=lambda: self.main_login_screen(), text="Back", font=("Calibre", 20, 'bold'))
 		back.grid(row=1, column=1)
 
 		action_frame = tk.Frame(order_main_frame)
@@ -501,7 +536,6 @@ class ShowSaleData(tk.Frame):
 			if sales[entry]:
 				self.ticket.insert(tk.END, sales[entry])
 		self.ticket['state'] = 'disabled'
-
 
 
 class UpdatingCategories(tk.Frame):
