@@ -27,6 +27,8 @@ shopEmp = {}
 *                 10 Mar 2021 - Perat Damrongsiri
 *                 v1.1: Bugs fixed
 """
+
+
 def read_emp_db():
     # calling the database class from ManDB
     emp_database = db.EmployeesDatabase()
@@ -39,6 +41,7 @@ def read_emp_db():
     for emp in emp_list:
         emp_temp = temp.create(emp.name, emp.pass_hash, emp.permission, emp.recov_key)
         shopEmp[emp.name] = emp_temp
+
 
 """
 *   Function: is_emp_db_empty
@@ -54,6 +57,8 @@ def read_emp_db():
 *                 10 Mar 2021 - Perat Damrongsiri
 *                 v1.1: Bugs fixed
 """
+
+
 def is_emp_db_empty():
     emp_database = db.EmployeesDatabase()
     # checking if the database is exist
@@ -64,13 +69,14 @@ def is_emp_db_empty():
         # exist
         emp_database.start_session()
         # checking that it is empty or not
-        if emp_database.read_db() == []:
+        if not emp_database.read_db():
             # empty
             ret = True
         else:
             # not empty
             ret = False
     return ret
+
 
 """
 *   Function: add_employee
@@ -92,6 +98,8 @@ def is_emp_db_empty():
 *                 11 Mar 2021 - Perat Damrongsiri
 *                 v1.2: added username checking.
 """
+
+
 def add_employee(name, current_user, password, firstrun=False, add_to_db=True):
     # check that name is not in the dictionary
     if name not in shopEmp:
@@ -137,6 +145,7 @@ def add_employee(name, current_user, password, firstrun=False, add_to_db=True):
         ret = 36
     return ret
 
+
 """
 *   Function: login
 *   Description: This function handle the login action. It will set the login time.
@@ -152,6 +161,8 @@ def add_employee(name, current_user, password, firstrun=False, add_to_db=True):
 *                 11 Mar 2021 - Perat Damrongsiri
 *                 v1.2: add checking username
 """
+
+
 def login(name, password):
     # check that the username is exist
     if name in shopEmp:
@@ -175,6 +186,7 @@ def login(name, password):
         ret = 35
     return ret
 
+
 """
 *   Function: logout
 *   Description: This function handle the logout action. It will set the logout time
@@ -189,6 +201,8 @@ def login(name, password):
 *                 11 Mar 2021 - Perat Damrongsiri
 *                 v1.2: add checking username
 """
+
+
 def logout(name, password):
     # check that the username is exist
     if name in shopEmp:
@@ -223,6 +237,7 @@ def logout(name, password):
         ret = 35
     return ret
 
+
 """
 *   Function: remove_employee
 *   Description: This function remove the employee from the dictionary and employee database.
@@ -238,6 +253,8 @@ def logout(name, password):
 *                 11 Mar 2021 - Perat Damrongsiri
 *                 v1.2: added username checking.
 """
+
+
 def remove_employee(name, current_user, password):
     # checking that thte current_user is exist
     if current_user in shopEmp:
@@ -274,6 +291,7 @@ def remove_employee(name, current_user, password):
         ret = 37
     return ret
 
+
 """
 *   Function: add_admin
 *   Description: This function adds the new admin into the dictionary and employee database.
@@ -290,6 +308,8 @@ def remove_employee(name, current_user, password):
 *                 11 Mar 2021 - Perat Damrongsiri
 *                 v1.2: added username checking.
 """
+
+
 def add_admin(name, current_user, new_ad_pass, curr_user_pass):
     # checking that thte current_user is exist
     if current_user in shopEmp:
@@ -321,6 +341,7 @@ def add_admin(name, current_user, new_ad_pass, curr_user_pass):
         ret = 37
     return ret
 
+
 """
 *   Function: promote_to_admin
 *   Description: This function promotes employee to admin. Only admin can use it.
@@ -338,6 +359,8 @@ def add_admin(name, current_user, new_ad_pass, curr_user_pass):
 *                 11 Mar 2021 - Perat Damrongsiri
 *                 v1.2: added username checking.
 """
+
+
 def promote_to_admin(name, current_user, password):
     # checking that thte current_user is exist
     if current_user in shopEmp:
@@ -376,6 +399,7 @@ def promote_to_admin(name, current_user, password):
         ret = 37
     return ret
 
+
 """
 *   Function: demote_from_admin
 *   Description: This function demotes admin to employee. Only admin can use it.
@@ -391,6 +415,8 @@ def promote_to_admin(name, current_user, password):
 *                 11 Mar 2021 - Perat Damrongsiri
 *                 v1.2: added username checking.
 """
+
+
 def demote_from_admin(name, current_user, password):
     # checking that thte current_user is exist
     if current_user in shopEmp:
@@ -425,6 +451,7 @@ def demote_from_admin(name, current_user, password):
         ret = 37
     return ret
 
+
 """
 *   Function: change_password
 *   Description: This function is for the user to change their password.
@@ -440,6 +467,8 @@ def demote_from_admin(name, current_user, password):
 *                 11 Mar 2021 - Perat Damrongsiri
 *                 v1.3: added username checking.
 """
+
+
 def change_password(name, old_pass, new_pass):
     # checking that thte name is exist
     if name in shopEmp:
@@ -468,6 +497,7 @@ def change_password(name, old_pass, new_pass):
         ret = 38
     return ret
 
+
 """
 *   Function: forgot_password
 *   Description: This function is for the user to change their password when they
@@ -482,6 +512,8 @@ def change_password(name, old_pass, new_pass):
 *                 11 Mar 2021 - Perat Damrongsiri
 *                 v1.2: added username checking.
 """
+
+
 def forgot_password(name, key, new_pass):
     # checking that thte name is exist
     if name in shopEmp:
@@ -507,6 +539,7 @@ def forgot_password(name, key, new_pass):
         ret = 38
     return ret
 
+
 """
 *   Function: is_admin
 *   Description: This function check that the <name> is an admin or not
@@ -516,6 +549,8 @@ def forgot_password(name, key, new_pass):
 *   Edit History: 11 Mar 2021 - Perat Damrongsiri
 *                 v1.0: Created.
 """
+
+
 def is_admin(name):
     # check that the name is exist
     if name in shopEmp:
@@ -523,6 +558,7 @@ def is_admin(name):
     else:
         ret = False
     return ret
+
 
 """
 *   Function: admin_entry
@@ -533,6 +569,8 @@ def is_admin(name):
 *   Edit History: 11 Mar 2021 - Perat Damrongsiri
 *                 v1.0: Created.
 """
+
+
 def admin_entry(name, password):
     # check that the name is exist
     if name in shopEmp:
@@ -556,6 +594,7 @@ def admin_entry(name, password):
         ret = 38
     return ret
 
+
 """
 *   Function: get_message
 *   Description: This function will convert the error code to error message, and
@@ -570,6 +609,8 @@ def admin_entry(name, password):
 *                 10 Mar 2021 - Perat Damrongsiri
 *                 v1.2: Fixed some message.
 """
+
+
 def get_message(code):
     # check the code
     if code == 2:
