@@ -10,11 +10,8 @@
 *	Date Created: 22 Feb 2022
 """
 import tkinter as tk
-from tkinter import ttk
 import ManCus as cus
 import ManStaff as stf
-import ManReport as rep
-import datetime as dt
 
 BG_COLOR = 'gray'
 
@@ -25,6 +22,7 @@ class App(tk.Frame):
 		super().__init__(master)
 		self.master = master
 		self.grid()
+		self.clocked = []
 
 	def reset(self):
 		"""Reset the list of participants"""
@@ -44,9 +42,7 @@ class App(tk.Frame):
 				confirm_pin_label.grid(row=5, column=2)
 			else:
 				# insert name/pin in database
-				print(name)
-				print(pin)
-				stf.add_admin(name, )
+				stf.add_employee(name.lower(), None, pin, firstrun=True)
 				name_var.set("")
 				pin_var.set("")
 				for widget in self.master.winfo_children():
@@ -98,7 +94,7 @@ class App(tk.Frame):
 		submit = tk.Button(self.master, text="Submit", command=_init_submit_button, font=("Calibre", 20, 'bold'))
 		submit.grid(row=5, column=3)
 
-	def main_login_screen(self, clear_screen=True, clocked_in=None):
+	def main_login_screen(self, clear_screen=True):
 		if clear_screen:
 			self.reset()
 
@@ -108,9 +104,15 @@ class App(tk.Frame):
 		def _order_history():
 			print("Order History")
 
-		if clocked_in is not None:
+		if len(self.clocked) > 0:
+			clocked_in = ""
+			for emp in self.clocked:
+				clocked_in += emp
+				clocked_in += ", "
+			clocked_in = clocked_in[:len(clocked_in) - 2]
 			user = tk.Label(background=BG_COLOR, text=("Clocked in as: " + clocked_in), font=("Arial", 25, 'bold'))
 			user.grid(row=3, column=4, columnspan=2)
+
 		for i in range(6):
 			tk.Grid.rowconfigure(self.master, i, weight=1)
 			tk.Grid.columnconfigure(self.master, i, weight=1)
@@ -142,6 +144,9 @@ class App(tk.Frame):
 		clock_in = tk.Button(self.master, text="Clock In", command=lambda: self.pin_screen("clock"), font=("Calibre", 30, 'bold'))
 		clock_in.grid(row=4, column=4)
 
+		clock_in = tk.Button(self.master, text="Clock Out", command=lambda: self.pin_screen("clock_out"), font=("Calibre", 30, 'bold'))
+		clock_in.grid(row=5, column=4)
+
 		name_label = tk.Label(self.master, background=BG_COLOR, text="Administrator Use Only",
 							  font=("Calibre", 20, 'bold'))
 		name_label.grid(row=3, column=1, pady=20)
@@ -150,13 +155,29 @@ class App(tk.Frame):
 		self.reset()
 
 		def login(mode):
+			name = name_var.get()
 			pin = pin_var.get()
 			# login with pin number
 			print(pin)
 			if mode == "settings":
 				self.settings_menu()
 			elif mode == "clock":
-				self.main_login_screen(True, "Jarett")
+				stf.read_emp_db()
+				succ = stf.login(name.lower(), pin)
+				print(succ)
+				if (succ == 4):
+					self.clocked.append(name)
+					self.main_login_screen()
+				else:
+					self.main_login_screen(True)
+			elif mode == "clock_out":
+				stf.read_emp_db()
+				succ = stf.logout(name.lower(), pin)
+				if (succ == 1):
+					self.clocked.remove(name)
+					self.main_login_screen()
+				else:
+					self.main_login_screen()
 
 		def add_char(c):
 			pin = pin_var.get()
@@ -177,48 +198,62 @@ class App(tk.Frame):
 				tk.Label(self.master, text='R%s/C%s' % (r, c),
 						 borderwidth=1).grid(row=r, column=c)
 		"""
+		name_var = tk.StringVar()
+		name_label = tk.Label(self.master, background=BG_COLOR, text="Name", font=("Calibre", 20, 'bold'))
+		name_entry = tk.Entry(self.master, textvariable=name_var, font=("Calibre", 18))
+
+		name_label.grid(row=0, column=2)
+		name_entry.grid(row=0, column=3)
+
 		pin_var = tk.StringVar()
 		pin_label = tk.Label(self.master, background=BG_COLOR, text="Pin", font=("Calibre", 20, 'bold'))
 		pin_entry = tk.Entry(self.master, textvariable=pin_var, font=("Calibre", 18))
 
-		pin_label.grid(row=0, column=2)
-		pin_entry.grid(row=0, column=3)
+		pin_label.grid(row=1, column=2)
+		pin_entry.grid(row=1, column=3)
 
 		button1 = tk.Button(self.master, text="1", command=lambda: add_char("1"), font=("Calibre", 50, 'bold'))
-		button1.grid(row=1, column=2)
+		button1.grid(row=2, column=2)
 
 		button2 = tk.Button(self.master, text="2", command=lambda: add_char("2"), font=("Calibre", 50, 'bold'))
-		button2.grid(row=1, column=3)
+		button2.grid(row=2, column=3)
 
 		button3 = tk.Button(self.master, text="3", command=lambda: add_char("3"), font=("Calibre", 50, 'bold'))
-		button3.grid(row=1, column=4)
+		button3.grid(row=2, column=4)
 
 		button4 = tk.Button(self.master, text="4", command=lambda: add_char("4"), font=("Calibre", 50, 'bold'))
-		button4.grid(row=2, column=2)
+		button4.grid(row=3, column=2)
 
 		button5 = tk.Button(self.master, text="5", command=lambda: add_char("5"), font=("Calibre", 50, 'bold'))
-		button5.grid(row=2, column=3)
+		button5.grid(row=3, column=3)
 
 		button6 = tk.Button(self.master, text="6", command=lambda: add_char("6"), font=("Calibre", 50, 'bold'))
-		button6.grid(row=2, column=4)
+		button6.grid(row=3, column=4)
 
 		button7 = tk.Button(self.master, text="7", command=lambda: add_char("7"), font=("Calibre", 50, 'bold'))
-		button7.grid(row=3, column=2)
+		button7.grid(row=4, column=2)
 
 		button8 = tk.Button(self.master, text="8", command=lambda: add_char("8"), font=("Calibre", 50, 'bold'))
-		button8.grid(row=3, column=3)
+		button8.grid(row=4, column=3)
 
 		button9 = tk.Button(self.master, text="9", command=lambda: add_char("9"), font=("Calibre", 50, 'bold'))
-		button9.grid(row=3, column=4)
+		button9.grid(row=4, column=4)
 
 		button0 = tk.Button(self.master, text="0", command=lambda: add_char("0"), font=("Calibre", 50, 'bold'))
-		button0.grid(row=4, column=3)
+		button0.grid(row=5, column=3)
 
 		button0 = tk.Button(self.master, text="DEL", command=delete_char, font=("Calibre", 30, 'bold'))
-		button0.grid(row=4, column=4)
+		button0.grid(row=5, column=4)
 
-		login_button = tk.Button(self.master, text="login", command=lambda: login(mode), font=("Calibre", 25, 'bold'))
-		login_button.grid(row=0, column=4)
+		if mode == "clock":
+			login_button = tk.Button(self.master, text="login", command=lambda: login(mode), font=("Calibre", 25, 'bold'))
+			login_button.grid(row=1, column=4)
+		else:
+			login_button = tk.Button(self.master, text="logout", command=lambda: login(mode), font=("Calibre", 25, 'bold'))
+			login_button.grid(row=1, column=4)
+
+		back = tk.Button(self.master, text="Back", command=lambda: self.main_login_screen(), font=("Calibre", 20, 'bold'))
+		back.grid(row=1, column=1)
 
 	def settings_menu(self):
 		self.reset()
@@ -236,8 +271,7 @@ class App(tk.Frame):
 								text='Create New Account', width='25', height='10', font=("Calibre", 20, 'bold'))
 		new_account.grid(row=2, column=1)
 
-		sales = tk.Button(settings_frame, cursor='circle', command=lambda: self.analysis(), text='Sales Analytics',
-						  width='25', height='10',
+		sales = tk.Button(settings_frame, cursor='circle', text='Sales Analytics', width='25', height='10',
 						  font=("Calibre", 20, 'bold'))
 		sales.grid(row=2, column=3)
 
@@ -246,8 +280,7 @@ class App(tk.Frame):
 						 font=("Calibre", 20, 'bold'))
 		edit.grid(row=3, column=3)
 
-		employee = tk.Button(settings_frame, cursor='circle', command=lambda: self.emp_analysis(),
-							 text='Employee Analytics', width='25', height='10',
+		employee = tk.Button(settings_frame, cursor='circle', text='Employee Analytics', width='25', height='10',
 							 font=("Calibre", 20, 'bold'))
 		employee.grid(row=3, column=1)
 
@@ -370,8 +403,7 @@ class App(tk.Frame):
 		title = tk.Label(title_frame, text='New Order', font=("Calibre", 20, 'bold'), width='15', height='5')
 		title.grid(row=1, column=2)
 
-		back = tk.Button(title_frame, command=lambda: self.main_login_screen(), text="Back",
-						 font=("Calibre", 20, 'bold'))
+		back = tk.Button(title_frame, command=lambda: self.main_login_screen(), text="Back", font=("Calibre", 20, 'bold'))
 		back.grid(row=1, column=1)
 
 		action_frame = tk.Frame(order_main_frame)
@@ -381,114 +413,6 @@ class App(tk.Frame):
 		category_buttons.show_cat_list()
 		send_button = category_buttons.get_send_button()
 		send_button['command'] = lambda: category_buttons.send_order(self)
-
-	def analysis(self):
-		self.reset()
-
-		title_frame = tk.Frame(self.master, background=BG_COLOR)
-		title_frame.grid(row=1, column=3)
-
-		back = tk.Button(title_frame, command=lambda: self.settings_menu(), text="Back", font=("Calibre", 20, 'bold'))
-		back.pack(side=tk.LEFT)
-
-		title = tk.Label(title_frame, text='Sales Analytics', background=BG_COLOR, font=("Calibre", 20, 'bold'),
-						 width='20', height='5')
-		title.pack(side=tk.LEFT)
-
-		date = tk.Label(self.master, text='Date Range:', background=BG_COLOR, font=("Calibre", 16, 'bold'), width='15',
-						height='5')
-		date.grid(row=2, column=1)
-
-		to = tk.Label(self.master, text='To:', background=BG_COLOR, font=("Calibre", 16, 'bold'), width='10',
-						height='5')
-		to.grid(row=2, column=3)
-
-		from_frame = tk.Frame(self.master)
-		from_frame.grid(row=2, column=2)
-
-		to_frame = tk.Frame(self.master)
-		to_frame.grid(row=2, column=4)
-
-		style = ttk.Style()
-		style.configure("bg.TCombobox", forground=BG_COLOR, background=BG_COLOR)
-
-		monthvar = tk.StringVar()
-		month = ttk.Combobox(from_frame, state="readonly", style="bg.TCombobox", textvariable=monthvar,
-							 font=("Calibre", 16, 'bold'), width='10', height='5')
-		month['values'] = (
-		'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November',
-		'December')
-		month.pack(side=tk.LEFT)
-
-		dayvar = tk.IntVar()
-		day = ttk.Combobox(from_frame, state="readonly", style="bg.TCombobox", textvariable=dayvar,
-						   font=("Calibre", 16, 'bold'), width='5', height='5')
-		day['values'] = [x for x in range(1, 32)]
-		day.pack(side=tk.LEFT)
-
-		yearvar = tk.IntVar()
-		year = ttk.Combobox(from_frame, state="readonly", style="bg.TCombobox", textvariable=yearvar,
-						   font=("Calibre", 16, 'bold'), width='5', height='5')
-		year['values'] = (2021)
-		year.pack(side=tk.LEFT)
-
-		tomonthvar = tk.StringVar()
-		tomonth = ttk.Combobox(to_frame, state="readonly", style="bg.TCombobox", textvariable=tomonthvar,
-							 font=("Calibre", 16, 'bold'), width='10', height='5')
-		tomonth['values'] = (
-			'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October',
-			'November',
-			'December')
-		tomonth.pack(side=tk.LEFT)
-
-		todayvar = tk.IntVar()
-		today = ttk.Combobox(to_frame, state="readonly", style="bg.TCombobox", textvariable=todayvar,
-						   font=("Calibre", 16, 'bold'), width='5', height='5')
-		today['values'] = [x for x in range(1, 32)]
-		today.pack(side=tk.LEFT)
-
-		toyearvar = tk.IntVar()
-		toyear = ttk.Combobox(to_frame, state="readonly", style="bg.TCombobox", textvariable=toyearvar,
-							font=("Calibre", 16, 'bold'), width='5', height='5')
-		toyear['values'] = (2021)
-		toyear.pack(side=tk.LEFT)
-
-		button_frame = tk.Frame(self.master, background=BG_COLOR,)
-		button_frame.grid(row=2, column=5)
-
-		saleData = ShowSaleData(self.master)
-
-		findBy = tk.Label(button_frame, text='Find By:', background=BG_COLOR, font=("Calibre", 16, 'bold'),
-						 width='20')
-		findBy.pack(side=tk.TOP)
-
-		findBySale = tk.Button(button_frame, background=BG_COLOR, command=lambda: saleData.findBySale((yearvar.get(), monthvar.get(), dayvar.get()), (toyearvar.get(), tomonthvar.get(), todayvar.get())), text="Sales", font=("Calibre", 16, 'bold'))
-		findBySale.pack(side=tk.TOP)
-
-		findByItem = tk.Button(button_frame, background=BG_COLOR, command=lambda: self.settings_menu(), text="Items", font=("Calibre", 16, 'bold'))
-		findByItem.pack(side=tk.TOP)
-
-		findByCat = tk.Button(button_frame, background=BG_COLOR, command=lambda: self.settings_menu(), text="Categories", font=("Calibre", 16, 'bold'))
-		findByCat.pack(side=tk.TOP)
-
-
-	def emp_analysis(self):
-		self.reset()
-
-		title = tk.Label(self.master, text='Employee Analytics', font=("Calibre", 20, 'bold'), width='15', height='5')
-		title.grid(row=1, column=4)
-
-		back = tk.Button(self.master, command=lambda: self.settings_menu(), text="Back", font=("Calibre", 20, 'bold'))
-		back.grid(row=1, column=3)
-
-class ShowSaleData(tk.Frame):
-
-	def __init__(self, master=None):
-		super().__init__(master)
-		self.master = master
-
-	def findBySale(self, startdate: tuple, enddate: tuple):
-		print(startdate, enddate)
 
 
 class UpdatingCategories(tk.Frame):
