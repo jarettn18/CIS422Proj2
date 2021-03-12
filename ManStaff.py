@@ -96,9 +96,9 @@ def add_employee(name, current_user, password, firstrun=False, add_to_db=True):
     # check that name is not in the dictionary
     if name not in shopEmp:
         # check that the current user is in the dictionary
-        if current_user in shopEmp:
+        if current_user is None or current_user in shopEmp:
             # checking the optional parameter.
-            if firstrun and current_user is None:
+            if firstrun:
                 # if firstrun is true and current_user is None, it will automatically make the
                 # first employee as an admin
                 temp = mc.Employee(name='temp@#$', permission='admin')
