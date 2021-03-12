@@ -1,15 +1,13 @@
 # CIS422Proj2 -ManEZ
 
 ## Introduction
-    - Point of Sale system
-    - Current Point of Sale system is overcomplicated and expensive for business owner ex) restaurant, warehouse
-    - Easeir and more efficient program for new users.
-    - 
-## Documentation
-    - Python files that we used and funtions in each file.
-    
+    Point of Sale system
+    Current Point of Sale system is overcomplicated and expensive for business owner ex) restaurant, warehouse
+    Easeir and more efficient program for new users.
+
 ## User Guide
-    
+## Documentation
+    Python files that we used and funtions in each file.
 #### ManCus.py
     add_item() : add new data into the list
     query_item() : add new data into the list
