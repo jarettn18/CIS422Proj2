@@ -107,12 +107,15 @@
         delete_item(): delete item from the database
         edit_item(): edit item in the database
         read_db(): read database
+        
     Receipt database
         add_receipt(): add receipt to the database
         delete_receipt(): delete a receipt from the database
         get_period(): get receipts from input start date to end date
+        
     WorkTime database
         checkout(): check out the employee and save the log info to the database for the analysis
+        
     Employees database
         add_employee(): add employee data into the database
         delete_employee(): delete employee data into the database
