@@ -777,13 +777,6 @@ class DynamicMenu(tk.Frame):
 		ticket_frame.grid(row=1, column=1)
 		self.order_grid = tk.Frame(ticket_frame, width="50", height="200")
 		self.order_grid.pack()
-		'''
-		self.ticket = tk.Text(ticket_frame, font=("Calibre", 18, 'bold'), width="30")
-		ys = tk.Scrollbar(ticket_frame, orient='vertical', command=self.ticket.yview)
-		self.ticket['yscrollcommand'] = ys.set
-		self.ticket.pack()
-		self.ticket['state'] = 'disabled'
-		'''
 		self.total = tk.Label(ticket_frame, text="Total: No Items Selected", font=("Calibre", 18, 'bold'))
 		self.total.pack(side=tk.TOP)
 		name_bar = tk.Frame(ticket_frame)
@@ -825,7 +818,7 @@ class DynamicMenu(tk.Frame):
 		self.active = selections
 		count = 1
 		for j in cus.query_items()[i]:
-			name_label = tk.Button(selections, command=lambda j=j: self.insert_item2(j), width="15", height="5",
+			name_label = tk.Button(selections, command=lambda j=j: self.insert_item(j), width="15", height="5",
 								   text=f'{j[0]}', font=("Calibre", 18, 'bold'))
 			if col:
 				val = 1
@@ -836,7 +829,7 @@ class DynamicMenu(tk.Frame):
 				count += 1
 			col = not col
 
-	def insert_item2(self, j: tuple):
+	def insert_item(self, j: tuple):
 
 		cus.add_order(j[0], 1)
 		items = cus.show_order()
@@ -873,29 +866,15 @@ class DynamicMenu(tk.Frame):
 
 	def delete_whole_order(self, app):
 		items = cp.deepcopy(cus.show_order())
-		print(items)
 		if items:
 			for order in items:
 				cus.delete_order(order)
 		app.main_login_screen()
 
-	def insert_item(self, j: tuple):
-		self.ticket['state'] = 'normal'
-		cus.add_order(j[0], 1)
-		items = cus.show_order()
-		self.ticket.delete(1.0, tk.END)
-		line = 1
-		for order in reversed(list(items.keys())):
-			amount = int(items[order].get_amount())
-			name = items[order].get_item().get_name()
-			price = items[order].get_item().get_price()
-			self.ticket.insert(f'{self.line}.0', f'{amount}  {name} \t\t {price}\n')
-			line += 1
-		self.ticket['state'] = 'disabled'
-		self.total['text'] = f'Total: ${round(cus.get_total(), 2)}'
-		self.send_button.pack(side=tk.BOTTOM)
-
 	def send_order(self, app):
+		if not self.name_var.get():
+			now = dt.datetime.now().strftime('%H%M%S')
+			self.name_var.set(f"{now}")
 		if cus.pay_order(self.name_var.get()):
 			app.main_login_screen()
 
