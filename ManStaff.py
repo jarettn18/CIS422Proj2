@@ -525,6 +525,38 @@ def is_admin(name):
     return ret
 
 """
+*   Function: admin_entry
+*   Description: This function checks that the user is admin and verifying the password.
+*
+*   Date: 11 Mar 2021
+*   Created by: Perat Damrongsiri
+*   Edit History: 11 Mar 2021 - Perat Damrongsiri
+*                 v1.0: Created.
+"""
+def admin_entry(name, password):
+    # check that the name is exist
+    if name in shopEmp:
+        if shopEmp[name].is_admin():
+            # is admin
+            if shopEmp[name].checkpass(password):
+                # correct password
+                print("Successfully enter.")
+                ret = 39
+            else:
+                # wrong password
+                print("Error: ManStaff: admin_entry(): wrong password.")
+                ret = 19
+        else:
+            # not an admin
+            print("Error: ManStaff: admin_entry(): not an admin.")
+            ret = 40
+    else:
+        # name does not exist
+        print("Error: ManStaff: admin_entry(): name does not exist.")
+        ret = 38
+    return ret
+
+"""
 *   Function: get_message
 *   Description: This function will convert the error code to error message, and
 *                boolean to indicate that it's error or success.
@@ -614,6 +646,10 @@ def get_message(code):
         ret = "current user does not exist.", False
     elif code == 38:
         ret = "name does not exist.", False
+    elif code == 39:
+        ret = "Successfully enter.", True
+    elif code == 40:
+        ret = "not an admin.", False
     elif code > 999:
         ret = ("Successfully added new admin/employee. Recovery key is: " + str(code)), True
     return ret
