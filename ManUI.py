@@ -100,9 +100,6 @@ class App(tk.Frame):
 		if clear_screen:
 			self.reset()
 
-		def _new_order():
-			print("New Order")
-
 		def _order_history():
 			print("Order History")
 
@@ -146,8 +143,8 @@ class App(tk.Frame):
 		clock_in = tk.Button(self.master, text="Clock In", command=lambda: self.pin_screen("clock"), font=("Calibre", 30, 'bold'))
 		clock_in.grid(row=4, column=4)
 
-		clock_in = tk.Button(self.master, text="Clock Out", command=lambda: self.pin_screen("clock_out"), font=("Calibre", 30, 'bold'))
-		clock_in.grid(row=5, column=4)
+		clock_out = tk.Button(self.master, text="Clock Out", command=lambda: self.pin_screen("clock_out"), font=("Calibre", 30, 'bold'))
+		clock_out.grid(row=5, column=4)
 
 		name_label = tk.Label(self.master, background=BG_COLOR, text="Administrator Use Only",
 							  font=("Calibre", 20, 'bold'))
@@ -161,10 +158,12 @@ class App(tk.Frame):
 			pin = pin_var.get()
 			# login with pin number
 			if mode == "settings":
-
-				self.settings_menu()
+				if stf.is_admin(name.lower()) and stf.admin_entry(name.lower(), pin) == 39:
+					self.settings_menu()
+				else:
+					admin_label = tk.Label(self.master, background=BG_COLOR, text="Invalid Login", font=("Calibre", 20, "bold"))
+					admin_label.grid(row=0, column=4)
 			elif mode == "clock":
-				stf.read_emp_db()
 				succ = stf.login(name.lower(), pin)
 				msg, success = stf.get_message(succ)
 				if (success == True):
@@ -247,12 +246,12 @@ class App(tk.Frame):
 		button0 = tk.Button(self.master, text="DEL", command=delete_char, font=("Calibre", 30, 'bold'))
 		button0.grid(row=5, column=4)
 
-		if mode == "clock":
+		if mode == "clock" or mode == "settings":
 			login_button = tk.Button(self.master, text="login", command=lambda: login(mode), font=("Calibre", 25, 'bold'))
 			login_button.grid(row=1, column=4)
 		else:
-			login_button = tk.Button(self.master, text="logout", command=lambda: login(mode), font=("Calibre", 25, 'bold'))
-			login_button.grid(row=1, column=4)
+			logout_button = tk.Button(self.master, text="logout", command=lambda: login(mode), font=("Calibre", 25, 'bold'))
+			logout_button.grid(row=1, column=4)
 
 		back = tk.Button(self.master, text="Back", command=lambda: self.main_login_screen(), font=("Calibre", 20, 'bold'))
 		back.grid(row=1, column=1)
@@ -694,6 +693,7 @@ def main():
 	root = tk.Tk(className="Welcome to ManEz")
 	root.geometry("1200x2000")
 	manez = App(root)
+	stf.read_emp_db()
 	if stf.is_emp_db_empty():
 		manez.init_screen()
 	else:
