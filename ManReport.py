@@ -7,6 +7,8 @@
 *                 v1.0: Creating all the function.
                   10 March 2021 - Jay Shin
                   v1.5: wrap up.
+                  11 March 2021 - Jay Shin
+                  v2.0: Add employee managing function.
 """
 import datetime
 import ManDB
@@ -120,3 +122,89 @@ def report_by_category(start_date, end_date):
     else:
         print("Invalid Input")
         return False
+
+def daily_worktime_report(name, start_date, end_date):
+    '''
+    This function read all the employee log data between input dates
+    Returns total amount of individual work time by date in range
+    '''
+    if isinstance(name, str):
+        delta = datetime.timedelta(days=1)
+        #   reading WorkTimeDatabase
+        wtdb = ManDB.WorkTimeDatabase()
+        wtdb.start_session()
+        wts = wtdb.read_db()
+        log_check = {}
+        for wt in wts:
+            if wt.name == name:
+                if wt.date not in log_check:
+                    log_check[wt.date] = wt.work_time
+                else:
+                    log_check[wt.date] += wt.work_time
+            else:
+                print("Invalid Input")
+                return False
+        #   Checking and adding worktime and its sum
+        if start_date in log_check:
+            ret_dic = {}
+            while start_date <= end_date:
+                ret_dic[start_date] = log_check[start_date]
+                start_date += delta
+        return ret_dic
+    else:
+        print("Invalid Input")
+        return False
+
+def total_worktime_report(name, start_date, end_date):
+    '''
+    This function read all the employee log data between input dates
+    Returns total amount of individual work time by input period
+    '''
+    if isinstance(name, str):
+        delta = datetime.timedelta(days=1)
+        #   reading WorkTimeDatabase
+        wtdb = ManDB.WorkTimeDatabase()
+        wtdb.start_session()
+        wts = wtdb.read_db()
+        log_check = {}
+        for wt in wts:
+            if wt.name == name:
+                if wt.date not in log_check:
+                    log_check[wt.date] = wt.work_time
+                else:
+                    log_check[wt.date] += wt.work_time
+            else:
+                print("Invalid Name")
+                return False
+        #   Checking and adding worktime to get total
+        if start_date in log_check:
+            ret = log_check[start_date]
+            start_date += delta
+            while start_date <= end_date:
+                if start_date in log_check:
+                    ret += log_check[start_date]
+                    start_date += delta
+        return ret
+    else:
+        print("Invalid Input")
+        return False
+
+def pay_employee(name, wage, start_date, end_date):
+    if isinstance(name, str):
+        if wage > 0.0:
+            wt = total_worktime_report(name, start_date, end_date)
+            #datetime delta need to be changed into seconds
+            #to calculate hours and minutes
+            wtsec = wt.seconds
+            wthour = wtsec//3600
+            wtmin = (wtsec//60)%60
+            wt = wthour + (wtmin/60)
+            pay = wage * wt
+            return pay
+        else:
+            print("Invalid Wage")
+            return False    
+    else:
+        print("Invalid Name")
+        return False
+
