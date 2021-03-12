@@ -257,7 +257,7 @@ class receipt:
 			ret = False
 		return ret
 
-	# Calculation function for get total price of order
+	# Calculation function for get total price of order item price * discount rate * amount = total price
 	def cal_total(self):
 		if self.orders:
 			self.total = 0

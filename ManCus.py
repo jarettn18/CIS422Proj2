@@ -3,7 +3,7 @@
 # This module have functions for users
 """
 *   Description: Functions for Point of Sales
-*   Date: 18 Feb 2021
+*   Date: 10 Mar 2021
 *   Last Created by: Theodore Yun
 *   Edit History: v1.0: Jay Basic functions
 *                  20 Feb 2021
@@ -27,6 +27,15 @@ if os.name == "nt":
     navigator_symbol = "\\" # This will make the program runnable on Windows
 
 # ManCus ONLY
+"""
+*   Function: set_itemlist
+*   Description: Create item list from database
+*  Date: 10 Mar 2021
+*   Last Created by: Theodore Yun
+*   Edit History: v1.0: Jay Basic functions
+*                  20 Feb 2021
+*                  v1.1: Jay end of basic functions
+"""
 def set_itemlist():
     # Just to set item list from database
     itemdb = ManDB.ItemDatabase()
@@ -40,9 +49,19 @@ def set_itemlist():
         data.discount = item[3]
         list_items[item[0]] = data
     return True
+
 # fresh item list from database
 set_itemlist()
 
+"""
+*   Function: add_item
+*   Description: Add item to item list
+*   Date: 10 Mar 2021
+*   Last Created by: Theodore Yun
+*   Edit History: v1.0: Jay Basic functions
+*                  20 Feb 2021
+*                  v1.1: Jay end of basic functions
+"""
 # Discount will be optional argument by using *
 def add_item(name, category, price, discount=0, add_to_db=True):
     try:
@@ -52,7 +71,7 @@ def add_item(name, category, price, discount=0, add_to_db=True):
         item.set_name(name)
         item.set_category(category)
         item.set_price(price)
-        # default should be 1.0
+        # default should be 1.0, if the discount rate is 10% it would be 0.9
         if discount:
             item.set_discount(discount)
 
@@ -64,7 +83,15 @@ def add_item(name, category, price, discount=0, add_to_db=True):
         return True
     except:
         return False
-
+"""
+*   Function: query_items
+*   Description: Add item to menu dictionary
+*   Date: 10 Mar 2021
+*   Last Created by: Theodore Yun
+*   Edit History: v1.0: Jay Basic functions
+*                  20 Feb 2021
+*                  v1.1: Jay end of basic functions
+"""
 def query_items():
     menu_dict = {}
     itemdb = ManDB.ItemDatabase()
@@ -77,6 +104,15 @@ def query_items():
             menu_dict[i[1]].append((i[0], i[2], i[3]))
     return menu_dict
 
+"""
+*   Function: add_order
+*   Description: Make order with item name and amount
+*   Date: 10 Mar 2021
+*   Last Created by: Theodore Yun
+*   Edit History: v1.0: Jay Basic functions
+*                  20 Feb 2021
+*                  v1.1: Jay end of basic functions
+"""
 def add_order(name, amount):
     # add order
     # copy and paste selected item to order list
@@ -92,6 +128,15 @@ def add_order(name, amount):
         ret = False
     return ret
 
+"""
+*   Function: edit_item
+*   Description: Edit the features of item ex)name, category, price, and discount
+*   Date: 10 Mar 2021
+*   Last Created by: Theodore Yun
+*   Edit History: v1.0: Jay Basic functions
+*                  20 Feb 2021
+*                  v1.1: Jay end of basic functions
+"""
 def edit_item(name, factor, newkey):
     # edit item data
     # read and write the list
@@ -111,11 +156,29 @@ def edit_item(name, factor, newkey):
         print("Invalid Input")
         return False
 
+"""
+*   Function: edit_order
+*   Description: Edit the features of order
+*   Date: 10 Mar 2021
+*   Last Created by: Theodore Yun
+*   Edit History: v1.0: Jay Basic functions
+*                  20 Feb 2021
+*                  v1.1: Jay end of basic functions
+"""
 def edit_order(name, factor, newkey):
     # edit order data
     # read and write the list
     return list_dict['list_orders'].edit_order(name, factor, newkey)
 
+"""
+*   Function: delete_menu
+*   Description: deleting function for item from item list
+*   Date: 10 Mar 2021
+*   Last Created by: Theodore Yun
+*   Edit History: v1.0: Jay Basic functions
+*                  20 Feb 2021
+*                  v1.1: Jay end of basic functions
+"""
 def delete_menu(name):
     # delete menu from list
     # read and write lists from the file?
@@ -128,29 +191,74 @@ def delete_menu(name):
         print("Option does not exist")
         return False
 
+"""
+*   Function: delete_order
+*   Description: deleting function the order from order list
+*   Date: 10 Mar 2021
+*   Last Created by: Theodore Yun
+*   Edit History: v1.0: Jay Basic functions
+*                  20 Feb 2021
+*                  v1.1: Jay end of basic functions
+"""
 def delete_order(name):
     # delete order from list
     # read and write the list
     return list_dict['list_orders'].delete_order(name)
 
+"""
+*   Function: show_item
+*   Description: display the items that are in current item list
+*   Date: 10 Mar 2021
+*   Last Created by: Theodore Yun
+*   Edit History: v1.0: Jay Basic functions
+*                  20 Feb 2021
+*                  v1.1: Jay end of basic functions
+"""
 def show_item():
-    # present orders from list
-    # read the orders
+    # present item from list
+    # read the item
     if list_items:
         return list_items
     else:
         print("Option is empty")
         return False
 
+"""
+*   Function: show_order
+*   Description: display the items that are in current order
+*   Date: 10 Mar 2021
+*   Last Created by: Theodore Yun
+*   Edit History: v1.0: Jay Basic functions
+*                  20 Feb 2021
+*                  v1.1: Jay end of basic functions
+"""
 def show_order():
     # present orders from list
     # read the orders
     return list_dict['list_orders'].get_orders()
 
+"""
+*   Function: get_total
+*   Description: get total price of each order, get_total from ManClass.get_total
+*   Date: 10 Mar 2021
+*   Last Created by: Theodore Yun
+*   Edit History: v1.0: Jay Basic functions
+*                  20 Feb 2021
+*                  v1.1: Jay end of basic functions
+"""
 def get_total():
     # get total price of the each order
     return list_dict['list_orders'].get_total()
 
+"""
+*   Function: pay_order
+*   Description: display receipt from ManClass.get_receipt
+*   Date: 10 Mar 2021
+*   Last Created by: Theodore Yun
+*   Edit History: v1.0: Jay Basic functions
+*                  20 Feb 2021
+*                  v1.1: Jay end of basic functions
+"""
 def pay_order(customer):
     if customer:
         list_dict['list_orders'].set_customer(customer)
