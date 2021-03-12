@@ -120,7 +120,7 @@ class App(tk.Frame):
 							 font=("Calibre", 20, 'bold'))
 			back.grid(row=2, column=1)
 
-			title = tk.Label(background=BG_COLOR, text="Order History", font=("Arial", 50, 'bold'))
+			title = tk.Label(background=BG_COLOR, text="Order History", width="30", font=("Arial", 50, 'bold'))
 			title.grid(row=1, column=2, columnspan=2)
 
 		if len(self.clocked) > 0:
