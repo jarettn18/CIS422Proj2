@@ -190,6 +190,10 @@ def total_worktime_report(name, start_date, end_date):
         return False
 
 def pay_employee(name, wage, start_date, end_date):
+    '''
+    calculate total payment for the employee
+    wage must be bigger than zero
+    '''
     if isinstance(name, str):
         if wage > 0.0:
             wt = total_worktime_report(name, start_date, end_date)
