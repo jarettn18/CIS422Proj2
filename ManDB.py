@@ -149,12 +149,12 @@ class ReceiptDatabase:
 
             orders = receipt.get_orders()
             date = datetime.date.today()
-            datetime = datetime.datetime.now()
+            dt = datetime.datetime.now()
             # loop through orders in receipt
             for elem in orders:
                 # put each order into each row
                 query = db.insert(self.receipts).values(number=rec_num, date=date,
-                    datetime=datetime, name=receipt.get_customer(),
+                    datetime=dt, name=receipt.get_customer(),
                     orders=elem, discount=receipt.get_discount(),
                     amount=orders[elem].get_amount(), price=receipt.get_total())
                 ResultProxy = self.connection.execute(query)
