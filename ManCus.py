@@ -303,7 +303,7 @@ def pay_order(customer):
             receiptdb = ManDB.ReceiptDatabase()
             receiptdb.start_session()
             receiptdb.add_receipt(list_dict['list_orders'])
-            list_dict['list_orders'] = ManClass.receipt()
+            list_dict['list_orders'] = ManClass.Receipt()
         except TypeError:
             return False
     else:

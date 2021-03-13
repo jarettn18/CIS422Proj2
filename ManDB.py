@@ -141,7 +141,7 @@ class ReceiptDatabase:
         Add the receipt to the receipt database
         """
         # check the datatype of receipt
-        if type(receipt) == ManClass.receipt:
+        if type(receipt) == ManClass.Receipt:
             # finding the latest added receipt
             Session = sessionmaker(bind=self.engine)
             session = Session()
