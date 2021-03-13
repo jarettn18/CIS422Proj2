@@ -19,7 +19,15 @@ import copy as cp
 
 BG_COLOR = 'gray'
 
-
+"""
+*   Class: App
+*   Description: Core Class that ManEz runs through
+*
+*   Date: 5 Mar 2021
+*   Created by: Jarett Nishijo
+*   Edit History: 5 Mar 2021 - Jarett Nishijo
+*					v1.0 - Created
+"""
 class App(tk.Frame):
 
 	def __init__(self, master=None):
@@ -30,11 +38,29 @@ class App(tk.Frame):
 		self.active = None
 		stf.read_emp_db()
 
+	"""
+	*   Function: reset
+	*   Description: Clear widgets on screen
+	*
+	*   Date: 5 Mar 2021
+	*   Created by: Alex Villa
+	*   Edit History: 5 Mar 2021 - Alex Villa
+	*					v1.0 - Created
+	"""
 	def reset(self):
 		"""Reset the list of participants"""
 		for child in self.master.winfo_children():
 			child.destroy()
 
+	"""
+	*   Function: init_screen
+	*   Description: Creates initialization screen upon installation
+	*
+	*   Date: 5 Mar 2021
+	*   Created by: Jarett Nishijo
+	*   Edit History: 5 Mar 2021 - Jarett Nishijo
+	*					v1.0 - Created
+	"""
 	def init_screen(self):
 
 		def _init_submit_button():
@@ -100,6 +126,15 @@ class App(tk.Frame):
 		submit = tk.Button(self.master, text="Submit", command=_init_submit_button, font=("Calibre", 20, 'bold'))
 		submit.grid(row=5, column=3)
 
+	"""
+	*   Function: main_login_screen
+	*   Description: Creates initialization screen for future program launches
+	*
+	*   Date: 5 Mar 2021
+	*   Created by: Jarett Nishijo
+	*   Edit History: 5 Mar 2021 - Jarett Nishijo
+	*					v1.0 - Created
+	"""
 	def main_login_screen(self, clear_screen=True):
 		self.active=None
 		if clear_screen:
@@ -172,6 +207,15 @@ class App(tk.Frame):
 							  font=("Calibre", 20, 'bold'))
 		name_label.grid(row=3, column=1, pady=20)
 
+	"""
+	*   Function: pin_screen
+	*   Description: Creates screen for pin and account verification
+	*
+	*   Date: 5 Mar 2021
+	*   Created by: Jarett Nishijo
+	*   Edit History: 5 Mar 2021 - Jarett Nishijo
+	*					v1.0 - Created
+	"""
 	def pin_screen(self, mode):
 		self.reset()
 
@@ -283,6 +327,15 @@ class App(tk.Frame):
 						 font=("Calibre", 20, 'bold'))
 		back.grid(row=1, column=1)
 
+	"""
+	*   Function: settings_menu
+	*   Description: Creates menu screen for the settings tab
+	*
+	*   Date: 5 Mar 2021
+	*   Created by: Alex Villa
+	*   Edit History: 5 Mar 2021 - Alex Villa
+	*					v1.0 - Created
+	"""
 	def settings_menu(self):
 		self.reset()
 
@@ -312,6 +365,15 @@ class App(tk.Frame):
 							 font=("Calibre", 20, 'bold'))
 		employee.grid(row=3, column=2)
 
+	"""
+	*   Function: new_account
+	*   Description: Creates new account screen
+	*
+	*   Date: 8 Mar 2021
+	*   Created by: Alex Villa
+	*   Edit History: 8 Mar 2021 - Alex Villa
+	*					v1.0 - Created
+	"""
 	def new_account(self):
 		self.reset()
 
@@ -352,6 +414,15 @@ class App(tk.Frame):
 
 		submit.grid(row=5, column=3)
 
+	"""
+	*   Function: create_account
+	*   Description: Creates account and adds to database
+	*
+	*   Date: 5 Mar 2021
+	*   Created by: Alex Villa
+	*   Edit History: 5 Mar 2021 - Alex Villa
+	*					v1.0 - Created
+	"""
 	def create_account(self, name: str, pin: str, confirm: int):
 		confirm_pin_label = tk.Label(self.master, background=BG_COLOR,
 									 font=("Calibre", 15, 'bold'))
@@ -367,6 +438,15 @@ class App(tk.Frame):
 				confirm_pin_label['text'] = "Need a clocked in Admin to create account"
 				confirm_pin_label.grid(row=6, column=3)
 
+	"""
+	*   Function: add_menu
+	*   Description: Creates the Add Menu Screen
+	*
+	*   Date: 5 Mar 2021
+	*   Created by: Alex Villa
+	*   Edit History: 5 Mar 2021 - Alex Villa
+	*					v1.0 - Created
+	"""
 	def add_menu(self):
 		self.reset()
 
@@ -419,6 +499,15 @@ class App(tk.Frame):
 
 		submit.grid(column=2, row=6, pady=20)
 
+	"""
+	*   Function: order_screen
+	*   Description: Creates new order screen
+	*
+	*   Date: 8 Mar 2021
+	*   Created by: Alex Villa
+	*   Edit History: 8 Mar 2021 - Alex Villa
+	*					v1.0 - Created
+	"""
 	def order_screen(self):
 		self.reset()
 
@@ -442,6 +531,15 @@ class App(tk.Frame):
 		send_button = category_buttons.get_send_button()
 		send_button['command'] = lambda: category_buttons.send_order(self)
 
+	"""
+	*   Function: analysis
+	*   Description: Creates sales analytics widget
+	*
+	*   Date: 10 Mar 2021
+	*   Created by: Alex Villa
+	*   Edit History: 10 Mar 2021 - Alex Villa
+	*					v1.0 - Created
+	"""
 	def analysis(self):
 		self.reset()
 
@@ -550,6 +648,15 @@ class App(tk.Frame):
 							  text="Categories", font=("Calibre", 16, 'bold'))
 		findByCat.pack(side=tk.TOP)
 
+	"""
+	*   Function: emp_analysis
+	*   Description: Creates employee analytics widget
+	*
+	*   Date: 10 Mar 2021
+	*   Created by: Alex Villa
+	*   Edit History: 10 Mar 2021 - Alex Villa
+	*					v1.0 - Created
+	"""
 	def emp_analysis(self):
 		self.reset()
 
