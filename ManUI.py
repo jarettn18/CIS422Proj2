@@ -757,9 +757,9 @@ class ShowEmpData(tk.Frame):
 		title = tk.Label(self.edit_menu, text=f'Edit {emp}\n Role: {"Administrator" if self.employees[emp].is_admin() else "Employee"}', background=self.this_color, font=("Calibre", 20, 'bold'), width='20')
 		title.pack(side=tk.TOP)
 		curr_user = tk.Frame(self.edit_menu, background=self.this_color)
-		user_label = tk.Label(curr_user, background=self.this_color, font=("Calibre", 14, 'bold'), width='16')
+		user_label = tk.Label(curr_user, background=self.this_color, font=("Calibre", 14, 'bold'), width='24')
 		user_entry = tk.Entry(curr_user, textvariable=self.uservar,font=("Calibre", 12, 'bold'), width='10')
-		pass_label = tk.Label(curr_user, background=self.this_color, font=("Calibre", 14, 'bold'), width='10')
+		pass_label = tk.Label(curr_user, background=self.this_color, font=("Calibre", 14, 'bold'), width='12')
 		pass_entry = tk.Entry(curr_user, textvariable=self.passvar, show="*", font=("Calibre", 12, 'bold'), width='10')
 		self.error = tk.Label(curr_user, text="Invalid", background=self.this_color, font=("Calibre", 14, 'bold'), width='10')
 		user_label.pack(side=tk.LEFT)
@@ -1076,7 +1076,7 @@ class UpdatingCategories(tk.Frame):
 		cat_label = tk.Button(div, bg='gray',
 							  command=lambda i=i: self.toggle_items(self.buttons_dict[i], self.indiv_frames[i]),
 							  text=f'{i}',
-							  font=("Calibre", 18, 'bold'), width="40")
+							  font=("Calibre", 18, 'bold'), width="50")
 		self.buttons_dict[i] = cat_label
 		cat_label.pack(side=tk.TOP)
 
@@ -1089,15 +1089,27 @@ class UpdatingCategories(tk.Frame):
 	def create_item(self, j: tuple, indiv_frame, count: int):
 		name_label = tk.Label(indiv_frame, text=f'{j[0]}', font=("Calibre", 18, 'bold'), width="30")
 		price_label = tk.Label(indiv_frame, text=f'$ {j[1]:.2f}', font=("Calibre", 18, 'bold'), width="10")
-		name_label.grid(column=1, row=count)
-		price_label.grid(column=2, row=count)
+		delete_button = tk.Button(indiv_frame, bg='gray',
+							  command=lambda j=j: self.delete_item(j[0]),
+							  text="X",
+							  font=("Calibre", 14, 'bold'), width="3")
+		delete_button.grid(column=1, row=count)
+		name_label.grid(column=2, row=count)
+		price_label.grid(column=3, row=count)
+
+	def delete_item(self, name):
+		print(name)
+		if cus.delete_menu(name):
+			self.update_cat_list()
+		else:
+			print("delete Failed")
 
 	def toggle_items(self, btn: tk.Button, frm: tk.Frame):
 		if btn['bg'] == 'gray':
 			frm.pack(side=tk.BOTTOM)
 			btn['bg'] = 'white'
 		else:
-			frm.pack_forget()
+			frm.destroy()
 			btn['bg'] = 'gray'
 
 
@@ -1168,7 +1180,6 @@ class DynamicMenu(tk.Frame):
 			col = not col
 
 	def insert_item(self, j: tuple):
-
 		cus.add_order(j[0], 1)
 		items = cus.show_order()
 
