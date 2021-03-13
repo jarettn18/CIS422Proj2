@@ -1057,7 +1057,7 @@ class UpdatingCategories(tk.Frame):
 				indiv_frame = self.indiv_frames[i]
 				count = 2
 				for j in cus.query_items()[i]:
-					self.create_item(j, indiv_frame, count)
+					self.create_item(j, indiv_frame, count, i)
 					count += 1
 			else:
 				self.create_category(i)
@@ -1083,26 +1083,27 @@ class UpdatingCategories(tk.Frame):
 		count = 2
 		for j in cus.query_items()[i]:
 			edit_frame = self.indiv_frames[i]
-			self.create_item(j, edit_frame, count)
+			self.create_item(j, edit_frame, count, i)
 			count += 1
 
-	def create_item(self, j: tuple, indiv_frame, count: int):
+	def create_item(self, j: tuple, indiv_frame, count: int, frame_num: int):
 		name_label = tk.Label(indiv_frame, text=f'{j[0]}', font=("Calibre", 18, 'bold'), width="30")
 		price_label = tk.Label(indiv_frame, text=f'$ {j[1]:.2f}', font=("Calibre", 18, 'bold'), width="10")
-		delete_button = tk.Button(indiv_frame, bg='gray',
-							  command=lambda j=j: self.delete_item(j[0]),
-							  text="X",
-							  font=("Calibre", 14, 'bold'), width="3")
+		delete_button = tk.Button(indiv_frame, bg='gray',text="X",font=("Calibre", 14, 'bold'), width="3")
+		delete_button['command'] = lambda j=(j, name_label, price_label, delete_button): self.delete_item(j[0], j[1], j[2], j[3]),
 		delete_button.grid(column=1, row=count)
 		name_label.grid(column=2, row=count)
 		price_label.grid(column=3, row=count)
+		print(indiv_frame.grid_slaves())
 
-	def delete_item(self, name):
-		print(name)
+	def delete_item(self, name, label, price, butt):
 		if cus.delete_menu(name):
-			self.update_cat_list()
-		else:
-			print("delete Failed")
+			'''
+			label.destroy()
+			price.destroy()
+			butt.destroy()
+			'''
+			print("success")
 
 	def toggle_items(self, btn: tk.Button, frm: tk.Frame):
 		if btn['bg'] == 'gray':
