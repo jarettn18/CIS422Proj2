@@ -325,17 +325,13 @@ def remove_employee(name, current_user, password):
 """
 
 
-def add_admin(name, current_user, new_ad_pass, curr_user_pass):
+def add_admin(name, current_user, new_ad_pass):
     # checking that thte current_user is exist
     if current_user in shopEmp:
         # create new employee object with admin permission
-        new_admin = shopEmp[current_user].add_admin(name, curr_user_pass)
+        new_admin = shopEmp[current_user].add_admin(name)
         # check the return value of add_admin
-        if new_admin == 2:
-            # wrong admin's password
-            print("Error: ManStaff: add_admin(): Wrong Password.")
-            ret = 15
-        elif new_admin == 3:
+        if new_admin == 3:
             # the current_user is not an admin
             print("Error: ManStaff: add_admin(): Require Admin Permission.")
             ret = 16

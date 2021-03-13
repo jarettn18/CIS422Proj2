@@ -520,18 +520,14 @@ class Employee:
             ret = 2
         return ret
 
-    def add_admin(self, name, password):
+    def add_admin(self, name):
         """
         create employee object with admin permission and return it
         """
         if self._permission == 'admin':
-            if self._password_hash == hashing(password):
-                new_employee = Employee(name=name, permission='admin')
-                ret = new_employee
-                ret.set_recovery_key()
-            else:
-                print("Error: employee(): add_admin(): Wrong Password.")
-                ret = 2
+            new_employee = Employee(name=name, permission='admin')
+            ret = new_employee
+            ret.set_recovery_key()
         else:
             print("Error: employee(): add_admin(): Require Admin Permission.")
             ret = 3
