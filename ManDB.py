@@ -68,7 +68,7 @@ class ItemDatabase:
     def delete_item(self, name):
         if name:
             query = db.delete(self.item)
-            query = query.where(self.item.columns.name == self.item.name)
+            query = query.where(self.item.columns.name == name)
             ret = self.connection.execute(query)
         else:
             print("Invalid Input")

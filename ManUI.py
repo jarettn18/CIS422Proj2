@@ -674,7 +674,15 @@ class App(tk.Frame):
 		data.show_employees()
 		data.show_time_options()
 
-
+"""
+	*   Class: showEmpData
+	*   Description: Class contains functions show employees data
+	*
+	*   Date: 10 Mar 2021
+	*   Created by: Alex Villa
+	*   Edit History: 10 Mar 2021 - Alex Villa
+	*					v1.0 - Created
+"""
 class ShowEmpData(tk.Frame):
 
 	def __init__(self, master=None):
@@ -901,7 +909,15 @@ class ShowEmpData(tk.Frame):
 		toyear.pack(side=tk.LEFT)
 		self.toyearvar.set(int(year_today))
 
-
+"""
+	*   Class: ShowSaleData
+	*   Description: Class contains functions Sale data
+	*
+	*   Date: 10 Mar 2021
+	*   Created by: Alex Villa
+	*   Edit History: 10 Mar 2021 - Alex Villa
+	*					v1.0 - Created
+"""
 class ShowSaleData(tk.Frame):
 
 	def __init__(self, master=None):
@@ -1035,6 +1051,15 @@ class ShowSaleData(tk.Frame):
 			self.title['text'] = f"Showing Item Sales From {start} to {end}"
 		self.ticket['state'] = 'disabled'
 
+"""
+	*   Class: UpdatingCategories
+	*   Description: Class contains functions for updating categories
+	*
+	*   Date: 10 Mar 2021
+	*   Created by: Alex Villa
+	*   Edit History: 10 Mar 2021 - Alex Villa
+	*					v1.0 - Created
+"""
 
 class UpdatingCategories(tk.Frame):
 
@@ -1113,7 +1138,15 @@ class UpdatingCategories(tk.Frame):
 			frm.destroy()
 			btn['bg'] = 'gray'
 
-
+"""
+	*   Class: DynamicMenu
+	*   Description: Class contains functions for handling items, orders(create, insert, delete)
+	*
+	*   Date: 10 Mar 2021
+	*   Created by: Alex Villa
+	*   Edit History: 10 Mar 2021 - Alex Villa
+	*					v1.0 - Created
+"""
 class DynamicMenu(tk.Frame):
 
 	def __init__(self, master=None):
