@@ -17,7 +17,7 @@ import sqlalchemy as db
 from sqlalchemy.orm import sessionmaker
 import datetime
 import ManClass
-#just for read_db function
+# just for read_db function
 from decimal import Decimal
 
 """
@@ -28,12 +28,15 @@ from decimal import Decimal
 *   Edit History: 21 Feb 2021 - Theodore Yun
 *                 v1.0: Creating all the function.
 """
+
+
 # Create item Database for saving data
 class ItemDatabase:
     def __init__(self):
         self.engine = None
         self.connection = None
         self.metadata = None
+        self.item = None
 
     def start_session(self):
         self.engine = db.create_engine('sqlite:///ManEzItems.sqlite')
@@ -42,23 +45,25 @@ class ItemDatabase:
 
         # Set each column for each variable
         self.item = db.Table('item', self.metadata,
-              db.Column('name', db.String(255), nullable=False),
-              db.Column('category', db.String(255), nullable=False),
-              db.Column('price', db.Float(), default=0.0),
-              db.Column('discount', db.Float(), default=1.0)
-              )
+                             db.Column('name', db.String(255), nullable=False),
+                             db.Column('category', db.String(255), nullable=False),
+                             db.Column('price', db.Float(), default=0.0),
+                             db.Column('discount', db.Float(), default=1.0)
+                             )
         self.metadata.create_all(self.engine)
+
     # Add item into item list
     def add_item(self, item):
         if item:
             query = db.insert(self.item).values(name=item.get_name(), category=item.get_category(),
-                      price=item.get_price(),
-                      discount=item.get_discount())
+                                                price=item.get_price(),
+                                                discount=item.get_discount())
             ret = self.connection.execute(query)
         else:
             print("Invalid Input")
             ret = False
         return ret
+
     # Delete selected item in item list
     def delete_item(self, name):
         if name:
@@ -69,6 +74,7 @@ class ItemDatabase:
             print("Invalid Input")
             ret = False
         return ret
+
     # Modify information of the item
     def edit_item(self, name):
         if name:
@@ -79,10 +85,12 @@ class ItemDatabase:
             print("Invalid Input")
             ret = False
         return ret
+
     # Read data of item from item database
     def read_db(self):
         query = db.select([self.item])
         return self.connection.execute(query).fetchall()
+
 
 """
 *   Class: ReceiptDatabase
@@ -116,15 +124,15 @@ class ReceiptDatabase:
         self.connection = self.engine.connect()
         self.metadata = db.MetaData()
         self.receipts = db.Table('receipts', self.metadata,
-              db.Column('number', db.Integer()),
-              db.Column('date', db.Date()),
-              db.Column('datetime', db.DateTime()),
-              db.Column('name', db.String(255), nullable=False),
-              db.Column('orders', db.String(255), nullable=False),
-              db.Column('discount', db.Float(), default=1.0),
-              db.Column('amount', db.Integer(), default=1),
-              db.Column('price', db.Float())
-              )
+                                 db.Column('number', db.Integer()),
+                                 db.Column('date', db.Date()),
+                                 db.Column('datetime', db.DateTime()),
+                                 db.Column('name', db.String(255), nullable=False),
+                                 db.Column('orders', db.String(255), nullable=False),
+                                 db.Column('discount', db.Float(), default=1.0),
+                                 db.Column('amount', db.Integer(), default=1),
+                                 db.Column('price', db.Float())
+                                 )
 
         self.metadata.create_all(self.engine)
 
@@ -154,10 +162,11 @@ class ReceiptDatabase:
             for elem in orders:
                 # put each order into each row
                 query = db.insert(self.receipts).values(number=rec_num, date=date,
-                    datetime=dt, name=receipt.get_customer(),
-                    orders=elem, discount=receipt.get_discount(),
-                    amount=orders[elem].get_amount(), price=orders[elem].get_item().get_price())
-                ResultProxy = self.connection.execute(query)
+                                                        datetime=dt, name=receipt.get_customer(),
+                                                        orders=elem, discount=receipt.get_discount(),
+                                                        amount=orders[elem].get_amount(),
+                                                        price=orders[elem].get_item().get_price())
+                self.connection.execute(query)
             ret = True
         else:
             # invalid datatype
@@ -198,12 +207,12 @@ class ReceiptDatabase:
         Get the dictionary of receipts during start_date to end_date
         """
         if isinstance(start_date, datetime.date) and isinstance(end_date, datetime.date):
-            #regular database calls
+            # regular database calls
             Session = sessionmaker(bind=self.engine)
             session = Session()
-            #delta 1 day to start date to loop until end_date
+            # delta 1 day to start date to loop until end_date
             delta = datetime.timedelta(days=1)
-            #return dic
+            # return dic
             ret = {}
             while start_date <= end_date:
                 query_res = session.query(self.receipts).filter(self.receipts.c.date.like(start_date)).all()
@@ -213,6 +222,7 @@ class ReceiptDatabase:
             print("Error: get_report(): Invalid date input")
             ret = False
         return ret
+
 
 """
 *   Class: WorkTimeDatabase
@@ -224,36 +234,38 @@ class ReceiptDatabase:
 *                 v2.0: Edit functions.
 """
 
+
 class WorkTimeDatabase:
     def __init__(self):
         self.engine = None
         self.connection = None
         self.metadata = None
+        self.work = None
 
     def start_session(self):
         self.engine = db.create_engine('sqlite:///ManEzUsers.sqlite')
         self.connection = self.engine.connect()
         self.metadata = db.MetaData()
         self.work = db.Table('users', self.metadata,
-              db.Column('name', db.String(255), nullable=False),
-              db.Column('date', db.Date()),
-              db.Column('login_time', db.DateTime()),
-              db.Column('logout_time', db.DateTime()),
-              db.Column('work_time', db.Interval())
-              )
+                             db.Column('name', db.String(255), nullable=False),
+                             db.Column('date', db.Date()),
+                             db.Column('login_time', db.DateTime()),
+                             db.Column('logout_time', db.DateTime()),
+                             db.Column('work_time', db.Interval())
+                             )
 
         self.metadata.create_all(self.engine)
 
     def checkout(self, employee):
         if type(employee) == ManClass.Employee:
-            if employee._login_time:
+            if employee.get_login_time():
                 query = db.insert(self.work).values(name=employee.get_name(),
-                    date=datetime.date.today(),
-                    login_time=employee.get_login_time(),
-                    logout_time=employee.get_logout_time(),
-                    work_time=(employee.get_logout_time()-employee.get_login_time())
-                    )
-                ResultProxy = self.connection.execute(query)
+                                                    date=datetime.date.today(),
+                                                    login_time=employee.get_login_time(),
+                                                    logout_time=employee.get_logout_time(),
+                                                    work_time=(employee.get_logout_time() - employee.get_login_time())
+                                                    )
+                self.connection.execute(query)
                 ret = True
             else:
                 print("Error: WorkTimeDatabase(): employee: require log-in first.")
@@ -262,6 +274,7 @@ class WorkTimeDatabase:
             print("Error: WorkTimeDatabase(): employee: Invalid data type.")
             ret = False
         return ret
+
 
 """
 *   Class: EmployeesDatabase
@@ -291,11 +304,11 @@ class EmployeesDatabase:
         self.connection = self.engine.connect()
         self.metadata = db.MetaData()
         self.employees = db.Table('employees', self.metadata,
-              db.Column('name', db.String(255), nullable=False),
-              db.Column('permission', db.String(255), nullable=False),
-              db.Column('pass_hash', db.String(255), nullable=False),
-              db.Column('recov_key', db.String(255), nullable=False)
-              )
+                                  db.Column('name', db.String(255), nullable=False),
+                                  db.Column('permission', db.String(255), nullable=False),
+                                  db.Column('pass_hash', db.String(255), nullable=False),
+                                  db.Column('recov_key', db.String(255), nullable=False)
+                                  )
 
         self.metadata.create_all(self.engine)
 
@@ -307,10 +320,10 @@ class EmployeesDatabase:
         if type(employee) == ManClass.Employee:
             # add employee to the database
             query = db.insert(self.employees).values(name=employee.get_name(),
-                permission=employee.get_permission(),
-                pass_hash=employee.get_pass_hash(),
-                recov_key=employee.get_key())
-            ResultProxy = self.connection.execute(query)
+                                                     permission=employee.get_permission(),
+                                                     pass_hash=employee.get_pass_hash(),
+                                                     recov_key=employee.get_key())
+            self.connection.execute(query)
             ret = True
         else:
             print("Error: EmployeesDatabase(): add_employee(): Invalid datatype.")

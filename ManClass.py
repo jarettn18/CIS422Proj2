@@ -350,6 +350,7 @@ class Employee:
         """
         emp = Employee(name=name, permission=permission)
         emp._password_hash = pass_hash
+        emp._recovery_key = rec_key
         return emp
 
     def is_admin(self):
