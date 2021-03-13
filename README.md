@@ -22,9 +22,7 @@
     Perat Damronsiri, Jarett Nishijo, Jay Shin, Alex Villa, Theodore Yun
 
 ## How to use
-    Refer to ManEZ_Software_Guide for installation and user guide of our program
-
-## Modules - Python files that we used and functions in each file.
+    Find all the information of setup, installation, and user guide from ManEZ_Software_Guide
     
 #### ManUI.py
     Class: App
