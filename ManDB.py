@@ -224,6 +224,8 @@ class ReceiptDatabase:
         return ret
 
 
+
+
 """
 *   Class: WorkTimeDatabase
 *   Description:
@@ -275,6 +277,9 @@ class WorkTimeDatabase:
             ret = False
         return ret
 
+    def read_db(self):
+        query = db.select([self.work])
+        return self.connection.execute(query).fetchall()
 
 """
 *   Class: EmployeesDatabase
