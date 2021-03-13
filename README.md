@@ -137,3 +137,13 @@
         is_exist(): check if employee exists in the database
         is_empty(): check whether the employee database is empty or not
         read_db(): read database
+        
+#### ManReport.py
+      get_sale_list() : obtain sales data from the input start date to end date
+      total_sale_by_date() : obtain total sales amount from the input start date to end date
+      total_profit_by_date() : obtain total sales profit from the input start date to end date
+      report_by_item() : get report by item (coke: 5)
+      report_by_category() : get report by category(drink:5)
+        daily_worktime_report() : get daily work time report during the input date period
+      total_worktime_report() : get total work time during the input period
+      pay_employee() : calculate the employee payment during the input period
