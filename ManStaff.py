@@ -42,6 +42,8 @@ def read_emp_db():
         emp_temp = temp.create(emp.name, emp.pass_hash, emp.permission, emp.recov_key)
         shopEmp[emp.name] = emp_temp
 
+def get_emp_list():
+    return shopEmp
 
 """
 *   Function: is_emp_db_empty

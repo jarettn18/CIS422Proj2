@@ -554,7 +554,7 @@ class App(tk.Frame):
 		self.reset()
 
 		title_frame = tk.Frame(self.master, background=BG_COLOR)
-		title_frame.grid(row=1, column=2, columnspan=3)
+		title_frame.grid(row=1, column=3, columnspan=3)
 
 		back = tk.Button(title_frame, command=lambda: self.settings_menu(), text="Back", font=("Calibre", 20, 'bold'))
 		back.pack(side=tk.LEFT)
@@ -562,6 +562,122 @@ class App(tk.Frame):
 		title = tk.Label(title_frame, text='Employee Analytics', background=BG_COLOR, font=("Calibre", 20, 'bold'),
 						 width='20', height='5')
 		title.pack(side=tk.LEFT)
+
+		data = ShowEmpData(self.master)
+		data.show_employees()
+		data.show_time_options()
+
+
+class ShowEmpData(tk.Frame):
+
+	def __init__(self, master=None):
+		super().__init__(master)
+		self.master = master
+		self.months = {'January': 1, 'February': 2, 'March': 3, 'April': 4, 'May': 5, 'June': 6, 'July': 7, 'August': 8,
+					   'September': 9, 'October': 10, 'November': 11, 'December': 12}
+		self.ticket = tk.Text(self.master, font=("Calibre", 18, 'bold'))
+		ys = tk.Scrollbar(self.master, orient='vertical', command=self.ticket.yview)
+		self.ticket['yscrollcommand'] = ys.set
+		self.ticket.grid(column=3, row=4, columnspan=4, rowspan=3)
+		self.ticket['state'] = 'disabled'
+		self.empty = True
+		self.title = title = tk.Label(self.master, text='Employee Worklog', background=BG_COLOR, font=("Calibre", 20, 'bold'))
+		title.grid(row=3, column=3, columnspan=4)
+		self.button_grid = tk.Frame(self.master)
+		self.button_grid.grid(column=2, row=3, rowspan=3)
+		self.edit_grid = tk.Frame(self.master, background=BG_COLOR)
+		self.edit_grid.grid(column=1, row=3, rowspan=3, padx=3)
+		self.monthvar = tk.StringVar()
+		self.dayvar = tk.IntVar()
+		self.yearvar = tk.IntVar()
+		self.tomonthvar = tk.StringVar()
+		self.todayvar = tk.IntVar()
+		self.toyearvar = tk.IntVar()
+
+	def show_employees(self):
+		employees = stf.get_emp_list()
+		i = 1
+		global EditIcon
+		EditIcon = tk.PhotoImage(file="edit_icon.png")
+		for emp in employees:
+			new = tk.Button(self.button_grid, command=lambda j=emp: self.show_work_hours(j, (self.yearvar.get(), self.monthvar.get(), self.dayvar.get()),
+																   (self.toyearvar.get(), self.tomonthvar.get(), self.todayvar.get())), text=f"{emp.capitalize()}", font=("Calibre", 16, 'bold'), width="15", height='3')
+			edit = tk.Button(self.edit_grid, image=EditIcon, font=("Calibre", 16, 'bold'))
+			edit.pack(side=tk.TOP, pady=11)
+			new.pack(side=tk.TOP)
+		i += 1
+
+	def show_work_hours(self, emp, startdate: tuple, enddate: tuple):
+		start = dt.date(startdate[0], self.months[startdate[1]], startdate[2])
+		end = dt.date(enddate[0], self.months[enddate[1]], enddate[2])
+		print(emp, startdate, enddate)
+		print(rep.daily_worktime_report(emp, start, end))
+		print(rep.total_worktime_report(emp, start, end))
+
+	def show_time_options(self):
+		date = tk.Label(self.master, text='Date Range:', background=BG_COLOR, font=("Calibre", 16, 'bold'), width='15',
+						height='5')
+		date.grid(row=2, column=2)
+
+		to = tk.Label(self.master, text='To:', background=BG_COLOR, font=("Calibre", 16, 'bold'), width='10',
+					  height='5')
+		to.grid(row=2, column=4)
+
+		from_frame = tk.Frame(self.master)
+		from_frame.grid(row=2, column=3)
+
+		to_frame = tk.Frame(self.master)
+		to_frame.grid(row=2, column=5)
+
+		style = ttk.Style()
+		style.configure("bg.TCombobox", forground=BG_COLOR, background=BG_COLOR)
+
+		date_today = dt.date.today()
+		year_today = date_today.year
+		month_today = date_today.month
+		day_today = date_today.day
+
+		month = ttk.Combobox(from_frame, state="readonly", style="bg.TCombobox", textvariable=self.monthvar,
+							 font=("Calibre", 16, 'bold'), width='10', height='5')
+		month['values'] = (
+			'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October',
+			'November',
+			'December')
+		month.pack(side=tk.LEFT)
+		month.current(int(month_today) - 1)
+
+		day = ttk.Combobox(from_frame, state="readonly", style="bg.TCombobox", textvariable=self.dayvar,
+						   font=("Calibre", 16, 'bold'), width='5', height='5')
+		day['values'] = [x for x in range(1, 32)]
+		day.pack(side=tk.LEFT)
+		day.current(int(day_today) - 1)
+
+		year = ttk.Combobox(from_frame, state="readonly", style="bg.TCombobox", textvariable=self.yearvar,
+							font=("Calibre", 16, 'bold'), width='5', height='5')
+		year['values'] = (2021)
+		year.pack(side=tk.LEFT)
+		self.yearvar.set(int(year_today))
+
+		tomonth = ttk.Combobox(to_frame, state="readonly", style="bg.TCombobox", textvariable=self.tomonthvar,
+							   font=("Calibre", 16, 'bold'), width='10', height='5')
+		tomonth['values'] = (
+			'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October',
+			'November',
+			'December')
+		tomonth.pack(side=tk.LEFT)
+		tomonth.current(int(month_today) - 1)
+
+		today = ttk.Combobox(to_frame, state="readonly", style="bg.TCombobox", textvariable=self.todayvar,
+							 font=("Calibre", 16, 'bold'), width='5', height='5')
+		today['values'] = [x for x in range(1, 32)]
+		today.pack(side=tk.LEFT)
+		today.current(int(day_today) - 1)
+
+		toyear = ttk.Combobox(to_frame, state="readonly", style="bg.TCombobox", textvariable=self.toyearvar,
+							  font=("Calibre", 16, 'bold'), width='5', height='5')
+		toyear['values'] = (2021)
+		toyear.pack(side=tk.LEFT)
+		self.toyearvar.set(int(year_today))
 
 
 class ShowSaleData(tk.Frame):
