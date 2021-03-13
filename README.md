@@ -1,8 +1,8 @@
 # CIS422Proj2 -ManEZ
 
-    *   Title:			 ReadME.md
-    *   Project:		 ManEz
-    *   Team:			 TAP2J
+    *   Title: ReadME.md
+    *   Project: ManEz
+    *   Team: TAP2J
     *   Description: ReadME file of our proejct
     *   Date: 11 March 2021
     *   Last Created by: Theodore Yun
