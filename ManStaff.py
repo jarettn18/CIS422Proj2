@@ -42,8 +42,21 @@ def read_emp_db():
         emp_temp = temp.create(emp.name, emp.pass_hash, emp.permission, emp.recov_key)
         shopEmp[emp.name] = emp_temp
 
+
+"""
+*   Function: get_emp_list
+*   Description: This function return the employee list
+*
+*   Date: 12 Mar 2021
+*   Created by: Alex Villa
+*   Edit History: 12 Mar 2021 - Perat Damrongsiri
+*                 v1.0: Added this function.
+"""
+
+
 def get_emp_list():
     return shopEmp
+
 
 """
 *   Function: is_emp_db_empty
