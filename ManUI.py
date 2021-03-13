@@ -593,26 +593,141 @@ class ShowEmpData(tk.Frame):
 		self.tomonthvar = tk.StringVar()
 		self.todayvar = tk.IntVar()
 		self.toyearvar = tk.IntVar()
-
-	def show_employees(self):
-		employees = stf.get_emp_list()
-		i = 1
+		self.employees = stf.get_emp_list()
+		self.edit_menu = tk.Frame(self.master)
+		self.this_color = "bisque2"
+		self.uservar = tk.StringVar()
+		self.passvar = tk.StringVar()
+		self.error = None
 		global EditIcon
 		EditIcon = tk.PhotoImage(file="edit_icon.png")
-		for emp in employees:
+
+	def show_employees(self):
+		for child in self.button_grid.winfo_children():
+			child.destroy()
+		for child in self.edit_grid.winfo_children():
+			child['command'] = None
+			child.destroy()
+		for emp in self.employees:
 			new = tk.Button(self.button_grid, command=lambda j=emp: self.show_work_hours(j, (self.yearvar.get(), self.monthvar.get(), self.dayvar.get()),
 																   (self.toyearvar.get(), self.tomonthvar.get(), self.todayvar.get())), text=f"{emp.capitalize()}", font=("Calibre", 16, 'bold'), width="15", height='3')
-			edit = tk.Button(self.edit_grid, image=EditIcon, font=("Calibre", 16, 'bold'))
+			edit = tk.Button(self.edit_grid, image=EditIcon, command=lambda k=emp: self.show_edit_menu(k), font=("Calibre", 16, 'bold'))
 			edit.pack(side=tk.TOP, pady=11)
 			new.pack(side=tk.TOP)
-		i += 1
 
 	def show_work_hours(self, emp, startdate: tuple, enddate: tuple):
+		self.empty = True
+		self.ticket['state'] = 'normal'
+		self.ticket.delete('1.0', tk.END)
 		start = dt.date(startdate[0], self.months[startdate[1]], startdate[2])
 		end = dt.date(enddate[0], self.months[enddate[1]], enddate[2])
-		print(emp, startdate, enddate)
-		print(rep.daily_worktime_report(emp, start, end))
-		print(rep.total_worktime_report(emp, start, end))
+		self.title['text'] = f'show'
+		punches = rep.daily_worktime_report(emp, start, end)
+		total_work = rep.total_worktime_report(emp, start, end)
+		if total_work:
+			self.empty = False
+			time = str(total_work).split(":")
+			hr = time[0]
+			minim = time[1]
+			self.ticket.insert(tk.END, f"Showing Time Clock Data For {emp}\n")
+			self.ticket.insert(tk.END, f"___________________________________\n")
+			if punches:
+				for entry in punches:
+					self.ticket.insert(tk.END, f"Date: {entry} \t\t\t {str(punches[entry])}\n")
+			else:
+				self.ticket.insert(tk.END, f"No Work Data To Show\n")
+		if self.empty:
+			self.title['text'] = "No Orders To Show In Date Range"
+			self.empty = True
+		else:
+			self.title['text'] = f" Showing Punches From {start} to {end} \t Total: {hr} Hours and {minim} Minutes"
+		self.ticket['state'] = 'disabled'
+
+	def show_edit_menu(self, emp):
+		self.edit_menu.destroy()
+		self.edit_menu = tk.Frame(self.master, background=self.this_color)
+		self.edit_menu.grid(row=3,column=3,columnspan=4, rowspan=4, ipadx=20, ipady=20)
+		title = tk.Label(self.edit_menu, text=f'Edit {emp}\n Role: {"Administrator" if self.employees[emp].is_admin() else "Employee"}', background=self.this_color, font=("Calibre", 20, 'bold'), width='20')
+		title.pack(side=tk.TOP)
+		curr_user = tk.Frame(self.edit_menu, background=self.this_color)
+		user_label = tk.Label(curr_user, background=self.this_color, font=("Calibre", 14, 'bold'), width='16')
+		user_entry = tk.Entry(curr_user, textvariable=self.uservar,font=("Calibre", 12, 'bold'), width='10')
+		pass_label = tk.Label(curr_user, background=self.this_color, font=("Calibre", 14, 'bold'), width='10')
+		pass_entry = tk.Entry(curr_user, textvariable=self.passvar, show="*", font=("Calibre", 12, 'bold'), width='10')
+		self.error = tk.Label(curr_user, text="Invalid", background=self.this_color, font=("Calibre", 14, 'bold'), width='10')
+		user_label.pack(side=tk.LEFT)
+		user_entry.pack(side=tk.LEFT)
+		pass_label.pack(side=tk.LEFT)
+		pass_entry.pack(side=tk.LEFT)
+		confirm_button = tk.Button(curr_user, text="confirm", font=("Calibre", 12, 'bold'))
+		confirm_button.pack(side=tk.LEFT, padx=3)
+		delete_button = tk.Button(self.edit_menu, text="Delete User", command=lambda: self._show_entry_bar(curr_user, "delete", user_label, pass_label, confirm_button, emp), font=("Calibre", 18, 'bold'), width='18')
+		delete_button.pack(side=tk.TOP)
+		status_button = tk.Button(self.edit_menu, text="Change Password", command=lambda: self._show_entry_bar(curr_user, "password", user_label, pass_label, confirm_button, emp), font=("Calibre", 18, 'bold'), width='18')
+		status_button.pack(side=tk.TOP)
+		pass_button = tk.Button(self.edit_menu, text=f"{'Demote to Employee' if self.employees[emp].is_admin() else 'Promote to Admin'}", command=lambda: self._show_entry_bar(curr_user, "role", user_label, pass_label, confirm_button, emp), font=("Calibre", 18, 'bold'), width='18')
+		pass_button.pack(side=tk.TOP)
+		ok = tk.Button(self.edit_menu, command=lambda: self._close_menu(self.edit_menu), text="OK", font=("Calibre", 20, 'bold'))
+		ok.pack(side=tk.BOTTOM)
+
+	def _show_entry_bar(self, frame, type, label1, label2, confirm, emp):
+		self.uservar.set("")
+		self.passvar.set("")
+		self.error['text'] = ""
+		if type == "password":
+			label1['text'] = "New Pin"
+			label2['text'] = "Old Pin"
+			confirm['command'] = lambda: self.change_password(emp, self.uservar.get(), self.passvar.get(), frame)
+		elif type == "delete":
+			label1['text'] = f'Admin for confirmation:'
+			label2['text'] = "Admin Pin"
+			confirm['command'] = lambda: self.delete_user(emp, self.uservar.get(), self.passvar.get(), frame)
+		elif type == "role":
+			label1['text'] = f'Confirm with Admin:'
+			label2['text'] = "Admin Pin"
+			confirm['command'] = lambda: self.promote_demote(emp, self.uservar.get(), self.passvar.get(), frame)
+		frame.pack(side=tk.TOP, pady=5)
+
+	def change_password(self, emp, new_pass, old_pass, frame):
+		if stf.change_password(emp, old_pass, new_pass) == 29:
+			self.title['text'] = f"Successfully Changed {emp}'s Password"
+			frame.grid_forget()
+			self.show_edit_menu(emp)
+		else:
+			self.error['text'] = "Invalid"
+			self.error.pack(side=tk.BOTTOM)
+
+	def promote_demote(self, emp, admin, admin_password, frame):
+		if self.employees[emp].is_admin():
+			if stf.demote_from_admin(emp, admin, admin_password) == 22:
+				self.title['text'] = f"{emp} Is Now an Employee"
+				frame.grid_forget()
+				self.show_edit_menu(emp)
+			else:
+				self.error['text'] = "Invalid"
+				self.error.pack(side=tk.BOTTOM)
+		else:
+			if stf.promote_to_admin(emp, admin, admin_password) == 18:
+				self.title['text'] = f"{emp} Is Now an Administrator"
+				frame.grid_forget()
+				self.show_edit_menu(emp)
+			else:
+				self.error['text'] = "Invalid"
+				self.error.pack(side=tk.BOTTOM)
+
+	def delete_user(self, user, curr, pin, frame):
+		if stf.remove_employee(user, curr, pin) == 11:
+			self.employees = stf.get_emp_list()
+			self.title['text'] = f"Successfully Removed {user}"
+			frame.grid_forget()
+			self._close_menu(frame)
+		else:
+			self.error['text'] = "Invalid"
+			self.error.pack(side=tk.BOTTOM)
+
+	def _close_menu(self, menu_frame):
+		menu_frame.destroy()
+		self.show_employees()
 
 	def show_time_options(self):
 		date = tk.Label(self.master, text='Date Range:', background=BG_COLOR, font=("Calibre", 16, 'bold'), width='15',

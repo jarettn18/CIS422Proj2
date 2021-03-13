@@ -156,11 +156,11 @@ def daily_worktime_report(name, start_date, end_date):
                 print("Invalid Input")
                 return False
         #   Checking and adding worktime and its sum
-        if start_date in log_check:
-            ret_dic = {}
-            while start_date <= end_date:
+        ret_dic = {}
+        while start_date <= end_date:
+            if start_date in log_check:
                 ret_dic[start_date] = log_check[start_date]
-                start_date += delta
+            start_date += delta
         return ret_dic
     else:
         print("Invalid Input")
@@ -189,13 +189,15 @@ def total_worktime_report(name, start_date, end_date):
                 print("Invalid Name")
                 return False
         #   Checking and adding worktime to get total
-        if start_date in log_check:
-            ret = log_check[start_date]
+        ret = {}
+        while start_date <= end_date:
+            if start_date in log_check:
+                ret = log_check[start_date]
             start_date += delta
-            while start_date <= end_date:
-                if start_date in log_check:
-                    ret += log_check[start_date]
-                    start_date += delta
+        while start_date <= end_date:
+            if start_date in log_check:
+                ret += log_check[start_date]
+                start_date += delta
         return ret
     else:
         print("Invalid Input")
