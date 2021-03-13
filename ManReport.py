@@ -1,6 +1,6 @@
 """
 *   Report Module
-*   Description: Module with all the reporting functionsd
+*   Description: Module with all the reporting functions
 *   Date: 21 Feb 2021
 *   Last Created by: Jay Shin
 *   Edit History: 25 Feb 2021 - Jay Shin
@@ -17,10 +17,12 @@ import ManDB
     Whenever user request report from one of these functions
     this module returns analysis of input date period
 '''
+
+
 def get_sale_list(start_date, end_date):
-    '''
+    """
     This function read all receipts in input date period
-    '''
+    """
     try:
         receiptdb = ManDB.ReceiptDatabase()
         receiptdb.start_session()
@@ -30,11 +32,12 @@ def get_sale_list(start_date, end_date):
         ret = False
     return ret
 
-def total_sale_by_date(start_date,end_date):
-    '''
+
+def total_sale_by_date(start_date, end_date):
+    """
     This function read all the receipts between input dates
     Returns total sale amount by date in range
-    '''
+    """
     sales = get_sale_list(start_date, end_date)
     if sales:
         delta = datetime.timedelta(days=1)
@@ -48,11 +51,12 @@ def total_sale_by_date(start_date,end_date):
         print("Invalid Input")
         return False
 
+
 def total_profit_by_date(start_date, end_date):
-    '''
+    """
     This function read all the receipts between input dates
     Returns total profit made in each date
-    '''
+    """
     sales = get_sale_list(start_date, end_date)
     if sales:
         delta = datetime.timedelta(days=1)
@@ -60,7 +64,7 @@ def total_profit_by_date(start_date, end_date):
             tot = 0.0
             prev_num = 0
             for sale in sales[start_date]:
-                #check if the sale is still in same order
+                # check if the sale is still in same order
                 if sale.number != prev_num:
                     prev_num = sale.number
                     tot += sale.price
@@ -71,11 +75,12 @@ def total_profit_by_date(start_date, end_date):
         print("Invalid Input")
         return False
 
+
 def report_by_item(start_date, end_date):
-    '''
+    """
     This function read all the receipts between input dates
     Returns total amount of each sold item by date in range
-    '''
+    """
     sales = get_sale_list(start_date, end_date)
     if sales:
         delta = datetime.timedelta(days=1)
@@ -93,11 +98,12 @@ def report_by_item(start_date, end_date):
         print("Invalid Input")
         return False
 
+
 def report_by_category(start_date, end_date):
-    '''
+    """
     This function read all the receipts between input dates
     Returns total amount of each sold category by date in range
-    '''
+    """
     sales = get_sale_list(start_date, end_date)
     if sales:
         delta = datetime.timedelta(days=1)
@@ -124,11 +130,12 @@ def report_by_category(start_date, end_date):
         print("Invalid Input")
         return False
 
+
 def daily_worktime_report(name, start_date, end_date):
-    '''
+    """
     This function read all the employee log data between input dates
     Returns total amount of individual work time by date in range
-    '''
+    """
     if isinstance(name, str):
         delta = datetime.timedelta(days=1)
         #   reading WorkTimeDatabase
@@ -156,14 +163,15 @@ def daily_worktime_report(name, start_date, end_date):
         print("Invalid Input")
         return False
 
+
 def total_worktime_report(name, start_date, end_date):
-    '''
+    """
     This function read all the employee log data between input dates
     Returns total amount of individual work time by input period
-    '''
+    """
     if isinstance(name, str):
         delta = datetime.timedelta(days=1)
-        #   reading WorkTimeDatabase
+        # reading WorkTimeDatabase
         wtdb = ManDB.WorkTimeDatabase()
         wtdb.start_session()
         wts = wtdb.read_db()
@@ -190,20 +198,21 @@ def total_worktime_report(name, start_date, end_date):
         print("Invalid Input")
         return False
 
+
 def pay_employee(name, wage, start_date, end_date):
-    '''
+    """
     calculate total payment for the employee
     wage must be bigger than zero
-    '''
+    """
     if isinstance(name, str):
         if wage > 0.0:
             wt = total_worktime_report(name, start_date, end_date)
-            #datetime delta need to be changed into seconds
-            #to calculate hours and minutes
+            # datetime delta need to be changed into seconds
+            # to calculate hours and minutes
             wtsec = wt.seconds
-            wthour = wtsec//3600
-            wtmin = (wtsec//60)%60
-            wt = wthour + (wtmin/60)
+            wthour = wtsec // 3600
+            wtmin = (wtsec // 60) % 60
+            wt = wthour + (wtmin / 60)
             pay = wage * wt
             return pay
         else:
@@ -212,4 +221,3 @@ def pay_employee(name, wage, start_date, end_date):
     else:
         print("Invalid Name")
         return False
-
