@@ -1120,7 +1120,7 @@ class UpdatingCategories(tk.Frame):
 			frm.pack(side=tk.BOTTOM)
 			btn['bg'] = 'white'
 		else:
-			frm.destroy()
+			frm.pack_forget()
 			btn['bg'] = 'gray'
 
 """
