@@ -24,8 +24,7 @@
 ## How to use
     Refer to ManEZ_Software_Guide for installation and user guide of our program
 
-## Subdirectories in Directory
-    Python files that we used and funtions in each file.
+## Modules - Python files that we used and functions in each file.
     
 #### ManUI.py
     UI
