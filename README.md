@@ -1,13 +1,16 @@
-# CIS422Proj2 -ManEZ
+# Welcome to EZ Point of Sale system ManEZ!
 
     *   Title: ReadME.md
     *   Project: ManEz
     *   Team: TAP2J
+    *   Course Name: CIS 422
+    *   Assignment: Project 2
     *   Description: ReadME file of our proejct
     *   Date: 11 March 2021
     *   Last Created by: Theodore Yun
     *   Edit History: 11 Mar 2021 - Theodore Yun
                       v1.0: First create file
+                      v1.1: Finalize readme
                   
  
 ## Introduction
@@ -15,7 +18,13 @@
     Current Point of Sale system is overcomplicated and expensive for business owner ex) restaurant, warehouse
     Easeir and more efficient program for new users.
 
-## Documentation
+## Authors
+    Perat Damronsiri, Jarett Nishijo, Jay Shin, Alex Villa, Theodore Yun
+
+## How to use
+    Refer to ManEZ_Software_Guide for installation and user guide of our program
+
+## Subdirectories in Directory
     Python files that we used and funtions in each file.
     
 #### ManUI.py
