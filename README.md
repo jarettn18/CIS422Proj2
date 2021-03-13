@@ -11,8 +11,8 @@
     *   Edit History: 11 Mar 2021 - Theodore Yun
                       v1.0: First create file
                       v1.1: Finalize readme
-                  
- 
+
+
 ## Introduction
     Point of Sale system
     Current Point of Sale system is overcomplicated and expensive for business owner ex) restaurant, warehouse
@@ -22,10 +22,8 @@
     Perat Damronsiri, Jarett Nishijo, Jay Shin, Alex Villa, Theodore Yun
 
 ## How to use
-    Refer to ManEZ_Software_Guide for installation and user guide of our program
+    Find all the information of setup, installation, and user guide from ManEZ_Software_Guide
 
-## Modules - Python files that we used and functions in each file.
-    
 #### ManUI.py
     Class: App
         reset() : Clear the screen of all current widgets
@@ -71,7 +69,7 @@
         delete_order_grid() : reset the widgets in the order grid
         delete_whole_order() : delete an order
         send_order() : send order to database
-    
+
 #### ManCus.py
     add_item() : add new data into the list
     query_item() : add new data into the list
@@ -87,37 +85,37 @@
 
 #### ManClass.py
     Class for item
-    
+
       Class variables
           name: order’s name
-          category: order’s category	
+          category: order’s category
           price: order’s price
           discount: menu’s discount
-        
+
       Getter and Setter for each class
           get_name(): get order’s name
-          get_category(): get order’s category	
+          get_category(): get order’s category
           get_price(): get order’s price
           get_discount(): get discount rate
           set_name(): set order’s name
-          set_category(): set order’s category	
+          set_category(): set order’s category
           set_price(): set order’s price
           set_discount(): set discount rate
-         
+
     Class for order
-    
+
         Class Variable
             item: name of item
             amount: amount of order
-        
+
        Getter and Setter for receipt class
              get_item(): get item name
              get_amount(): get amount of item
              set_item(): set item name
              set_item(): set amount of item
-    
+
     Class for receipt
-    
+
         Class Variable
               customer_name: Name of Customers
               orders: list of orders
@@ -128,20 +126,20 @@
               get_orders(): get orders list
               get_total(): get total cost
               get_discount(): get discount rate
-              set_customer_name(): set customer’s name	
+              set_customer_name(): set customer’s name
               set_orders(): set orders list
               Set_total(): set total cost
               Set_discount(): set discount rate
-        
+
     Class for Employee
-    
+
         Class Variable
             _name: name of the employee
             _password_hash: security hash for the employee
             _login_time: login time of the employee
             _logout_time: logout time of the employee
             _recovery_key: key to recover the employee account
-        
+
         Getter and Setter for receipt class
              create(): create employee account
              is_admin(): check whether the current user is administer
@@ -165,22 +163,43 @@
              reset_time(): reset the log time data of the current user
 
 #### ManStaff.py
+
+    Global Variable
+        shopEmp: a dictionary that stores the employees' data
+
+    Functions
+        read_emp_db(): reads the employee database and puts it in the dictionary for internal use.
+        is_emp_db_empty(): check that the employee database is empty or not. return true if empty, else return false.
+        add_employee(): adds employee to the dictionary and employee database. return recovery key on successfully added else returns error code.
+        login(): handling the login action. It will set the login time.
+        logout(): handle the logout action. It will set the logout time and record it to the database.
+        remove_employee(): remove the employee from the dictionary and employee database.
+        add_admin(): adds the new admin into the dictionary and employee database. only allow admin to use else it will just return an error message.
+        promote_to_admin(): promotes employee to admin. Only the admin can use it.
+        demote_from_admin(): demotes admin to employee. Only the admin can use it.
+        change_password(): This function is for the user to change their password.
+        forgot_password(): This function is for the user to change their password when the user forgot it.
+        is_admin(): check that the <name> is an admin or not
+        admin_entry(): checks that the user is admin and verifying the password.
+        get_message(): convert the error code to error message, and boolean to indicate that it's error or success.
+
+
 #### ManDB.py
 
     Item database
-        add_item(): add item into the database 
+        add_item(): add item into the database
         delete_item(): delete item from the database
         edit_item(): edit item in the database
         read_db(): read database
-        
+
     Receipt database
         add_receipt(): add receipt to the database
         delete_receipt(): delete a receipt from the database
         get_period(): get receipts from input start date to end date
-        
+
     WorkTime database
         checkout(): check out the employee and save the log info to the database for the analysis
-        
+
     Employees database
         add_employee(): add employee data into the database
         delete_employee(): delete employee data into the database
@@ -188,7 +207,7 @@
         is_exist(): check if employee exists in the database
         is_empty(): check whether the employee database is empty or not
         read_db(): read database
-        
+
 #### ManReport.py
       get_sale_list() : obtain sales data from the input start date to end date
       total_sale_by_date() : obtain total sales amount from the input start date to end date
