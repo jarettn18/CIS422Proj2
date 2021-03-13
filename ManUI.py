@@ -453,9 +453,6 @@ class App(tk.Frame):
 		curr_men_frame = tk.Frame(self.master, background=BG_COLOR)
 		curr_men_frame.grid(row=1, column=4, rowspan=5)
 
-		currents_header = tk.Label(curr_men_frame, text="Current Menu", font=("Calibre", 18, 'bold'), background=BG_COLOR)
-		currents_header.grid(column=1, row=1, padx=50)
-
 		item_frames = UpdatingCategories(curr_men_frame)
 		item_frames.show_cat_list()
 
@@ -1074,20 +1071,14 @@ class UpdatingCategories(tk.Frame):
 		if cus.add_item(name, category, price):
 			name_entry.delete(0, 'end')
 			price_entry.delete(0, 'end')
-			self.update_cat_list()
-
-	def update_cat_list(self):
-		for i in cus.query_items():
-			if i in self.indiv_frames:
-				indiv_frame = self.indiv_frames[i]
-				count = 2
-				for j in cus.query_items()[i]:
-					self.create_item(j, indiv_frame, count, i)
-					count += 1
-			else:
-				self.create_category(i)
+			self.show_cat_list()
 
 	def show_cat_list(self):
+		for child in self.master.grid_slaves():
+			child.destroy()
+		currents_header = tk.Label(self.master, text="Current Menu", font=("Calibre", 18, 'bold'), background=BG_COLOR)
+		currents_header.grid(column=1, row=1, padx=50)
+		self.c = 2
 		for i in cus.query_items():
 			self.create_category(i)
 
@@ -1115,20 +1106,14 @@ class UpdatingCategories(tk.Frame):
 		name_label = tk.Label(indiv_frame, text=f'{j[0]}', font=("Calibre", 18, 'bold'), width="30")
 		price_label = tk.Label(indiv_frame, text=f'$ {j[1]:.2f}', font=("Calibre", 18, 'bold'), width="10")
 		delete_button = tk.Button(indiv_frame, bg='gray',text="X",font=("Calibre", 14, 'bold'), width="3")
-		delete_button['command'] = lambda j=(j, name_label, price_label, delete_button): self.delete_item(j[0], j[1], j[2], j[3]),
+		delete_button['command'] = lambda j=j: self.delete_item(j)
 		delete_button.grid(column=1, row=count)
 		name_label.grid(column=2, row=count)
 		price_label.grid(column=3, row=count)
-		print(indiv_frame.grid_slaves())
 
-	def delete_item(self, name, label, price, butt):
-		if cus.delete_menu(name):
-			'''
-			label.destroy()
-			price.destroy()
-			butt.destroy()
-			'''
-			print("success")
+	def delete_item(self, name):
+		if cus.delete_menu(name[0]):
+			self.show_cat_list()
 
 	def toggle_items(self, btn: tk.Button, frm: tk.Frame):
 		if btn['bg'] == 'gray':
