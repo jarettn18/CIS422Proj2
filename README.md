@@ -1,15 +1,26 @@
 # CIS422Proj2 -ManEZ
 
+    *   Title:			 ReadME.md
+    *   Project:		 ManEz
+    *   Team:			 TAP2J
+    *   Description: ReadME file of our proejct
+    *   Date: 11 March 2021
+    *   Last Created by: Theodore Yun
+    *   Edit History: 11 Mar 2021 - Theodore Yun
+                      v1.0: First create file
+                  
+ 
 ## Introduction
     Point of Sale system
     Current Point of Sale system is overcomplicated and expensive for business owner ex) restaurant, warehouse
     Easeir and more efficient program for new users.
 
-## User Guide
 ## Documentation
     Python files that we used and funtions in each file.
+    
 #### ManUI.py
     UI
+    
 #### ManCus.py
     add_item() : add new data into the list
     query_item() : add new data into the list

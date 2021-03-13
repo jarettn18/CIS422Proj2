@@ -1,7 +1,7 @@
 """
 *   Title:			 ManDB.py
 *   Project:		 ManEz
-*   Description:
+*   Description:     Database for saving report data from item,order,and employee
 *
 *   Team:			 TAP2J
 *

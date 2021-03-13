@@ -1,7 +1,7 @@
 """
 *   Title:			 ManClass.py
 *   Project:		 ManEz
-*   Description:
+*   Description:     Classes object for ManCus
 *
 *   Team:			 TAP2J
 *

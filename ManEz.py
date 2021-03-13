@@ -1,3 +1,14 @@
+"""
+*   Title:			 ManEZ.py
+*   Project:		 ManEz
+*   Description:    Main Function for executing program
+*
+*   Team:			 TAP2J
+*
+*   Last Created by: Jay Shin
+*   Date Created:    10 Feb 2021
+                    v 1.0 : Initial creation
+"""
 import ManUI
 from ManCus import *
 import ManDB

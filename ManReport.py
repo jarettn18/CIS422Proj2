@@ -1,4 +1,7 @@
 """
+*   Title:			 ManReport.py
+*   Project:		 ManEz
+*   Team:			 TAP2J
 *   Report Module
 *   Description: Module with all the reporting functions
 *   Date: 21 Feb 2021
