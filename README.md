@@ -27,7 +27,50 @@
 ## Modules - Python files that we used and functions in each file.
     
 #### ManUI.py
-    UI
+    Class: App
+        reset() : Clear the screen of all current widgets
+        init_screen() : initial screen brought up upon installation
+        main_login_screen() : main screen brought up upon future program launches
+        pin_screen() : pin screen to validate all screens requiring a pin
+        settings_menu() : settings menu screen
+        New_account() : new account screen used to add new accounts to database
+        create_account() : insert the account name into database
+        add_menu() : screen to add new menus to database
+        order_screen() : brings up a UI for new orders
+        analysis() : brings up screen used for analyzing sale data
+        emp_analysis() : brings up screen used for analyzing employee data
+
+    Class: ShowEmpData
+        Show_employees() : bring a list of employees
+        show_work_hours() : bring a list of hours worked for each employee
+        show_time_options() : style dates according to options
+
+    Class: ShowSaleData
+        _calcTotalPeriod() : calculate the total sales for the given period
+        _calcTotalDay() : calculate the total sales for the day
+        _calcTotal() : calculate the total for a given collection
+        findBySale() : find a receipt by sale date
+        findByCategory() : find a receipt by category
+        findByItem() : find a receipt by item
+
+    Class: UpdatingCategories
+        insert_item() : add an item to a category
+        update_cat_list() : update a category list
+        show_cat_list() : show category list
+        create_category() : create a category
+        create_item() : create an item for a category
+        toggle_item() : turn on and off visibility of items
+
+    Class: DynamicMenu
+        get_send_button() : get the send button
+        show_cat_list() : show the category list
+        create_items() : create an item for menu
+        insert_item() : insert an item to a menu
+        delete_item() : delete an item from a menu
+        _delete_order_grid() : delete the order grid
+        delete_order_grid() : reset the widgets in the order grid
+        delete_whole_order() : delete an order
+        send_order() : send order to database
     
 #### ManCus.py
     add_item() : add new data into the list
