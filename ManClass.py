@@ -132,7 +132,7 @@ class Order:
 
     # setter for item
     def set_item(self, value):
-        if value and type(value) == self.item:
+        if value and type(value) == Item:
             self.item = copy.deepcopy(value)
             ret = True
         else:
@@ -175,7 +175,7 @@ class Receipt:
 
     # Class variable for adding order
     def add_order(self, new_order):
-        if type(new_order) == order:
+        if type(new_order) == Order:
             name = new_order.get_item().get_name()
             if name in self.orders:
                 self.orders[name].set_amount(int(new_order.get_amount() + self.orders[name].get_amount()))
