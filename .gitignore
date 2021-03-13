@@ -11,3 +11,4 @@ ManEzReceipts.sqlite
 *.pyc
 *.pyc
 *.pyc
+.idea/workspace.xml
