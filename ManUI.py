@@ -1247,7 +1247,7 @@ class DynamicMenu(tk.Frame):
 			app.main_login_screen()
 
 
-def main():
+def run_ui():
 	root = tk.Tk(className="Welcome to ManEz")
 	root.geometry("1200x2000")
 	manez = App(root)
@@ -1257,7 +1257,3 @@ def main():
 	else:
 		manez.main_login_screen()
 	manez.mainloop()
-
-
-if __name__ == '__main__':
-	main()

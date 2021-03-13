@@ -13,7 +13,7 @@ import ManUI
 
 
 def main():
-    ManUI.main()
+    ManUI.run_ui()
 
 
 if __name__ == '__main__':
