@@ -132,7 +132,7 @@ class Order:
 
     # setter for item
     def set_item(self, value):
-        if value and type(value) == item:
+        if value and type(value) == self.item:
             self.item = copy.deepcopy(value)
             ret = True
         else:
