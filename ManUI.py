@@ -985,7 +985,7 @@ class ShowSaleData(tk.Frame):
 				day_sales = total_sales[entry]
 				day_total = self._calcTotalDay(receipt_collection)
 				period_totals.append((day_total, day_sales))
-				self.ticket.insert(tk.END, f"-Showing All Sales On {entry} \t\t Day Total: ${day_total} From {day_sales} Sales- \n\n")
+				self.ticket.insert(tk.END, f"-Showing All Sales On {entry} \t\t Day Total: ${day_total:.2f} From {day_sales} Sales- \n\n")
 				for item in receipt_collection:
 					self.ticket.insert(tk.END, f"\t\tReceipt#: {item} \t Customer: {receipt_info[item][0]}\n")
 					self.ticket.insert(tk.END, f"\t\tDate: {receipt_info[item][1]} \t Time: {receipt_info[item][2]}\n ")
@@ -1205,7 +1205,7 @@ class DynamicMenu(tk.Frame):
 		self._delete_order_grid()
 		self.items = {}
 		i = 0;
-		for order in reversed(list(items.keys())):
+		for order in items.keys():
 			order_button = tk.Button(self.order_grid, command=lambda i=i: self.delete_item(i), font=("Calibre", 18, 'bold'), width="40", justify="left", anchor="w")
 			amount = int(items[order].get_amount())
 			name = items[order].get_item().get_name()
